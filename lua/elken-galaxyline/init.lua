@@ -86,7 +86,7 @@ table.insert(gls.left, {
     DiffAdd = {
         provider = 'DiffAdd',
         condition = condition.hide_in_width,
-        icon = '  ',
+        icon = ' ',
         highlight = {colors.green, colors.bg}
     }
 })
@@ -94,7 +94,7 @@ table.insert(gls.left, {
     DiffModified = {
         provider = 'DiffModified',
         condition = condition.hide_in_width,
-        icon = ' 柳',
+	icon = ' ',
         highlight = {colors.blue, colors.bg}
     }
 })
@@ -102,7 +102,7 @@ table.insert(gls.left, {
     DiffRemove = {
         provider = 'DiffRemove',
         condition = condition.hide_in_width,
-        icon = '  ',
+        icon = ' ',
         highlight = {colors.red, colors.bg}
     }
 })
