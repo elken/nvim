@@ -552,12 +552,6 @@ require('packer').startup(function(use)
                 }
             }
 
-            local php_settings = {
-                init_options = {
-                    licenseKey = "~/.intelephense_key"
-                }
-            }
-
             -- config that activates keymaps and enables snippet support
             local function make_config()
                 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -584,10 +578,6 @@ require('packer').startup(function(use)
                     -- language specific config
                     if server == "lua" then
                         config.settings = lua_settings
-                    end
-
-                    if server == "php" then
-                        config.settigns = php_settings
                     end
 
                     require'lspconfig'[server].setup(config)
