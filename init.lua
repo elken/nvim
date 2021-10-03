@@ -58,8 +58,7 @@ vim.api.nvim_exec(
   [[
   augroup Packer
     autocmd!
-    autocmd BufWritePost init.lua PackerCompile
-    autocmd BufWritePost init.lua luafile %
+    autocmd BufWritePost init.lua source <afile> | PackerCompile
   augroup end
 ]], false)
 
@@ -74,6 +73,22 @@ vim.cmd[[
     autocmd BufEnter * silent! lcd %:p:h
 ]]
 
+-- Make containing directory if missing
+vim.cmd[[
+    autocmd BufWritePre * silent! <cmd>Mkdir
+]]
+
+-- Highlight on yank
+vim.api.nvim_exec(
+  [[
+  augroup YankHighlight
+    autocmd!
+    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+  augroup end
+]],
+  false
+)
+
 -- Installed packer if it's missing
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 
@@ -84,78 +99,55 @@ if fn.empty(fn.glob(install_path)) > 0 then
     })
 end
 
-require('packer').startup(function(use)
+return require('packer').startup(function(use)
+    -- Packer (needed to manage packer packages to manage packages to manage...)
     use "wbthomason/packer.nvim"
-    use {
-        'shaunsingh/nord.nvim',
-        config = function()
-            vim.g.nord_borders = true
-            vim.g.nord_italic = true
 
-            require('nord').set()
+    -- Most important package; the colour scheme
+    use {
+        "shaunsingh/nord.nvim",
+        config = function ()
+            vim.g.nord_contrast = true
+            vim.g.nord_borders = true
+
+            vim.cmd([[colorscheme nord]])
         end
     }
 
-    use 'neomake/neomake'
-    use 'chrisbra/unicode.vim'
+    -- Add fancy indent markers, which integrate nicely with treesitter
+    -- and shows the current context
     use {
         "lukas-reineke/indent-blankline.nvim",
-        config = function()
-            require("indent_blankline").setup {
-                use_treesitter = true,
-                show_current_context = true,
+        config = function ()
+            require("indent_blankline").setup({
                 filetype_exclude = {
-                    "dashboard"
+                    "startify", "dashboard", "dotooagenda", "log", "fugitive", "gitcommit",
+                    "packer", "vimwiki", "markdown", "json", "txt", "vista", "help",
+                    "todoist", "NvimTree", "peekaboo", "git", "TelescopePrompt", "undotree",
+                    "flutterToolsOutline", "" -- for all buffers without a file type
                 },
-                buftype_exclude = {
-                    "terminal",
-                },
-            }
+                buftype_exclude = {"terminal", "nofile"},
+                use_treesitter = true,
+            })
         end
-}
-    use {
-        "ahmedkhalf/project.nvim",
-        config = function()
-            require("project_nvim").setup {
-                require('telescope').load_extension('projects')
-            }
-        end,
-        requires = {'nvim-telescope/telescope.nvim'}
     }
 
-    use 'lambdalisue/suda.vim'
-    use 'tpope/vim-commentary'
-    use 'tpope/vim-endwise'
-    use 'tpope/vim-eunuch'
-    use 'tpope/vim-fugitive'
-    use 'tpope/vim-repeat'
-    use 'tpope/vim-rhubarb'
-    use 'tpope/vim-speeddating'
-    use 'tpope/vim-surround'
-    use 'tpope/vim-vinegar'
-    use 'sindrets/diffview.nvim'
-    use { "rcarriga/vim-ultest", requires = {"vim-test/vim-test"}, run = ":UpdateRemotePlugins" }
-
+    -- Pointless rice project; the statusline. Pick a nice one that works
+    -- ootb and leave it there.
     use {
-        "ms-jpq/chadtree",
-        branch = "chad",
-        run = ":CHADdeps",
-    }
-
-
-    use {
-        'shadmansaleh/lualine.nvim',
+        "shadmansaleh/lualine.nvim",
         config = function()
-            require('lualine').setup({
+            require("lualine").setup({
                 options = {
-                    theme = 'nord'
+                    theme = "nord"
                 }
             })
         end,
-        requires = {'kyazdani42/nvim-web-devicons'}
+        requires = "kyazdani42/nvim-web-devicons"
     }
 
-    -- When we get to mappings https://github.com/folke/which-key.nvim#%EF%B8%8F-mappings
+    -- TODO When we get to mappings https://github.com/folke/which-key.nvim#%EF%B8%8F-mappings
+    -- Which key is that? Which-key!
     use {
         "folke/which-key.nvim",
         config = function()
@@ -169,14 +161,112 @@ require('packer').startup(function(use)
         end
     }
 
+    -- Highlight colours (sometimes, currently)
+    use {
+        'norcalli/nvim-colorizer.lua',
+        config = function()
+            require('colorizer').setup()
+        end
+    }
+
+    -- The big daddy
+    use {
+        "nvim-telescope/telescope.nvim",
+        cmd = "Telescope",
+        module = "telescope",
+        config = function ()
+            vim.api.nvim_set_keymap('n', '<leader><leader>', '<cmd>lua require("telescope.builtin").builtin({include_extensions=true})<CR>' ,{noremap=true, silent=true})
+        end,
+        requires = {
+            "nvim-lua/plenary.nvim",
+            "nvim-lua/popup.nvim"
+        }
+    }
+
+    -- Project management
+    use {
+        "ahmedkhalf/project.nvim",
+        config = function()
+            require("project_nvim").setup({})
+            require("telescope").load_extension("projects")
+        end,
+        requires = "nvim-telescope/telescope.nvim"
+    }
+
+    -- 􏿽
+    use 'chrisbra/unicode.vim'
+
+    -- :w !sudo tee % > /dev/null
+    use {
+        'lambdalisue/suda.vim',
+        cmd = { "SudaWrite", "SudaRead" }
+    }
+
+    -- Comment all the things
+    use 'tpope/vim-commentary'
+
+    -- Add "end" in ruby, lua, etc
+    use 'tpope/vim-endwise'
+
+    -- Unix helpers
+    use 'tpope/vim-eunuch'
+
+    -- The git plugin so good, it should be illegal
+    use 'tpope/vim-fugitive'
+
+    -- Enable repeating supported plugin maps with "."
+    use 'tpope/vim-repeat'
+
+    -- GitHub extension for fugitive.vim
+    use 'tpope/vim-rhubarb'
+
+    -- Increment dates/times
+    use 'tpope/vim-speeddating'
+
+    --  Quoting/parenthesizing made simple
+    use 'tpope/vim-surround'
+
+    -- Pretty good test runner
+    use {
+        "rcarriga/vim-ultest",
+        run = ":UpdateRemotePlugins",
+        requires = "vim-test/vim-test"
+    }
+
+    -- Syntax and speed
+    -- Sitting in a tree
     use {
         "nvim-treesitter/nvim-treesitter",
         run = ":TSUpdate",
-        config = function()
+        config = function ()
+            if vim.fn.has('macos') then
+                require('nvim-treesitter.install').compilers = { "gcc-11" }
+            end
+
+            -- Extra parser configs
+            local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
+            parser_configs.haskell = {
+                install_info = {
+                    url = "https://github.com/tree-sitter/tree-sitter-haskell",
+                    files = {"src/parser.c", "src/scanner.cc"}
+                },
+                filetype = "haskell"
+            }
+            parser_configs.markdown = {
+                install_info = {
+                    url = "https://github.com/ikatyang/tree-sitter-markdown",
+                    files = {"src/parser.c", "src/scanner.cc"}
+                },
+                filetype = "markdown"
+            }
+
+            -- Main treesitter config
             require('nvim-treesitter.configs').setup {
                 ensure_installed = "all",
 
-                highlight = {enable = true},
+                highlight = {
+                    enable = true
+                },
 
                 incremental_selection = {
                     enable = true,
@@ -287,47 +377,31 @@ require('packer').startup(function(use)
 
                 context_commentstring = {enable = true}
             }
-
-            local parser_configs =
-                require("nvim-treesitter.parsers").get_parser_configs()
-            parser_configs.markdown = {
-                install_info = {
-                    url = "https://github.com/ikatyang/tree-sitter-markdown",
-                    files = {"src/parser.c", "src/scanner.cc"}
-                },
-                filetype = "markdown"
-            }
-        end
-    }
-
-    use {"RRethy/nvim-treesitter-textsubjects", requires = {"nvim-treesitter"}}
-
-    use {
-        "nvim-treesitter/nvim-treesitter-textobjects",
-        requires = {"nvim-treesitter"}
-    }
-
-    use {
-        "JoosepAlviste/nvim-ts-context-commentstring",
-        requires = {"nvim-treesitter"}
+        end,
+        requires = {
+            "RRethy/nvim-treesitter-textsubjects",           -- Location & syntax-aware text objects
+            "nvim-treesitter/nvim-treesitter-textobjects",   -- Custom objects using treesitter
+            "JoosepAlviste/nvim-ts-context-commentstring",   -- Correctly guess which comment to use in a mixed-mode file
+            "p00f/nvim-ts-rainbow"                           -- 🌈
+        }
     }
 
     -- TODO Set this up
+    -- use {
+    --     "nvim-treesitter/nvim-tree-docs",
+    --     requires = {
+    --         {"nvim-treesitter/nvim-treesitter"},
+    --     },
+    -- }
+
+    -- Debug tool for treesitter
     use {
-        "nvim-treesitter/nvim-tree-docs",
-        requires = {
-            {"nvim-treesitter/nvim-treesitter"},
-            {"Olical/aniseed", after = "nvim-treesitter"}
-        },
+        "nvim-treesitter/playground",
+        cmd = "TSPlaygroundToggle"
     }
 
-    use {
-        "p00f/nvim-ts-rainbow",
-        requires = {"nvim-treesitter"}
-    }
-
-    use {"nvim-treesitter/playground", cmd = "TSPlaygroundToggle"}
-
+    -- Neovim anywhere
+    -- TODO Refine this (remove barbar etc)
     use {
         "glacambre/firenvim",
         run = function()
@@ -335,55 +409,43 @@ require('packer').startup(function(use)
         end
     }
 
-    use {
-        'norcalli/nvim-colorizer.lua',
-        config = function() require('colorizer').setup() end
-    }
-
-    use "monaqa/dial.nvim"
-
+    -- Git changes in the gutter
     use {
         "lewis6991/gitsigns.nvim",
-        requires = "nvim-lua/plenary.nvim",
-        config = function() require('gitsigns').setup() end
+        config = function()
+            require('gitsigns').setup()
+        end,
+        requires = "nvim-lua/plenary.nvim"
     }
 
+    -- Markdown preview
     use {
         "iamcco/markdown-preview.nvim",
         run = "cd app && yarn install",
-        config = function() vim.g.mkdp_browser = "firefox" end
-    }
-
-    use {
-        "mizlan/iswap.nvim",
-        requires = {"nvim-treesitter"},
         config = function()
-            require('iswap').setup {
-                -- The keys that will be used as a selection, in order
-                -- ('asdfghjklqwertyuiopzxcvbnm' by default)
-                keys = 'ashtgyneoi',
-
-                -- Grey out the rest of the text when making a selection
-                -- (enabled by default)
-                grey = 'disable',
-
-                -- Highlight group for the sniping value (asdf etc.)
-                -- default 'Search'
-                hl_snipe = 'Search',
-
-                -- Highlight group for the visual selection of terms
-                -- default 'Visual'
-                hl_selection = 'Visual',
-
-                -- Highlight group for the greyed background
-                -- default 'Comment'
-                hl_grey = 'Comment'
-            }
+            vim.g.mkdp_browser = "firefox"
         end
     }
 
-    use "TimUntersberger/neogit"
+    -- WIP Magit
+    -- Not good enough yet, but getting there
+    use {
+        "TimUntersberger/neogit",
+        config = function ()
+            require('neogit').setup({
+                integrations = {
+                    diffview = true
+                }
+            })
+        end,
+        requires = {
+            "sindrets/diffview.nvim",
+            'nvim-lua/plenary.nvim'
+        }
+    }
 
+    -- WIP orgmode
+    -- Not good enough yet, but getting there
     use {
         'kristijanhusak/orgmode.nvim',
         config = function()
@@ -391,41 +453,22 @@ require('packer').startup(function(use)
         end
     }
 
-    use {
-        "karb94/neoscroll.nvim",
-        config = function() require('neoscroll').setup() end
-    }
-
+    -- Github integration (making issues etc)
     use {
         "pwntester/octo.nvim",
         cmd = "Octo",
         config = function()
-            require('octo').setup({
+            require("octo").setup({
                 default_remote = {"upstream", "elken", "origin"}
             })
         end
     }
 
-    use {
-        "nvim-telescope/telescope.nvim",
-        cmd = "Telescope",
-        module = "telescope",
-        requires = {"nvim-lua/plenary.nvim", "nvim-lua/popup.nvim"},
-        config = function()
-            require('telescope').setup({
-                pickers = {
-                    find_files = {
-                        follow = true
-                    }
-                }
-            })
-        end
-    }
-
+    -- Toggleable terminal buffer
     use {
         "akinsho/nvim-toggleterm.lua",
         config = function()
-            require('toggleterm').setup {
+            require("toggleterm").setup {
                 size = 90,
                 hide_numbers = true, -- hide the number column in toggleterm buffers
                 direction = "float",
@@ -441,24 +484,36 @@ require('packer').startup(function(use)
                     highlights = {border = "Normal", background = "Normal"}
                 }
             }
-
         end
     }
 
-    use "romgrk/barbar.nvim"
-
-    use "kevinhwang91/nvim-bqf"
-
+    -- Tab bar plugin
+    -- TODO Hide this in firenvim
     use {
-        "jghauser/mkdir.nvim",
-        config = function() require('mkdir') end,
-        event = "BufWritePre"
+        "akinsho/bufferline.nvim",
+        config = function ()
+            require('bufferline').setup({
+                options = {
+                    diagnostics = "nvim_lsp",
+                    separator_style = "slant",
+                    always_show_bufferline = false
+                }
+            })
+        end,
+        requires = 'kyazdani42/nvim-web-devicons'
     }
 
+    -- Better QuickFix
+    use "kevinhwang91/nvim-bqf"
+
+    -- Main DAP plugin
+    -- TODO Get DAP setup neatly
     use {"mfussenegger/nvim-dap", module = "dap"}
 
+    -- UI for above
     use {"rcarriga/nvim-dap-ui", after = "nvim-dap"}
 
+    -- EZ installer for DAP servers
     use {
         "Pocco81/DAPInstall.nvim",
         config = function()
@@ -474,6 +529,8 @@ require('packer').startup(function(use)
         cmd = {"DIInstall", "DIUninstall", "DIList"},
     }
 
+    -- Basic formatting
+    -- TODO https://www.reddit.com/r/neovim/comments/jvisg5/lets_talk_formatting_again/
     use {
         "lukas-reineke/format.nvim",
         config = function()
@@ -486,14 +543,13 @@ require('packer').startup(function(use)
             }
         end,
         cmd = {"Format", "FormatWrite"},
-        --rocks = { 'luaformatter', server = 'https://luarocks.org/dev' }
+        rocks = { 'luaformatter', server = 'https://luarocks.org/dev' }
     }
 
-    use "neovim/nvim-lspconfig"
-
+    -- Fancy IDE stuff
     use {
         "kabouzeid/nvim-lspinstall",
-        config = function()
+        config = function ()
             -- Borrowed from https://github.com/kabouzeid/nvim-lspinstall/wiki
             -- keymaps
             local on_attach = function(client, bufnr)
@@ -519,6 +575,7 @@ require('packer').startup(function(use)
                 buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
                 buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
                 buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+                vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
 
                 -- Set some keybinds conditional on server capabilities
                 if client.resolved_capabilities.document_formatting then
@@ -539,6 +596,9 @@ require('packer').startup(function(use)
                 end
             end
 
+            local capabilities = vim.lsp.protocol.make_client_capabilities()
+            capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+
             -- Configure lua language server for neovim development
             local lua_settings = {
                 filetypes = {"lua"},
@@ -554,36 +614,20 @@ require('packer').startup(function(use)
                     },
                     workspace = {
                         -- Make the server aware of Neovim runtime files
-                        library = {
-                            [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-                            [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
-                        },
+                        library = vim.api.nvim_get_runtime_file('', true),
                     },
                 }
             }
 
-            -- config that activates keymaps and enables snippet support
-            local function make_config()
-                local capabilities = vim.lsp.protocol.make_client_capabilities()
-                capabilities.textDocument.completion.completionItem.snippetSupport = true
-                capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
-                return {
-                    -- enable snippet support
-                    capabilities = capabilities,
-                    -- map buffer local keybindings when the language server attaches
-                    on_attach = on_attach,
-                }
-            end
-
-            -- lsp-install
             local function setup_servers()
                 require'lspinstall'.setup()
-
-                -- get all installed servers
                 local servers = require'lspinstall'.installed_servers()
 
                 for _, server in pairs(servers) do
-                    local config = make_config()
+                    local config = {
+                        capabilities = capabilities,
+                        on_attach = on_attach,
+                    }
 
                     -- language specific config
                     if server == "lua" then
@@ -601,35 +645,78 @@ require('packer').startup(function(use)
                 setup_servers() -- reload installed servers
                 vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
             end
-
         end,
-        requires = {"nvim-lspconfig"},
+        requires = "neovim/nvim-lspconfig"
     }
 
+    -- Completion framework
     use {
         "hrsh7th/nvim-cmp",
         config = function()
-            require('cmp').setup {
+            require('lspkind').init()
+            local cmp = require('cmp')
+            local luasnip = require('luasnip')
+            cmp.setup {
                 sources = {
-                    { name = "nvim_lsp" }
+                    { name = "nvim_lsp" },
+                    { name = "luasnip" },
+                },
+                snippet = {
+                    expand = function(args)
+                        require('luasnip').lsp_expand(args.body)
+                    end,
+                },
+                mapping = {
+                    ['<C-p>'] = cmp.mapping.select_prev_item(),
+                    ['<C-n>'] = cmp.mapping.select_next_item(),
+                    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+                    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                    ['<C-Space>'] = cmp.mapping.complete(),
+                    ['<C-g>'] = cmp.mapping.close(),
+                    ['<CR>'] = cmp.mapping.confirm {
+                        behavior = cmp.ConfirmBehavior.Replace,
+                        select = true,
+                    },
+                    ['<Tab>'] = function(fallback)
+                        if vim.fn.pumvisible() == 1 then
+                            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
+                        elseif luasnip.expand_or_jumpable() then
+                            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
+                        else
+                            fallback()
+                        end
+                    end,
+                    ['<S-Tab>'] = function(fallback)
+                        if vim.fn.pumvisible() == 1 then
+                            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n')
+                        elseif luasnip.jumpable(-1) then
+                            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
+                        else
+                            fallback()
+                        end
+                    end,
+                },
+                formatting = {
+                    format = function(entry, vim_item)
+                        -- fancy icons and a name of kind
+                        vim_item.kind = require("lspkind").presets.default[vim_item.kind] .. " " .. vim_item.kind
+
+                        -- set a name for each source
+                        vim_item.menu = ({
+                            buffer = "[Buffer]",
+                            nvim_lsp = "[LSP]",
+                            luasnip = "[LuaSnip]",
+                            nvim_lua = "[Lua]",
+                            latex_symbols = "[Latex]",
+                        })[entry.source.name]
+                        return vim_item
+                    end,
                 },
             }
         end,
-        requires = {"nvim-treesitter", "hrsh7th/cmp-nvim-lsp"}
+        requires = {"nvim-treesitter", "hrsh7th/cmp-nvim-lsp", "onsails/lspkind-nvim", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip"}
     }
+
+    -- Faster-than-light jumping
     use 'ggandor/lightspeed.nvim'
-    use 'glepnir/dashboard-nvim'
 end)
-
--- Dashboard
-vim.g.dashboard_default_executive = "telescope"
-vim.g.dashboard_preview_command = 'cat'
-vim.g.dashboard_preview_file = "~/.config/nvim/header.cat"
-vim.g.dashboard_preview_file_height = 19
-vim.g.dashboard_preview_file_width = 80
-
--- Disable tabline in dashboard
-vim.api.nvim_exec(
-    [[
-    autocmd FileType dashboard set showtabline=0 | autocmd WinLeave <buffer> set showtabline=2
-]], false)
