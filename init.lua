@@ -2,12 +2,20 @@
 --
 -- Help documentation can be viewed with `:h <property>`
 local fn = vim.fn
+-- TODO Use this, if needed
+-- local colors = require('nord.colors')
 
-vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent = true })
-vim.g.mapleader = " "
+-- Only run these settings once
+if not packer_plugins then
+    vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent = true })
+    vim.g.mapleader = " "
+    vim.g.maplocalleader = " "
+    vim.opt.termguicolors = true
+end
+
+vim.g.did_load_filetypes = 1
 vim.g.formatoptions = 'qrn1'
 vim.opt.guifont = "Iosevka Nerd Font Mono"
-vim.opt.termguicolors = true
 vim.opt.showmode = false
 vim.opt.timeoutlen = 500
 vim.opt.updatetime = 100
@@ -54,13 +62,12 @@ vim.cmd[[
 ]]
 
 -- Run PackerCompile after saving init.lua
-vim.api.nvim_exec(
-  [[
-  augroup Packer
+vim.cmd([[
+  augroup packer_user_config
     autocmd!
     autocmd BufWritePost init.lua source <afile> | PackerCompile
   augroup end
-]], false)
+]])
 
 -- Firenvim buffers
 vim.cmd[[
@@ -75,7 +82,7 @@ vim.cmd[[
 
 -- Make containing directory if missing
 vim.cmd[[
-    autocmd BufWritePre * silent! <cmd>Mkdir
+    autocmd BufWritePre * silent! Mkdir
 ]]
 
 -- Highlight on yank
@@ -97,9 +104,24 @@ if fn.empty(fn.glob(install_path)) > 0 then
         'git', 'clone', 'https://github.com/wbthomason/packer.nvim',
         install_path
     })
+    vim.cmd([[
+          autocmd VimEnter * PackerSync
+    ]])
 end
 
-return require('packer').startup(function(use)
+-- Fancy borders for LSP
+local float_borders = {
+      {"🭽", "FloatBorder"},
+      {"▔", "FloatBorder"},
+      {"🭾", "FloatBorder"},
+      {"▕", "FloatBorder"},
+      {"🭿", "FloatBorder"},
+      {"▁", "FloatBorder"},
+      {"🭼", "FloatBorder"},
+      {"▏", "FloatBorder"},
+}
+
+return require('packer').startup({function(use)
     -- Packer (needed to manage packer packages to manage packages to manage...)
     use "wbthomason/packer.nvim"
 
@@ -110,8 +132,12 @@ return require('packer').startup(function(use)
             vim.g.nord_contrast = true
             vim.g.nord_borders = true
 
-            vim.cmd([[colorscheme nord]])
-        end
+            if not vim.g.colourscheme_set then
+                vim.cmd([[colorscheme nord]])
+                vim.g.colourscheme_set = true
+            end
+        end,
+        requires = "folke/lsp-colors.nvim"
     }
 
     -- Add fancy indent markers, which integrate nicely with treesitter
@@ -126,8 +152,10 @@ return require('packer').startup(function(use)
                     "todoist", "NvimTree", "peekaboo", "git", "TelescopePrompt", "undotree",
                     "flutterToolsOutline", "" -- for all buffers without a file type
                 },
-                buftype_exclude = {"terminal", "nofile"},
+                buftype_exclude = {"help", "terminal", "nofile"},
                 use_treesitter = true,
+                show_current_context = true,
+                max_indent_increase = 1
             })
         end
     }
@@ -140,24 +168,60 @@ return require('packer').startup(function(use)
             require("lualine").setup({
                 options = {
                     theme = "nord"
+                },
+                sections = {
+                    lualine_c = {
+                        {
+                            'filename',
+                            file_status = true,
+                            path = 1
+                        }
+                    }
                 }
             })
         end,
         requires = "kyazdani42/nvim-web-devicons"
     }
 
-    -- TODO When we get to mappings https://github.com/folke/which-key.nvim#%EF%B8%8F-mappings
     -- Which key is that? Which-key!
     use {
         "folke/which-key.nvim",
         config = function()
-            require("which-key").setup {
+            local whichkey = require("which-key")
+            whichkey.setup {
                 plugins = {
                     spelling = {
                         enabled = true
                     }
                 }
             }
+
+            whichkey.register({
+                b = {
+                    name = "Buffer",
+                    ["["] = { "<cmd>bp<CR>", "Previous buffer" },
+                    ["]"] = { "<cmd>bn<CR>", "Next buffer" },
+                    d = { "<cmd>bdelete<CR>", "Kill buffer" },
+                    p = { "<cmd>bp<CR>", "Previous buffer" },
+                    n = { "<cmd>bn<CR>", "Next buffer" },
+                },
+                f = {
+                    name = "File",
+                    f = { "<cmd>lua if not pcall(require('telescope.builtin').git_files, {}) then require('telescope.builtin').find_files() end<CR>", "Find file in project"},
+                    r = { "<cmd>Telescope frecency<CR>", "Find Recent File" },
+                    n = { "<cmd>enew<CR>", "New File" },
+                    s = { "<cmd>w<CR>", "Save file" },
+                    U = { "<cmd>SudaRead<CR>", "Sudo read" },
+                    S = { "<cmd>SudaWrite<CR>", "Sudo write" },
+                    y = { "<cmd>let @+ = expand('%:p')<CR>", "Yank file path" },
+                    Y = { "<cmd>let @+ = expand('%:~:.')<CR>", "Yank file path from project" },
+                    -- D = { "<cmd>lua require('util').confirm('Delete this file?', print('hi'))<CR>", "Delete this file" }
+                },
+                ["<space>"] = { "<cmd>lua if not pcall(require('telescope.builtin').git_files, {}) then require('telescope.builtin').find_files() end<CR>", "Find file in project" },
+                [","] = { "<cmd>Telescope buffers<CR>", "Switch buffer" },
+                ["."] = { "<cmd>Telescope file_browser<CR>", "Find file" },
+                ["/"] = { "<cmd>Telescope live_grep<CR>", "Search in project" },
+            }, { prefix = "<leader>" })
         end
     }
 
@@ -175,7 +239,16 @@ return require('packer').startup(function(use)
         cmd = "Telescope",
         module = "telescope",
         config = function ()
-            vim.api.nvim_set_keymap('n', '<leader><leader>', '<cmd>lua require("telescope.builtin").builtin({include_extensions=true})<CR>' ,{noremap=true, silent=true})
+            local actions = require('telescope.actions')
+            require('telescope').setup({
+                defaults = {
+                    mappings = {
+                        i = {
+                            ["<esc>"] = actions.close
+                        },
+                    },
+                }
+            })
         end,
         requires = {
             "nvim-lua/plenary.nvim",
@@ -529,59 +602,70 @@ return require('packer').startup(function(use)
         cmd = {"DIInstall", "DIUninstall", "DIList"},
     }
 
-    -- Basic formatting
-    -- TODO https://www.reddit.com/r/neovim/comments/jvisg5/lets_talk_formatting_again/
-    use {
-        "lukas-reineke/format.nvim",
-        config = function()
-            require('format').setup {
-                ["*"] = {
-                    {cmd = {"sed -i 's/[ \t]*$//'"}} -- Removes trailing whitespace
-                },
-                lua = {{cmd = {"lua-format"}}},
-                php = {{cmd = {"phpcbf"}}},
-            }
-        end,
-        cmd = {"Format", "FormatWrite"},
-        rocks = { 'luaformatter', server = 'https://luarocks.org/dev' }
-    }
-
     -- Fancy IDE stuff
     use {
         "kabouzeid/nvim-lspinstall",
         config = function ()
+            local whichkey = require('which-key')
+            function TelescopeCodeActions()
+                local theme = require('telescope.themes').get_ivy()
+                theme['layout_config']['height'] = 10
+                require('telescope.builtin').lsp_code_actions(theme)
+            end
+
             -- Borrowed from https://github.com/kabouzeid/nvim-lspinstall/wiki
             -- keymaps
             local on_attach = function(client, bufnr)
-                local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+                require "lsp_signature".on_attach({
+                    bind = true,
+                    handler_opts = {
+                        border = "single"
+                    }
+                }, bufnr)
                 local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
+                vim.lsp.handlers["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = "single"})
+                vim.lsp.handlers["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = float_borders})
                 buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-                -- Mappings.
-                local opts = { noremap=true, silent=true }
-                buf_set_keymap('n', 'gD', '<Cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-                buf_set_keymap('n', 'gd', '<Cmd>lua vim.lsp.buf.definition()<CR>', opts)
-                buf_set_keymap('n', 'K', '<Cmd>lua vim.lsp.buf.hover()<CR>', opts)
-                buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-                buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-                buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-                buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-                buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-                buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-                buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-                buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-                buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-                buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-                buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-                buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-                vim.cmd [[ command! Format execute 'lua vim.lsp.buf.formatting()' ]]
+                -- Mappings
+                local opts = { noremap=true, silent=true, buffer = bufnr }
+                whichkey.register({
+                    K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "Show documentation for symbol" },
+                    g = {
+                        d = { "<cmd>lua vim.lsp.buf.definition()<CR>", "LSP definition" },
+                        D = { "<cmd>lua vim.lsp.buf.declaration()<CR>", "LSP declaration" },
+                        i = { "<cmd>lua vim.lsp.buf.implementation()<CR>", "LSP implementation" },
+                        r = { "<cmd>lua vim.lsp.buf.references()<CR>", "LSP references" },
+                        R = { "<cmd>lua vim.lsp.buf.rename()<CR>", "LSP rename" },
+                    },
+                    ["<leader>"] = {
+                        c = {
+                            name = "Code",
+                            a = { "<cmd>lua TelescopeCodeActions()<CR>", "LSP Code Actions" },
+                            c = { "<cmd>Make<CR>", "Compile" },
+                            w = {
+                                name = "Workspaces",
+                                a = { "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", "Add workspace folder" },
+                                r = { "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", "Remove workspace folder" },
+                                l = { "<cmd> lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>", "List workspace folders" }
+                            },
+                            x = { "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics({border = 'single'})<CR>", "Show diagnostics for line" }
+                        },
+                        ["["] = { "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", "Jump to previous error" },
+                        ["]"] = { "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", "Jump to next error" },
+                    }
+                }, opts)
 
                 -- Set some keybinds conditional on server capabilities
                 if client.resolved_capabilities.document_formatting then
-                    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+                    whichkey.register({
+                        ["<leader>cf"] = { "<cmd>lua vim.lsp.buf.formatting()<CR>", "Format buffer" }
+                    }, opts)
                 elseif client.resolved_capabilities.document_range_formatting then
-                    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.range_formatting()<CR>", opts)
+                    whichkey.register({
+                        ["<leader>cf"] = { "<cmd>lua vim.lsp.buf.range_formatting()<CR>", "Format buffer/region" }
+                    }, opts)
                 end
 
                 -- Set autocommands conditional on server_capabilities
@@ -646,7 +730,11 @@ return require('packer').startup(function(use)
                 vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
             end
         end,
-        requires = "neovim/nvim-lspconfig"
+        after = "which-key.nvim",
+        requires ={
+            "neovim/nvim-lspconfig",
+            "ray-x/lsp_signature.nvim"
+        }
     }
 
     -- Completion framework
@@ -659,7 +747,11 @@ return require('packer').startup(function(use)
             cmp.setup {
                 sources = {
                     { name = "nvim_lsp" },
+                    { name = "path" },
+                    { name = "buffer" },
+                    { name = "nvim_lua" },
                     { name = "luasnip" },
+                    { name = "orgmode" },
                 },
                 snippet = {
                     expand = function(args)
@@ -673,10 +765,10 @@ return require('packer').startup(function(use)
                     ['<C-f>'] = cmp.mapping.scroll_docs(4),
                     ['<C-Space>'] = cmp.mapping.complete(),
                     ['<C-g>'] = cmp.mapping.close(),
-                    ['<CR>'] = cmp.mapping.confirm {
+                    ["<CR>"] = cmp.mapping.confirm({
                         behavior = cmp.ConfirmBehavior.Replace,
                         select = true,
-                    },
+                    }),
                     ['<Tab>'] = function(fallback)
                         if vim.fn.pumvisible() == 1 then
                             vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
@@ -703,6 +795,7 @@ return require('packer').startup(function(use)
 
                         -- set a name for each source
                         vim_item.menu = ({
+                            path = "[Path]",
                             buffer = "[Buffer]",
                             nvim_lsp = "[LSP]",
                             luasnip = "[LuaSnip]",
@@ -712,11 +805,72 @@ return require('packer').startup(function(use)
                         return vim_item
                     end,
                 },
+                documentation = {
+                    border = float_borders;
+                }
             }
         end,
-        requires = {"nvim-treesitter", "hrsh7th/cmp-nvim-lsp", "onsails/lspkind-nvim", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip"}
+        requires = {
+            "nvim-treesitter",
+            "hrsh7th/cmp-nvim-lsp",
+            "onsails/lspkind-nvim",
+            "L3MON4D3/LuaSnip",
+            "saadparwaiz1/cmp_luasnip",
+            "hrsh7th/cmp-path",
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-emoji",
+        }
     }
 
     -- Faster-than-light jumping
-    use 'ggandor/lightspeed.nvim'
-end)
+    use "ggandor/lightspeed.nvim"
+
+    -- Automatic pair matching
+    use {
+        "windwp/nvim-autopairs",
+        config = function ()
+            require("nvim-autopairs").setup()
+            require("nvim-autopairs.completion.cmp").setup({
+                map_cr = true, --  map <CR> on insert mode
+                map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
+            })
+        end,
+        after = "nvim-cmp"
+    }
+
+    -- Async Lint Engine
+    use {
+        "dense-analysis/ale",
+        config = function ()
+            vim.g.ale_fix_on_save = 1
+        end,
+        rocks = { 'luaformatter', server = 'https://luarocks.org/dev' }
+    }
+
+    -- Telescope most recently used
+    use {
+        "nvim-telescope/telescope-frecency.nvim",
+        config = function()
+            require"telescope".load_extension("frecency")
+        end,
+        requires = {"tami5/sqlite.lua"}
+    }
+
+    -- Simple popup notification library
+    use {
+        "rcarriga/nvim-notify",
+        config = function ()
+            vim.notify = require('notify')
+        end
+    }
+
+    -- Free real estate for startup perf
+    use "nathom/filetype.nvim"
+end,
+    config = {
+        display = {
+            open_fn = function()
+                return require("packer.util").float { border = "rounded" }
+            end,
+        }
+}})
