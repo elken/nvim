@@ -196,11 +196,9 @@ return require('packer').startup({function(use)
                 }
             }
 
-            whichkey.register({
+            local binds = {
                 b = {
                     name = "Buffer",
-                    ["["] = { "<cmd>bp<CR>", "Previous buffer" },
-                    ["]"] = { "<cmd>bn<CR>", "Next buffer" },
                     d = { "<cmd>bdelete<CR>", "Kill buffer" },
                     p = { "<cmd>bp<CR>", "Previous buffer" },
                     n = { "<cmd>bn<CR>", "Next buffer" },
@@ -217,11 +215,41 @@ return require('packer').startup({function(use)
                     Y = { "<cmd>let @+ = expand('%:~:.')<CR>", "Yank file path from project" },
                     -- D = { "<cmd>lua require('util').confirm('Delete this file?', print('hi'))<CR>", "Delete this file" }
                 },
+                g = {
+                    name = "Git",
+                    h = {
+                        name = "Hunk",
+                        b = { "<cmd>Gitsigns blame_line<CR>", "Blame line" },
+                        n = { "<cmd>Gitsigns next_hunk<CR>", "Next hunk" },
+                        p = { "<cmd>Gitsigns prev_hunk<CR>", "Previous hunk" },
+                        s = { "<cmd>Gitsigns stage_hunk<CR>", "Stage current hunk" },
+                        r = { "<cmd>Gitsigns reset_hunk<CR>", "Reset current hunk"}
+                    },
+                    b = { "<cmd>lua require('neogit').open({'branch'})<CR>", "Open branch popup" },
+                    D = { "<cmd>GDelete<CR>", "Delete current file from git" },
+                    f = { "<cmd>G fetch<CR>", "Fetch" },
+                    o = { "<cmd>GBrowse<CR>", "Open in browser" },
+                    g = { "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd = 'lazygit', direction = 'float'}):toggle()<CR>", "Lazygit" }
+                },
+                h = "which_key_ignore",
+                o = {
+                    name = "Open",
+                    t = { "<cmd>ToggleTerm<CR>", "Terminal" },
+                    D = { "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd = 'lazydocker', direction = 'float'}):toggle()<CR>", "Docker" },
+                    r = { "<cmd>RnvimrToggle<CR>", "Ranger" },
+                },
                 ["<space>"] = { "<cmd>lua if not pcall(require('telescope.builtin').git_files, {}) then require('telescope.builtin').find_files() end<CR>", "Find file in project" },
                 [","] = { "<cmd>Telescope buffers<CR>", "Switch buffer" },
                 ["."] = { "<cmd>Telescope file_browser<CR>", "Find file" },
                 ["/"] = { "<cmd>Telescope live_grep<CR>", "Search in project" },
-            }, { prefix = "<leader>" })
+            }
+
+
+            if vim.fn.has('macos') then
+                binds.o.o = { string.format("<cmd>silent !open -a Finder.app %s<CR>", vim.fn.expand('%:p:h')), "Open directory in Finder" }
+            end
+
+            whichkey.register(binds, { prefix = "<leader>" })
         end
     }
 
@@ -541,12 +569,9 @@ return require('packer').startup({function(use)
     use {
         "akinsho/nvim-toggleterm.lua",
         config = function()
-            require("toggleterm").setup {
-                size = 90,
-                hide_numbers = true, -- hide the number column in toggleterm buffers
-                direction = "float",
+            require("toggleterm").setup({
+                direction = "horizontal",
                 shell = vim.o.shell, -- change the default shell
-                -- This field is only relevant if direction is set to 'float'
                 float_opts = {
                     -- The border key is *almost* the same as 'nvim_win_open'
                     -- see :h nvim_win_open for details on borders however
@@ -556,7 +581,10 @@ return require('packer').startup({function(use)
                     winblend = 0,
                     highlights = {border = "Normal", background = "Normal"}
                 }
-            }
+            })
+
+            -- Easier escape from terminal buffers
+            vim.api.nvim_set_keymap('t', '<C-]>', '<C-\\><C-n>', { noremap = true, silent = true })
         end
     }
 
@@ -738,6 +766,7 @@ return require('packer').startup({function(use)
     }
 
     -- Completion framework
+    -- TODO Customize the new popup window
     use {
         "hrsh7th/nvim-cmp",
         config = function()
@@ -770,8 +799,8 @@ return require('packer').startup({function(use)
                         select = true,
                     }),
                     ['<Tab>'] = function(fallback)
-                        if vim.fn.pumvisible() == 1 then
-                            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
+                        if cmp.visible() then
+                            cmp.select_next_item()
                         elseif luasnip.expand_or_jumpable() then
                             vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
                         else
@@ -779,8 +808,7 @@ return require('packer').startup({function(use)
                         end
                     end,
                     ['<S-Tab>'] = function(fallback)
-                        if vim.fn.pumvisible() == 1 then
-                            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n')
+                        if cmp.visible() then
                         elseif luasnip.jumpable(-1) then
                             vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
                         else
@@ -866,6 +894,9 @@ return require('packer').startup({function(use)
 
     -- Free real estate for startup perf
     use "nathom/filetype.nvim"
+
+    -- File browser (depends on ranger)
+    use "kevinhwang91/rnvimr"
 end,
     config = {
         display = {
