@@ -25,7 +25,7 @@ vim.opt.wrap = false
 vim.opt.laststatus = 2
 vim.opt.ttimeoutlen = 5
 vim.opt.virtualedit = "block"
-vim.opt.undodir = "~/.config/nvim/undo"
+vim.opt.undodir = "$HOME/.config/nvim/undo"
 vim.opt.shell = '/bin/zsh'
 
 -- Mouse
@@ -52,9 +52,27 @@ vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.smartindent = true
+vim.opt.wrap = true
 
 -- Completion
 vim.opt.completeopt = "menuone,noselect"
+
+-- Fillchars
+vim.opt.fillchars = {
+  vert = "│",
+  fold = "⠀",
+  eob = " ", -- suppress ~ at EndOfBuffer
+  --diff = "⣿", -- alternatives = ⣿ ░ ─ ╱
+  msgsep = "‾",
+  foldopen = "▾",
+  foldsep = "│",
+  foldclose = "▸",
+}
+
+if fn.executable("rg") > 0 then
+  vim.o.grepprg = "rg --hidden --glob '!.git' --no-heading --smart-case --vimgrep --follow $*"
+  vim.opt.grepformat = vim.opt.grepformat ^ { "%f:%l:%c:%m" }
+end
 
 -- Jump to last line when opening a file
 vim.cmd[[
@@ -76,25 +94,19 @@ vim.cmd[[
 ]]
 
 -- Change directory to the current buffer
-vim.cmd[[
-    autocmd BufEnter * silent! lcd %:p:h
-]]
+vim.cmd("autocmd BufEnter * silent! lcd %:p:h")
 
 -- Make containing directory if missing
-vim.cmd[[
-    autocmd BufWritePre * silent! Mkdir
-]]
+vim.cmd("autocmd BufWritePre * silent! Mkdir ")
 
 -- Highlight on yank
-vim.api.nvim_exec(
+vim.cmd(
   [[
   augroup YankHighlight
     autocmd!
     autocmd TextYankPost * silent! lua vim.highlight.on_yank()
   augroup end
-]],
-  false
-)
+]])
 
 -- Installed packer if it's missing
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
@@ -104,22 +116,8 @@ if fn.empty(fn.glob(install_path)) > 0 then
         'git', 'clone', 'https://github.com/wbthomason/packer.nvim',
         install_path
     })
-    vim.cmd([[
-          autocmd VimEnter * PackerSync
-    ]])
+    vim.cmd("autocmd VimEnter * PackerSync")
 end
-
--- Fancy borders for LSP
-local float_borders = {
-      {"🭽", "FloatBorder"},
-      {"▔", "FloatBorder"},
-      {"🭾", "FloatBorder"},
-      {"▕", "FloatBorder"},
-      {"🭿", "FloatBorder"},
-      {"▁", "FloatBorder"},
-      {"🭼", "FloatBorder"},
-      {"▏", "FloatBorder"},
-}
 
 return require('packer').startup({function(use)
     -- Packer (needed to manage packer packages to manage packages to manage...)
@@ -129,11 +127,11 @@ return require('packer').startup({function(use)
     use {
         "shaunsingh/nord.nvim",
         config = function ()
-            vim.g.nord_contrast = true
+            vim.g.nord_contrast = false
             vim.g.nord_borders = true
 
             if not vim.g.colourscheme_set then
-                vim.cmd([[colorscheme nord]])
+                vim.cmd("colorscheme nord")
                 vim.g.colourscheme_set = true
             end
         end,
@@ -165,6 +163,22 @@ return require('packer').startup({function(use)
     use {
         "shadmansaleh/lualine.nvim",
         config = function()
+            -- Show the window number if there are more than 1 window
+            -- (used for fast jumping)
+            local window_number = function ()
+                local window_count = 0
+                for i = 1,vim.fn.winnr('$'),1 do
+                    local type = vim.fn.win_gettype(i)
+                    if not type or type == '' then
+                        window_count = window_count + 1
+                    end
+                end
+                if window_count > 1 then
+                    return vim.fn.winnr()
+                else
+                    return ''
+                end
+            end
             require("lualine").setup({
                 options = {
                     theme = "nord",
@@ -173,12 +187,26 @@ return require('packer').startup({function(use)
                 },
                 sections = {
                     lualine_c = {
+                        window_number,
                         {
                             'filename',
                             file_status = true,
                             path = 1
                         }
                     }
+                },
+                inactive_sections = {
+                    lualine_a = {window_number},
+                    lualine_b = {},
+                    lualine_c = {'filename'},
+                    lualine_x = {'location'},
+                    lualine_y = {},
+                    lualine_z = {}
+                },
+                extensions = {
+                    'quickfix',
+                    'toggleterm',
+                    'fugitive'
                 }
             })
         end,
@@ -198,10 +226,10 @@ return require('packer').startup({function(use)
                 }
             }
 
-            local binds = {
+            local normal_binds = {
                 b = {
                     name = "Buffer",
-                    d = { "<cmd>bdelete<CR>", "Kill buffer" },
+                    d = { "<cmd>Bdelete<CR>", "Kill buffer" },
                     p = { "<cmd>bp<CR>", "Previous buffer" },
                     n = { "<cmd>bn<CR>", "Next buffer" },
                 },
@@ -224,16 +252,21 @@ return require('packer').startup({function(use)
                         b = { "<cmd>Gitsigns blame_line<CR>", "Blame line" },
                         n = { "<cmd>Gitsigns next_hunk<CR>", "Next hunk" },
                         p = { "<cmd>Gitsigns prev_hunk<CR>", "Previous hunk" },
+                        P = { "<cmd>Gitsigns preview_hunk<CR>", "Preview hunk" },
                         s = { "<cmd>Gitsigns stage_hunk<CR>", "Stage current hunk" },
-                        r = { "<cmd>Gitsigns reset_hunk<CR>", "Reset current hunk"}
+                        S = { "<cmd>Gitsigns stage_buffer<CR>", "Stage current buffer" },
+                        r = { "<cmd>Gitsigns reset_hunk<CR>", "Reset current hunk" },
+                        R = { "<cmd>Gitsigns reset_buffer<CR>", "Reset current buffer" },
+                        u = { "<cmd>Gitsigns undo_stage_hunk<CR>", "Undo stage hunk" },
+                        U = { "<cmd>Gitsigns reset_buffer_index<CR>", "Reset buffer index" },
                     },
                     b = { "<cmd>lua require('neogit').open({'branch'})<CR>", "Open branch popup" },
                     D = { "<cmd>GDelete<CR>", "Delete current file from git" },
                     f = { "<cmd>G fetch<CR>", "Fetch" },
                     o = { "<cmd>GBrowse<CR>", "Open in browser" },
-                    g = { "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd = 'lazygit', direction = 'float'}):toggle()<CR>", "Lazygit" }
+                    g = { "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd = 'lazygit', direction = 'float'}):toggle()<CR>", "Lazygit" },
+                    y = { "<cmd>lua require('gitlinker').get_buf_range_url('n')<CR>", "Yank link to current line" }
                 },
-                h = "which_key_ignore",
                 o = {
                     name = "Open",
                     t = { "<cmd>ToggleTerm<CR>", "Terminal" },
@@ -246,12 +279,25 @@ return require('packer').startup({function(use)
                 ["/"] = { "<cmd>Telescope live_grep<CR>", "Search in project" },
             }
 
+            local visual_binds = {
+                g = {
+                    y = { "<cmd>lua require('gitlinker').get_buf_range_url('v')<CR>", "Yank link to current selection"}
+                }
+            }
 
-            if vim.fn.has('macos') then
-                binds.o.o = { string.format("<cmd>silent !open -a Finder.app %s<CR>", vim.fn.expand('%:p:h')), "Open directory in Finder" }
+            local copy_and_merge = function (base, override)
+                local copy = {}
+                for k,v in pairs(base) do copy[k] = v end
+                for k,v in pairs(override) do copy[k] = v end
+                return copy
             end
 
-            whichkey.register(binds, { prefix = "<leader>" })
+            if vim.fn.has('macos') then
+                normal_binds.o.o = { string.format("<cmd>silent !open -a Finder.app %s<CR>", vim.fn.expand('%:p:h')), "Open directory in Finder" }
+            end
+
+            whichkey.register(normal_binds, { prefix = "<leader>" })
+            whichkey.register(copy_and_merge(normal_binds, visual_binds), { prefix = "<leader>", mode = "v" })
         end
     }
 
@@ -478,12 +524,23 @@ return require('packer').startup({function(use)
                 },
                 tree_docs = {enable = true},
 
-                context_commentstring = {enable = true}
+                context_commentstring = {enable = true},
+
+                refactor = {
+                    highlight_definitions = { enable = true },
+                    smart_rename = {
+                        enable = true,
+                        keymaps = {
+                            smart_rename = "gR",
+                        },
+                    },
+                }
             }
         end,
         requires = {
             "RRethy/nvim-treesitter-textsubjects",           -- Location & syntax-aware text objects
             "nvim-treesitter/nvim-treesitter-textobjects",   -- Custom objects using treesitter
+            "nvim-treesitter/nvim-treesitter-refactor",      -- Slightly better refactorings
             "JoosepAlviste/nvim-ts-context-commentstring",   -- Correctly guess which comment to use in a mixed-mode file
             "p00f/nvim-ts-rainbow"                           -- 🌈
         }
@@ -516,7 +573,9 @@ return require('packer').startup({function(use)
     use {
         "lewis6991/gitsigns.nvim",
         config = function()
-            require('gitsigns').setup()
+            require('gitsigns').setup({
+                keymaps = {}
+            })
         end,
         requires = "nvim-lua/plenary.nvim"
     }
@@ -574,6 +633,7 @@ return require('packer').startup({function(use)
             require("toggleterm").setup({
                 direction = "horizontal",
                 shell = vim.o.shell, -- change the default shell
+                shade_terminals = false,
                 float_opts = {
                     -- The border key is *almost* the same as 'nvim_win_open'
                     -- see :h nvim_win_open for details on borders however
@@ -586,7 +646,10 @@ return require('packer').startup({function(use)
             })
 
             -- Easier escape from terminal buffers
-            vim.api.nvim_set_keymap('t', '<C-]>', '<C-\\><C-n>', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('t', '<C-h>', '<C-\\><C-n><C-w>h', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('t', '<C-j>', '<C-\\><C-n><C-w>j', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('t', '<C-k>', '<C-\\><C-n><C-w>k', { noremap = true, silent = true })
+            vim.api.nvim_set_keymap('t', '<C-l>', '<C-\\><C-n><C-w>l', { noremap = true, silent = true })
         end
     }
 
@@ -634,7 +697,7 @@ return require('packer').startup({function(use)
 
     -- Fancy IDE stuff
     use {
-        "kabouzeid/nvim-lspinstall",
+        "neovim/nvim-lspconfig",
         config = function ()
             local whichkey = require('which-key')
             function TelescopeCodeActions()
@@ -655,7 +718,7 @@ return require('packer').startup({function(use)
                 local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
                 vim.lsp.handlers["textDocument/hover"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = "single"})
-                vim.lsp.handlers["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = float_borders})
+                vim.lsp.handlers["textDocument/signatureHelp"] =  vim.lsp.with(vim.lsp.handlers.hover, {border = "single"})
                 buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
                 -- Mappings
@@ -667,7 +730,6 @@ return require('packer').startup({function(use)
                         D = { "<cmd>lua vim.lsp.buf.declaration()<CR>", "LSP declaration" },
                         i = { "<cmd>lua vim.lsp.buf.implementation()<CR>", "LSP implementation" },
                         r = { "<cmd>lua vim.lsp.buf.references()<CR>", "LSP references" },
-                        R = { "<cmd>lua vim.lsp.buf.rename()<CR>", "LSP rename" },
                     },
                     ["<leader>"] = {
                         c = {
@@ -761,8 +823,8 @@ return require('packer').startup({function(use)
             end
         end,
         after = "which-key.nvim",
-        requires ={
-            "neovim/nvim-lspconfig",
+        requires = {
+            "kabouzeid/nvim-lspinstall",
             "ray-x/lsp_signature.nvim"
         }
     }
@@ -836,7 +898,7 @@ return require('packer').startup({function(use)
                     end,
                 },
                 documentation = {
-                    border = float_borders;
+                    border = 'single'
                 }
             }
         end,
@@ -848,7 +910,7 @@ return require('packer').startup({function(use)
             "saadparwaiz1/cmp_luasnip",
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-buffer",
-            "hrsh7th/cmp-emoji",
+            "hrsh7th/cmp-emoji"
         }
     }
 
@@ -856,17 +918,7 @@ return require('packer').startup({function(use)
     use "ggandor/lightspeed.nvim"
 
     -- Automatic pair matching
-    use {
-        "windwp/nvim-autopairs",
-        config = function ()
-            require("nvim-autopairs").setup()
-            require("nvim-autopairs.completion.cmp").setup({
-                map_cr = true, --  map <CR> on insert mode
-                map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
-            })
-        end,
-        after = "nvim-cmp"
-    }
+    use 'LunarWatcher/auto-pairs'
 
     -- Async Lint Engine
     use {
@@ -898,7 +950,45 @@ return require('packer').startup({function(use)
     use "nathom/filetype.nvim"
 
     -- File browser (depends on ranger)
-    use "kevinhwang91/rnvimr"
+    use {
+        "kevinhwang91/rnvimr",
+        config = function ()
+            vim.g.rnvimr_ranger_cmd = 'HIGHLIGHT_STYLE=nord ranger --cmd="set draw_borders both"'
+        end
+    }
+
+    -- Trying out nvimtree, probably won't last
+    use {
+        'kyazdani42/nvim-tree.lua',
+        requires = 'kyazdani42/nvim-web-devicons',
+        config = function() require'nvim-tree'.setup {} end
+    }
+
+    -- Delete buffers without wiping layout
+    use "famiu/bufdelete.nvim"
+
+    -- Improve word motions
+    -- CamelCaseACRONYMWords_underscore1234
+    -- w--------------------------------->w
+    -- e--------------------------------->e
+    -- b<---------------------------------b
+    --
+    -- to
+    --
+    -- CamelCaseACRONYMWords_underscore1234
+    -- w--->w-->w----->w---->w-------->w->w
+    -- e-->e-->e----->e--->e--------->e-->e
+    -- b<---b<--b<-----b<----b<--------b<-b
+    use "chaoren/vim-wordmotion"
+
+    -- Link lines from repo host
+    use {
+        'ruifm/gitlinker.nvim',
+        requires = 'nvim-lua/plenary.nvim',
+        config = function ()
+            require("gitlinker").setup()
+        end
+    }
 end,
     config = {
         display = {
