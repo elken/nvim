@@ -153,7 +153,25 @@ return require('packer').startup({function(use)
                 buftype_exclude = {"help", "terminal", "nofile"},
                 use_treesitter = true,
                 show_current_context = true,
-                max_indent_increase = 1
+                max_indent_increase = 1,
+                context_patterns = {
+                    "table",
+                    "class",
+                    "function",
+                    "method",
+                    "^if",
+                    "while",
+                    "for",
+                    "with",
+                    "func_literal",
+                    "block",
+                    "try",
+                    "except",
+                    "argument_list",
+                    "object",
+                    "dictionary",
+                    "element",
+                },
             })
         end
     }
@@ -542,7 +560,8 @@ return require('packer').startup({function(use)
             "nvim-treesitter/nvim-treesitter-textobjects",   -- Custom objects using treesitter
             "nvim-treesitter/nvim-treesitter-refactor",      -- Slightly better refactorings
             "JoosepAlviste/nvim-ts-context-commentstring",   -- Correctly guess which comment to use in a mixed-mode file
-            "p00f/nvim-ts-rainbow"                           -- 🌈
+            "p00f/nvim-ts-rainbow",                          -- 🌈
+            "spywhere/detect-language.nvim"                  -- Whose ls is it anyway?
         }
     }
 
