@@ -775,6 +775,11 @@ return require('packer').startup({function(use)
             local capabilities = vim.lsp.protocol.make_client_capabilities()
             capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
+            -- Include rtp for nvim
+            local runtime_path = vim.split(package.path, ';')
+            table.insert(runtime_path, 'lua/?.lua')
+            table.insert(runtime_path, 'lua/?/init.lua')
+
             -- Configure lua language server for neovim development
             local lua_settings = {
                 filetypes = {"lua"},
@@ -782,7 +787,7 @@ return require('packer').startup({function(use)
                     runtime = {
                         -- LuaJIT in the case of Neovim
                         version = 'LuaJIT',
-                        path = vim.split(package.path, ';'),
+                        path = runtime_path
                     },
                     diagnostics = {
                         -- Get the language server to recognize the `vim` global
@@ -795,36 +800,24 @@ return require('packer').startup({function(use)
                 }
             }
 
-            local function setup_servers()
-                require'lspinstall'.setup()
-                local servers = require'lspinstall'.installed_servers()
+            local lsp_installer = require('nvim-lsp-installer')
+            lsp_installer.on_server_ready(function (server)
+                local config = {
+                    capabilities = capabilities,
+                    on_attach = on_attach,
+                }
 
-                for _, server in pairs(servers) do
-                    local config = {
-                        capabilities = capabilities,
-                        on_attach = on_attach,
-                    }
-
-                    -- language specific config
-                    if server == "lua" then
-                        config.settings = lua_settings
-                    end
-
-                    require'lspconfig'[server].setup(config)
+                if server.name == "sumneko_lua" then
+                    config.settings = lua_settings
                 end
-            end
 
-            setup_servers()
-
-            -- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
-            require'lspinstall'.post_install_hook = function ()
-                setup_servers() -- reload installed servers
-                vim.cmd("bufdo e") -- this triggers the FileType autocmd that starts the server
-            end
+                server:setup(config)
+                vim.cmd("do User LspAttachBuffers")
+            end)
         end,
         after = "which-key.nvim",
         requires = {
-            "kabouzeid/nvim-lspinstall",
+            "williamboman/nvim-lsp-installer",
             "ray-x/lsp_signature.nvim"
         }
     }
