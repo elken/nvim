@@ -251,6 +251,10 @@ return require('packer').startup({function(use)
                     p = { "<cmd>bp<CR>", "Previous buffer" },
                     n = { "<cmd>bn<CR>", "Next buffer" },
                 },
+                e = {
+                    name = "Edit Files",
+                    i = { "<cmd>e ~/.config/nvim/init.lua<CR>", "init.lua" }
+                },
                 f = {
                     name = "File",
                     f = { "<cmd>lua if not pcall(require('telescope.builtin').git_files, {}) then require('telescope.builtin').find_files() end<CR>", "Find file in project"},
@@ -284,6 +288,10 @@ return require('packer').startup({function(use)
                     o = { "<cmd>GBrowse<CR>", "Open in browser" },
                     g = { "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd = 'lazygit', direction = 'float'}):toggle()<CR>", "Lazygit" },
                     y = { "<cmd>lua require('gitlinker').get_buf_range_url('n')<CR>", "Yank link to current line" }
+                },
+                p = {
+                    name = "Projects",
+                    p = { "<cmd>:Telescope projects<CR>", "Switch Project" }
                 },
                 o = {
                     name = "Open",
@@ -343,21 +351,17 @@ return require('packer').startup({function(use)
                     },
                 }
             })
+            require("project_nvim").setup({})
+            require("telescope").load_extension("projects")
+            require('telescope').load_extension('fzy_native')
         end,
         requires = {
             "nvim-lua/plenary.nvim",
-            "nvim-lua/popup.nvim"
+            "nvim-lua/popup.nvim",
+            "nvim-telescope/telescope-fzy-native.nvim",
+            -- "ahmedkhalf/project.nvim"
+            "~/build/project.nvim"
         }
-    }
-
-    -- Project management
-    use {
-        "ahmedkhalf/project.nvim",
-        config = function()
-            require("project_nvim").setup({})
-            require("telescope").load_extension("projects")
-        end,
-        requires = "nvim-telescope/telescope.nvim"
     }
 
     -- 􏿽
@@ -720,9 +724,23 @@ return require('packer').startup({function(use)
         config = function ()
             local whichkey = require('which-key')
             function TelescopeCodeActions()
-                local theme = require('telescope.themes').get_ivy()
-                theme['layout_config']['height'] = 10
-                require('telescope.builtin').lsp_code_actions(theme)
+                local opts = {
+                    winblend = 15,
+                    layout_config = {
+                        prompt_position = "top",
+                        width = 80,
+                        height = 12,
+                    },
+                    borderchars = {
+                        prompt = { "─", "│", " ", "│", "╭", "╮", "│", "│" },
+                        results = { "─", "│", "─", "│", "├", "┤", "╯", "╰" },
+                        preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+                    },
+                    border = {},
+                    previewer = false,
+                    shorten_path = false,
+                }
+                require("telescope.builtin").lsp_code_actions(require("telescope.themes").get_dropdown(opts))
             end
 
             -- Borrowed from https://github.com/kabouzeid/nvim-lspinstall/wiki
@@ -878,15 +896,16 @@ return require('packer').startup({function(use)
                         if cmp.visible() then
                             cmp.select_next_item()
                         elseif luasnip.expand_or_jumpable() then
-                            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
+                            luasnip.expand_or_jump()
                         else
                             fallback()
                         end
                     end,
                     ['<S-Tab>'] = function(fallback)
                         if cmp.visible() then
+                            cmp.select_prev_item()
                         elseif luasnip.jumpable(-1) then
-                            vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
+                            luasnip.jump(-1)
                         else
                             fallback()
                         end
@@ -936,7 +955,7 @@ return require('packer').startup({function(use)
     use {
         "dense-analysis/ale",
         config = function ()
-            vim.g.ale_fix_on_save = 1
+            -- vim.g.ale_fix_on_save = 1
         end,
         rocks = { 'luaformatter', server = 'https://luarocks.org/dev' }
     }
