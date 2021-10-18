@@ -76,7 +76,7 @@ end
 
 -- Jump to last line when opening a file
 vim.cmd[[
-	au BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | execute 'normal! g`"zvzz' | endif
+	au BufWinEnter * if line("'\"") > 0 && line("'\"") <= line("$") | execute 'normal! g`"zvzz' | endif
 ]]
 
 -- Run PackerCompile after saving init.lua
@@ -86,12 +86,6 @@ vim.cmd([[
     autocmd BufWritePost init.lua source <afile> | PackerCompile
   augroup end
 ]])
-
--- Firenvim buffers
-vim.cmd[[
-    au BufEnter github.com_*.txt set filetype=markdown
-    au BufEnter reddit.com_*.txt set filetype=markdown
-]]
 
 -- Change directory to the current buffer
 vim.cmd("autocmd BufEnter * silent! lcd %:p:h")
@@ -269,25 +263,25 @@ return require('packer').startup({function(use)
                 },
                 g = {
                     name = "Git",
-                    h = {
-                        name = "Hunk",
-                        b = { "<cmd>Gitsigns blame_line<CR>", "Blame line" },
-                        n = { "<cmd>Gitsigns next_hunk<CR>", "Next hunk" },
-                        p = { "<cmd>Gitsigns prev_hunk<CR>", "Previous hunk" },
-                        P = { "<cmd>Gitsigns preview_hunk<CR>", "Preview hunk" },
-                        s = { "<cmd>Gitsigns stage_hunk<CR>", "Stage current hunk" },
-                        S = { "<cmd>Gitsigns stage_buffer<CR>", "Stage current buffer" },
-                        r = { "<cmd>Gitsigns reset_hunk<CR>", "Reset current hunk" },
-                        R = { "<cmd>Gitsigns reset_buffer<CR>", "Reset current buffer" },
-                        u = { "<cmd>Gitsigns undo_stage_hunk<CR>", "Undo stage hunk" },
-                        U = { "<cmd>Gitsigns reset_buffer_index<CR>", "Reset buffer index" },
-                    },
                     b = { "<cmd>lua require('neogit').open({'branch'})<CR>", "Open branch popup" },
                     D = { "<cmd>GDelete<CR>", "Delete current file from git" },
                     f = { "<cmd>G fetch<CR>", "Fetch" },
                     o = { "<cmd>GBrowse<CR>", "Open in browser" },
                     g = { "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd = 'lazygit', direction = 'float'}):toggle()<CR>", "Lazygit" },
                     y = { "<cmd>lua require('gitlinker').get_buf_range_url('n')<CR>", "Yank link to current line" }
+                },
+                h = {
+                    name = "Hunk",
+                    b = { "<cmd>Gitsigns blame_line<CR>", "Blame line" },
+                    n = { "<cmd>Gitsigns next_hunk<CR>", "Next hunk" },
+                    p = { "<cmd>Gitsigns prev_hunk<CR>", "Previous hunk" },
+                    P = { "<cmd>Gitsigns preview_hunk<CR>", "Preview hunk" },
+                    s = { "<cmd>Gitsigns stage_hunk<CR>", "Stage current hunk" },
+                    S = { "<cmd>Gitsigns stage_buffer<CR>", "Stage current buffer" },
+                    r = { "<cmd>Gitsigns reset_hunk<CR>", "Reset current hunk" },
+                    R = { "<cmd>Gitsigns reset_buffer<CR>", "Reset current buffer" },
+                    u = { "<cmd>Gitsigns undo_stage_hunk<CR>", "Undo stage hunk" },
+                    U = { "<cmd>Gitsigns reset_buffer_index<CR>", "Reset buffer index" },
                 },
                 p = {
                     name = "Projects",
@@ -353,12 +347,10 @@ return require('packer').startup({function(use)
             })
             require("project_nvim").setup({})
             require("telescope").load_extension("projects")
-            require('telescope').load_extension('fzy_native')
         end,
         requires = {
             "nvim-lua/plenary.nvim",
             "nvim-lua/popup.nvim",
-            "nvim-telescope/telescope-fzy-native.nvim",
             -- "ahmedkhalf/project.nvim"
             "~/build/project.nvim"
         }
@@ -589,6 +581,16 @@ return require('packer').startup({function(use)
         "glacambre/firenvim",
         run = function()
             vim.fn["firenvim#install"](0)
+        end,
+        config = function ()
+            -- _Soon_ this can be removed
+            vim.cmd[[
+                au BufEnter github.com_*.txt set filetype=markdown
+                au BufEnter reddit.com_*.txt set filetype=markdown
+                let g:firenvim_config = { "globalSettings": { "alt": "all", }, "localSettings": { ".*": { "cmdline": "neovim", "content": "text", "priority": 0, "selector": "textarea", "takeover": "always", }, } }
+                let fc = g:firenvim_config["localSettings"]
+                let fc["https?://mail.google.com/"] = { "takeover": "never", "priority": 1 }
+            ]]
         end
     }
 
@@ -602,6 +604,13 @@ return require('packer').startup({function(use)
         end,
         requires = "nvim-lua/plenary.nvim"
     }
+
+    -- Better markdown editing
+    -- use {
+    --     "SidOfc/mkdx",
+    --     config = function ()
+    --     end
+    -- }
 
     -- Markdown preview
     use {
