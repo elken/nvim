@@ -2,8 +2,6 @@
 --
 -- Help documentation can be viewed with `:h <property>`
 local fn = vim.fn
--- TODO Use this, if needed
--- local colors = require('nord.colors')
 
 -- Only run these settings once
 if not packer_plugins then
@@ -25,7 +23,8 @@ vim.opt.wrap = false
 vim.opt.laststatus = 2
 vim.opt.ttimeoutlen = 5
 vim.opt.virtualedit = "block"
-vim.opt.undodir = "$HOME/.config/nvim/undo"
+vim.opt.undofile = true
+vim.opt.undodir = fn.stdpath('data') .. 'undo'
 vim.opt.shell = '/bin/zsh'
 
 -- Mouse
@@ -1029,6 +1028,30 @@ return require('packer').startup({function(use)
             require("gitlinker").setup()
         end
     }
+
+    -- Clipboard manager
+    use {
+        "AckslD/nvim-neoclip.lua",
+        requires = {'tami5/sqlite.lua', module = 'sqlite'},
+        config = function()
+            require('neoclip').setup({
+                enable_persistant_history = true
+            })
+        end,
+    }
+
+    -- Dim inactive buffers
+    use {
+        'sunjon/shade.nvim',
+        config = function ()
+            require('shade').setup({
+                overlay_opacity = 50
+            })
+        end
+    }
+
+    -- Named well, tree of undos
+    use "mbbill/undotree"
 end,
     config = {
         display = {
