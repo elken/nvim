@@ -191,24 +191,23 @@ return require("packer").startup({
     -- Pointless rice project; the statusline. Pick a nice one that works
     -- ootb and leave it there.
     use({
-      "shadmansaleh/lualine.nvim",
+      "nvim-lualine/lualine.nvim",
       config = function()
-        -- Show the window number if there are more than 1 window
-        -- (used for fast jumping)
-        local window_number = function()
-          local window_count = 0
-          for i = 1, vim.fn.winnr("$"), 1 do
-            local type = vim.fn.win_gettype(i)
-            if not type or type == "" then
-              window_count = window_count + 1
+        local function buffer_not_empty()
+          return vim.fn.empty(vim.fn.expand("%:t")) ~= 1
+        end
+        local function lsp_servers()
+          local buf_ft = vim.api.nvim_buf_get_option(0, "filetype")
+          local servers = vim.lsp.get_active_clients()
+          local result = {}
+          for _, v in ipairs(servers) do
+            if not vim.tbl_contains(result, v.name) and vim.tbl_contains(v.config.filetypes, buf_ft) then
+              table.insert(result, v.name)
             end
           end
-          if window_count > 1 then
-            return vim.fn.winnr()
-          else
-            return ""
-          end
+          return (table.concat(result, ","))
         end
+
         require("lualine").setup({
           options = {
             theme = "nord",
@@ -216,19 +215,60 @@ return require("packer").startup({
             component_separators = { left = "╲", right = "╱" },
           },
           sections = {
+            lualine_a = {
+              { "mode", separator = { left = "" } },
+            },
+            lualine_b = { "branch" },
             lualine_c = {
-              window_number,
+              { "filetype", icon_only = true, separator = { right = "" }, padding = { left = 1 } },
+              {
+                lsp_servers,
+                color = { gui = "bold" },
+                cond = function()
+                  return table.maxn(vim.lsp.get_active_clients()) > 0
+                end,
+              },
               {
                 "filename",
                 file_status = true,
                 path = 1,
+                separator = { right = "" },
+                cond = buffer_not_empty,
               },
+              {
+                "%=",
+                separator = { left = "", right = "" },
+              },
+              "lsp-progress",
+            },
+            lualine_x = { { "diff", symbols = { added = " ", modified = " ", removed = " " } }, { "diagnostics", sources = { "nvim_lsp" } } },
+            lualine_y = {
+              "encoding",
+              {
+                "fileformat",
+                cond = function()
+                  local options = {
+                    unix = { "unix", "mac", "bsd", "wsl" },
+                    mac = { "mac" },
+                    dos = { "win32" },
+                  }
+                  for _, os in ipairs(options[vim.bo.fileformat]) do
+                    if vim.fn.has(os) then
+                      return false
+                    end
+                  end
+                  return true
+                end,
+              },
+            },
+            lualine_z = {
+              { "location", separator = { right = "" } },
             },
           },
           inactive_sections = {
-            lualine_a = { window_number },
+            lualine_a = { "winnr" },
             lualine_b = {},
-            lualine_c = { "filename" },
+            lualine_c = { "filename", cond = buffer_not_empty },
             lualine_x = { "location" },
             lualine_y = {},
             lualine_z = {},
@@ -240,7 +280,10 @@ return require("packer").startup({
           },
         })
       end,
-      requires = "kyazdani42/nvim-web-devicons",
+      requires = {
+        "arkav/lualine-lsp-progress",
+        "kyazdani42/nvim-web-devicons",
+      },
     })
 
     -- Which key is that? Which-key!
@@ -460,9 +503,19 @@ return require("packer").startup({
           filetype = "markdown",
         }
 
+        parser_configs.org = {
+          install_info = {
+            url = "https://github.com/milisims/tree-sitter-org",
+            revision = "main",
+            files = { "src/parser.c", "src/scanner.cc" },
+          },
+          filetype = "org",
+        }
+
         -- Main treesitter config
         require("nvim-treesitter.configs").setup({
           ensure_installed = "all",
+          additional_vim_regex_highlighting = { "org" },
 
           highlight = {
             enable = true,
@@ -679,9 +732,21 @@ return require("packer").startup({
     -- Not good enough yet, but getting there
     use({
       "kristijanhusak/orgmode.nvim",
+      branch = "tree-sitter",
       config = function()
-        require("orgmode").setup({})
+        require("orgmode").setup({
+          org_agenda_files = { "~/Nextcloud/org" },
+          org_default_notes_file = "~/Nextcloud/org/Notes.org",
+        })
+        -- require("org-bullets").setup {
+        --     symbols = { "›" }
+        -- }
+        -- require("headlines").setup()
       end,
+      requires = {
+        "akinsho/org-bullets.nvim",
+        "lukas-reineke/headlines.nvim",
+      },
     })
 
     -- Github integration (making issues etc)
@@ -743,7 +808,37 @@ return require("packer").startup({
 
     -- Main DAP plugin
     -- TODO Get DAP setup neatly
-    use({ "mfussenegger/nvim-dap", module = "dap" })
+    use({
+      "mfussenegger/nvim-dap",
+      config = function()
+        vim.g.dap_virtual_text = true
+        local dap = require("dap")
+        dap.configurations.lua = {
+          {
+            type = "nlua",
+            request = "attach",
+            name = "Attach to running Neovim instance",
+          },
+        }
+        dap.adapters.nlua = function(callback, config)
+          callback({ type = "server", host = config.host or "127.0.0.1", port = config.port or 8088 })
+        end
+        vim.cmd([[
+            nnoremap <silent> <F5> :lua require'dap'.continue()<CR>
+            nnoremap <silent> <F10> :lua require'dap'.step_over()<CR>
+            nnoremap <silent> <F11> :lua require'dap'.step_into()<CR>
+            nnoremap <silent> <F12> :lua require'dap'.step_out()<CR>
+            nnoremap <silent> <leader>db :lua require'dap'.toggle_breakpoint()<CR>
+            nnoremap <silent> <leader>dB :lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
+            nnoremap <silent> <leader>dl :lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>
+        ]])
+      end,
+      module = "dap",
+      requires = {
+        "theHamsta/nvim-dap-virtual-text",
+        "jbyuki/one-small-step-for-vimkind",
+      },
+    })
 
     -- UI for above
     use({ "rcarriga/nvim-dap-ui", after = "nvim-dap" })
@@ -926,9 +1021,9 @@ return require("packer").startup({
         cmp.setup({
           sources = {
             { name = "nvim_lsp" },
+            { name = "nvim_lua" },
             { name = "path" },
             { name = "buffer" },
-            { name = "nvim_lua" },
             { name = "luasnip" },
             { name = "orgmode" },
           },
@@ -968,21 +1063,7 @@ return require("packer").startup({
             end,
           },
           formatting = {
-            format = function(entry, vim_item)
-              -- fancy icons and a name of kind
-              vim_item.kind = require("lspkind").presets.default[vim_item.kind] .. " " .. vim_item.kind
-
-              -- set a name for each source
-              vim_item.menu = ({
-                path = "[Path]",
-                buffer = "[Buffer]",
-                nvim_lsp = "[LSP]",
-                luasnip = "[LuaSnip]",
-                nvim_lua = "[Lua]",
-                latex_symbols = "[Latex]",
-              })[entry.source.name]
-              return vim_item
-            end,
+            format = require("lspkind").cmp_format({ with_text = false, maxwidth = 50 }),
           },
           documentation = {
             border = "single",
@@ -998,6 +1079,7 @@ return require("packer").startup({
         "hrsh7th/cmp-path",
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-emoji",
+        "hrsh7th/cmp-nvim-lua",
       },
     })
 
@@ -1091,19 +1173,21 @@ return require("packer").startup({
     })
 
     -- Dim inactive buffers
-    use({
-      "sunjon/shade.nvim",
-      config = function()
-        require("shade").setup({
-          overlay_opacity = 50,
-        })
-      end,
-    })
+    -- use({
+    --   "sunjon/shade.nvim",
+    --   config = function()
+    --     require("shade").setup({
+    --       overlay_opacity = 50,
+    --     })
+    --   end,
+    -- })
 
     -- Named well, tree of undos
     use("mbbill/undotree")
+    use({ "mrjones2014/dash.nvim", requires = { "nvim-telescope/telescope.nvim" }, run = "make install" })
   end,
   config = {
+    max_jobs = 50,
     display = {
       open_fn = function()
         return require("packer.util").float({ border = "rounded" })
