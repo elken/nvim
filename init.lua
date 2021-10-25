@@ -193,6 +193,12 @@ return require("packer").startup({
     use({
       "nvim-lualine/lualine.nvim",
       config = function()
+        local function lsp_in_use()
+          return table.maxn(vim.lsp.get_active_clients()) > 0
+        end
+        local function hide_in_width()
+          return vim.fn.winwidth(0) > 80
+        end
         local function buffer_not_empty()
           return vim.fn.empty(vim.fn.expand("%:t")) ~= 1
         end
@@ -218,20 +224,26 @@ return require("packer").startup({
             lualine_a = {
               { "mode", separator = { left = "" } },
             },
-            lualine_b = { "branch" },
+            lualine_b = { { "branch", cond = hide_in_width } },
             lualine_c = {
               { "filetype", icon_only = true, separator = { right = "" }, padding = { left = 1 } },
               {
                 lsp_servers,
                 color = { gui = "bold" },
                 cond = function()
-                  return table.maxn(vim.lsp.get_active_clients()) > 0
+                  return lsp_in_use() and hide_in_width()
                 end,
               },
               {
                 "filename",
                 file_status = true,
-                path = 1,
+                path = function()
+                  if hide_in_width() then
+                    return 1
+                  else
+                    return 2
+                  end
+                end,
                 separator = { right = "" },
                 cond = buffer_not_empty,
               },
@@ -268,7 +280,7 @@ return require("packer").startup({
           inactive_sections = {
             lualine_a = { "winnr" },
             lualine_b = {},
-            lualine_c = { "filename", cond = buffer_not_empty },
+            lualine_c = { { "filename", cond = buffer_not_empty } },
             lualine_x = { "location" },
             lualine_y = {},
             lualine_z = {},
@@ -416,6 +428,7 @@ return require("packer").startup({
         })
         require("project_nvim").setup({})
         require("telescope").load_extension("projects")
+        require("telescope").load_extension("neoclip")
       end,
       requires = {
         "nvim-lua/plenary.nvim",
