@@ -54,7 +54,7 @@ vim.opt.smartindent = true
 vim.opt.wrap = true
 
 -- Completion
-vim.opt.completeopt = "menuone,noselect"
+vim.opt.completeopt = "menu,menuone,noselect"
 
 -- Fillchars
 vim.opt.fillchars = {
@@ -253,7 +253,10 @@ return require("packer").startup({
               },
               "lsp-progress",
             },
-            lualine_x = { { "diff", symbols = { added = " ", modified = " ", removed = " " } }, { "diagnostics", sources = { "nvim_lsp" } } },
+            lualine_x = {
+              { "diff", symbols = { added = " ", modified = " ", removed = " " } },
+              { "diagnostics", sources = { "nvim_lsp" } },
+            },
             lualine_y = {
               "encoding",
               {
@@ -347,7 +350,10 @@ return require("packer").startup({
               "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd = 'lazygit', direction = 'float'}):toggle()<CR>",
               "Lazygit",
             },
-            y = { "<cmd>lua require('gitlinker').get_buf_range_url('n')<CR>", "Yank link to current line" },
+            y = {
+              "<cmd>lua require('gitlinker').get_buf_range_url('n')<CR>",
+              "Yank link to current line",
+            },
           },
           h = {
             name = "Hunk",
@@ -386,7 +392,10 @@ return require("packer").startup({
 
         local visual_binds = {
           g = {
-            y = { "<cmd>lua require('gitlinker').get_buf_range_url('v')<CR>", "Yank link to current selection" },
+            y = {
+              "<cmd>lua require('gitlinker').get_buf_range_url('v')<CR>",
+              "Yank link to current selection",
+            },
           },
         }
 
@@ -416,19 +425,22 @@ return require("packer").startup({
       cmd = "Telescope",
       module = "telescope",
       config = function()
-        local actions = require("telescope.actions")
-        require("telescope").setup({
-          defaults = {
-            mappings = {
-              i = {
-                ["<esc>"] = actions.close,
+        if not vim.g.telescope_loaded then
+          local actions = require("telescope.actions")
+          require("telescope").setup({
+            defaults = {
+              mappings = {
+                i = {
+                  ["<esc>"] = actions.close,
+                },
               },
             },
-          },
-        })
-        require("project_nvim").setup({})
-        require("telescope").load_extension("projects")
-        require("telescope").load_extension("neoclip")
+          })
+          require("project_nvim").setup({})
+          require("telescope").load_extension("projects")
+          require("telescope").load_extension("neoclip")
+          vim.g.telescope_loaded = true
+        end
       end,
       requires = {
         "nvim-lua/plenary.nvim",
@@ -920,7 +932,10 @@ return require("packer").startup({
                 w = {
                   name = "Workspaces",
                   a = { "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", "Add workspace folder" },
-                  r = { "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>", "Remove workspace folder" },
+                  r = {
+                    "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>",
+                    "Remove workspace folder",
+                  },
                   l = {
                     "<cmd> lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>",
                     "List workspace folders",
