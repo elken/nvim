@@ -378,17 +378,6 @@ return require("packer").startup({
           },
         }
 
-        local copy_and_merge = function(base, override)
-          local copy = {}
-          for k, v in pairs(base) do
-            copy[k] = v
-          end
-          for k, v in pairs(override) do
-            copy[k] = v
-          end
-          return copy
-        end
-
         if vim.fn.has("macos") then
           normal_binds.o.o = {
             string.format("<cmd>silent !open -a Finder.app %s<CR>", vim.fn.expand("%:p:h")),
@@ -397,7 +386,7 @@ return require("packer").startup({
         end
 
         whichkey.register(normal_binds, { prefix = "<leader>" })
-        whichkey.register(copy_and_merge(normal_binds, visual_binds), { prefix = "<leader>", mode = "v" })
+        whichkey.register(vim.tbl_deep_extend("force", normal_binds, visual_binds), { prefix = "<leader>", mode = "v" })
       end,
     })
 
@@ -738,10 +727,10 @@ return require("packer").startup({
           org_agenda_files = { "~/Nextcloud/org" },
           org_default_notes_file = "~/Nextcloud/org/Notes.org",
         })
-        -- require("org-bullets").setup {
-        --     symbols = { "›" }
-        -- }
-        -- require("headlines").setup()
+        require("org-bullets").setup({
+          symbols = { "›" },
+        })
+        require("headlines").setup()
       end,
       requires = {
         "akinsho/org-bullets.nvim",
