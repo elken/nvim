@@ -20,7 +20,6 @@ vim.opt.updatetime = 100
 vim.wo.signcolumn = "yes"
 vim.opt.scrolloff = 5
 vim.opt.wrap = false
-vim.opt.laststatus = 2
 vim.opt.ttimeoutlen = 5
 vim.opt.virtualedit = "block"
 vim.opt.undofile = true
@@ -72,6 +71,15 @@ if fn.executable("rg") > 0 then
   vim.o.grepprg = "rg --hidden --glob '!.git' --no-heading --smart-case --vimgrep --follow $*"
   vim.opt.grepformat = vim.opt.grepformat ^ { "%f:%l:%c:%m" }
 end
+
+function _G.FirenvimSetup(channel)
+  local channel_info = vim.api.nvim_get_chan_info(channel)
+  if channel_info.client and channel_info.client.name == "Firenvim" then
+    vim.opt.laststatus = 0
+  end
+end
+
+vim.cmd("autocmd UIEnter * call v:lua.FirenvimSetup(deepcopy(v:event.chan))")
 
 -- Jump to last line when opening a file
 vim.cmd([[
@@ -241,7 +249,7 @@ return require("packer").startup({
                   if hide_in_width() then
                     return 1
                   else
-                    return 2
+                    return 0
                   end
                 end,
                 separator = { right = "" },
@@ -694,6 +702,7 @@ return require("packer").startup({
                 let g:firenvim_config = { "globalSettings": { "alt": "all", }, "localSettings": { ".*": { "cmdline": "neovim", "content": "text", "priority": 0, "selector": "textarea", "takeover": "always", }, } }
                 let fc = g:firenvim_config["localSettings"]
                 let fc["https?://mail.google.com/"] = { "takeover": "never", "priority": 1 }
+                let fc["https?://discord.com/"] = { "takeover": "never", "priority": 1 }
             ]])
       end,
     })
