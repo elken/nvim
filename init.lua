@@ -229,9 +229,6 @@ return require("packer").startup({
             component_separators = { left = "╲", right = "╱" },
           },
           sections = {
-            lualine_a = {
-              { "mode", separator = { left = "" } },
-            },
             lualine_b = { { "branch", cond = hide_in_width } },
             lualine_c = {
               { "filetype", icon_only = true, separator = { right = "" }, padding = { left = 1 } },
@@ -245,15 +242,20 @@ return require("packer").startup({
               {
                 "filename",
                 file_status = true,
-                path = function()
-                  if hide_in_width() then
-                    return 1
-                  else
-                    return 0
-                  end
-                end,
+                path = 0,
                 separator = { right = "" },
-                cond = buffer_not_empty,
+                cond = function()
+                  return buffer_not_empty() and not hide_in_width()
+                end,
+              },
+              {
+                "filename",
+                file_status = true,
+                path = 1,
+                separator = { right = "" },
+                cond = function()
+                  return buffer_not_empty() and hide_in_width()
+                end,
               },
               {
                 "%=",
@@ -266,7 +268,7 @@ return require("packer").startup({
               { "diagnostics", sources = { "nvim_lsp" } },
             },
             lualine_y = {
-              "encoding",
+              { "encoding", cond = hide_in_width },
               {
                 "fileformat",
                 cond = function()
@@ -284,14 +286,30 @@ return require("packer").startup({
                 end,
               },
             },
-            lualine_z = {
-              { "location", separator = { right = "" } },
-            },
           },
           inactive_sections = {
             lualine_a = { "winnr" },
             lualine_b = {},
-            lualine_c = { { "filename", cond = buffer_not_empty } },
+            lualine_c = {
+              {
+                "filename",
+                file_status = true,
+                path = 0,
+                separator = { right = "" },
+                cond = function()
+                  return buffer_not_empty() and not hide_in_width()
+                end,
+              },
+              {
+                "filename",
+                file_status = true,
+                path = 1,
+                separator = { right = "" },
+                cond = function()
+                  return buffer_not_empty() and hide_in_width()
+                end,
+              },
+            },
             lualine_x = { "location" },
             lualine_y = {},
             lualine_z = {},
