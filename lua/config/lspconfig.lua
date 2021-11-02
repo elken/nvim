@@ -2,7 +2,7 @@ local M = {}
 local whichkey = require("which-key")
 
 -- Borrowed from lunarvim
-function _G.LspCodeActions()
+function M.LspCodeActions()
   local opts = {
     winblend = 15,
     layout_config = {
@@ -19,12 +19,88 @@ function _G.LspCodeActions()
     previewer = false,
     shorten_path = false,
   }
-  require("telescope.builtin").lsp_code_actions(require("telescope.themes").get_dropdown(opts))
+  require("telescope.builtin").lsp_code_actions(require("telescope.themes").get_cursor(opts))
+end
+
+function M.LspDefinitions()
+  local opts = {
+    winblend = 15,
+    layout_config = {
+      prompt_position = "top",
+      width = 130,
+      height = 22,
+    },
+    borderchars = {
+      prompt = { "─", "│", " ", "│", "╭", "╮", "│", "│" },
+      results = { "─", "│", "─", "│", "├", "┤", "╯", "╰" },
+      preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+    },
+    border = {},
+    shorten_path = false,
+  }
+  require("telescope.builtin").lsp_definitions(require("telescope.themes").get_dropdown(opts))
+end
+
+function M.LspTypeDefinitions()
+  local opts = {
+    winblend = 15,
+    layout_config = {
+      prompt_position = "top",
+      width = 130,
+      height = 22,
+    },
+    borderchars = {
+      prompt = { "─", "│", " ", "│", "╭", "╮", "│", "│" },
+      results = { "─", "│", "─", "│", "├", "┤", "╯", "╰" },
+      preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+    },
+    border = {},
+    shorten_path = false,
+  }
+  require("telescope.builtin").lsp_type_definitions(require("telescope.themes").get_dropdown(opts))
+end
+
+function M.LspImplementations()
+  local opts = {
+    winblend = 15,
+    layout_config = {
+      prompt_position = "top",
+      width = 130,
+      height = 22,
+    },
+    borderchars = {
+      prompt = { "─", "│", " ", "│", "╭", "╮", "│", "│" },
+      results = { "─", "│", "─", "│", "├", "┤", "╯", "╰" },
+      preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+    },
+    border = {},
+    shorten_path = false,
+  }
+  require("telescope.builtin").lsp_implementations(require("telescope.themes").get_dropdown(opts))
+end
+
+function M.LspReferences()
+  local opts = {
+    winblend = 15,
+    layout_config = {
+      prompt_position = "top",
+      width = 130,
+      height = 22,
+    },
+    borderchars = {
+      prompt = { "─", "│", " ", "│", "╭", "╮", "│", "│" },
+      results = { "─", "│", "─", "│", "├", "┤", "╯", "╰" },
+      preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+    },
+    border = {},
+    shorten_path = false,
+  }
+  require("telescope.builtin").lsp_references(require("telescope.themes").get_dropdown(opts))
 end
 
 -- Borrowed from https://www.reddit.com/r/neovim/comments/ql4iuj/rename_hover_including_window_title_and/
 -- TODO Improve to show live updates (maybe)
-function _G.LspRename()
+function M.LspRename()
   local rename = "textDocument/rename"
   local currName = vim.fn.expand("<cword>")
   local tshl = require("nvim-treesitter-playground.hl-info").get_treesitter_hl()
@@ -104,16 +180,18 @@ local on_attach = function(client, bufnr)
   whichkey.register({
     K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "Show documentation for symbol" },
     g = {
-      d = { "<cmd>lua vim.lsp.buf.definition()<CR>", "LSP definition" },
-      D = { "<cmd>lua vim.lsp.buf.declaration()<CR>", "LSP declaration" },
-      i = { "<cmd>lua vim.lsp.buf.implementation()<CR>", "LSP implementation" },
-      r = { "<cmd>lua vim.lsp.buf.references()<CR>", "LSP references" },
-      R = { "<cmd>lua LspRename()<CR>", "LSP Rename" },
+      d = { "<cmd>lua require('config.lspconfig').LspDefinitions()<CR>", "LSP Definitions" },
+      D = { "<cmd>lua require('config.lspconfig').LspTypeDefinitions()<CR>", "LSP Type Definitions" },
+      i = { "<cmd>lua require('config.lspconfig').LspImplementations()<CR>", "LSP Implementations" },
+      r = { "<cmd>lua require('config.lspconfig').LspReferences()<CR>", "LSP References" },
+      R = { "<cmd>lua require('config.lspconfig').LspRename()<CR>", "LSP Rename" },
+      ["["] = { "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", "Jump to previous error" },
+      ["]"] = { "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", "Jump to next error" },
     },
     ["<leader>"] = {
       c = {
         name = "Code",
-        a = { "<cmd>lua LspCodeActions()<CR>", "LSP Code Actions" },
+        a = { "<cmd>lua require('config.lspconfig').LspCodeActions()<CR>", "LSP Code Actions" },
         c = { "<cmd>Make<CR>", "Compile" },
         w = {
           name = "Workspaces",
@@ -132,8 +210,6 @@ local on_attach = function(client, bufnr)
           "Show diagnostics for line",
         },
       },
-      ["["] = { "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", "Jump to previous error" },
-      ["]"] = { "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", "Jump to next error" },
     },
   }, opts)
 
@@ -152,12 +228,12 @@ local on_attach = function(client, bufnr)
   if client.resolved_capabilities.document_highlight then
     vim.api.nvim_exec(
       [[
-            augroup lsp_document_highlight
-            autocmd! * <buffer>
-            autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-            autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-            augroup END
-            ]],
+        augroup lsp_document_highlight
+        autocmd! * <buffer>
+        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+        augroup END
+    ]],
       false
     )
   end
