@@ -125,9 +125,9 @@ function M.setup()
       workspace = {
         -- Make the server aware of Neovim runtime files
         library = {
-            ['/usr/share/nvim/runtime/lua'] = true,
-            ['/usr/share/awesome/lib'] = true
-        }
+          ["/usr/share/nvim/runtime/lua"] = true,
+          ["/usr/share/awesome/lib"] = true,
+        },
       },
     },
   }

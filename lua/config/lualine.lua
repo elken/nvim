@@ -66,6 +66,7 @@ function M.setup()
       lualine_x = {
         { "diff", symbols = { added = " ", modified = " ", removed = " " } },
         { "diagnostics", sources = { "nvim_lsp" } },
+        { require("github-notifications").statusline_notification_count },
       },
       lualine_y = {
         { "encoding", cond = hide_in_width },

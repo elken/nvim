@@ -204,6 +204,7 @@ return require("packer").startup({
       requires = {
         "arkav/lualine-lsp-progress",
         "kyazdani42/nvim-web-devicons",
+        "rlch/github-notifications.nvim",
       },
     })
 
@@ -625,6 +626,10 @@ return require("packer").startup({
 
     -- Named well, tree of undos
     use("mbbill/undotree")
+    use({
+      "mrjones2014/dash.nvim",
+      run = "make install",
+    })
   end,
   config = {
     max_jobs = 50,
