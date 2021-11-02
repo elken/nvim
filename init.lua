@@ -67,11 +67,13 @@ vim.opt.fillchars = {
   foldclose = "▸",
 }
 
+-- Prefer ripgrep if it exists
 if fn.executable("rg") > 0 then
   vim.o.grepprg = "rg --hidden --glob '!.git' --no-heading --smart-case --vimgrep --follow $*"
   vim.opt.grepformat = vim.opt.grepformat ^ { "%f:%l:%c:%m" }
 end
 
+-- Firenvim setup
 function _G.FirenvimSetup(channel)
   local channel_info = vim.api.nvim_get_chan_info(channel)
   if channel_info.client and channel_info.client.name == "Firenvim" then
@@ -80,6 +82,11 @@ function _G.FirenvimSetup(channel)
 end
 
 vim.cmd("autocmd UIEnter * call v:lua.FirenvimSetup(deepcopy(v:event.chan))")
+
+-- Get a project root from vimL
+function _G.get_project_root()
+  return require("project_nvim.project").get_project_root()
+end
 
 -- Jump to last line when opening a file
 vim.cmd([[
@@ -129,15 +136,6 @@ return require("packer").startup({
     -- Most important package; the colour scheme
     use({
       "shaunsingh/nord.nvim",
-      config = function()
-        vim.g.nord_contrast = false
-        vim.g.nord_borders = true
-
-        if not vim.g.colourscheme_set then
-          vim.cmd("colorscheme nord")
-          vim.g.colourscheme_set = true
-        end
-      end,
       requires = "folke/lsp-colors.nvim",
     })
 
@@ -201,125 +199,7 @@ return require("packer").startup({
     use({
       "nvim-lualine/lualine.nvim",
       config = function()
-        local function lsp_in_use()
-          return table.maxn(vim.lsp.get_active_clients()) > 0
-        end
-        local function hide_in_width()
-          return vim.fn.winwidth(0) > 80
-        end
-        local function buffer_not_empty()
-          return vim.fn.empty(vim.fn.expand("%:t")) ~= 1
-        end
-        local function lsp_servers()
-          local buf_ft = vim.api.nvim_buf_get_option(0, "filetype")
-          local servers = vim.lsp.get_active_clients()
-          local result = {}
-          for _, v in ipairs(servers) do
-            if not vim.tbl_contains(result, v.name) and vim.tbl_contains(v.config.filetypes, buf_ft) then
-              table.insert(result, v.name)
-            end
-          end
-          return (table.concat(result, ","))
-        end
-
-        require("lualine").setup({
-          options = {
-            theme = "nord",
-            section_separators = { left = "", right = "" },
-            component_separators = { left = "╲", right = "╱" },
-          },
-          sections = {
-            lualine_b = { { "branch", cond = hide_in_width } },
-            lualine_c = {
-              { "filetype", icon_only = true, separator = { right = "" }, padding = { left = 1 } },
-              {
-                lsp_servers,
-                color = { gui = "bold" },
-                cond = function()
-                  return lsp_in_use() and hide_in_width()
-                end,
-              },
-              {
-                "filename",
-                file_status = true,
-                path = 0,
-                separator = { right = "" },
-                cond = function()
-                  return buffer_not_empty() and not hide_in_width()
-                end,
-              },
-              {
-                "filename",
-                file_status = true,
-                path = 1,
-                separator = { right = "" },
-                cond = function()
-                  return buffer_not_empty() and hide_in_width()
-                end,
-              },
-              {
-                "%=",
-                separator = { left = "", right = "" },
-              },
-              "lsp-progress",
-            },
-            lualine_x = {
-              { "diff", symbols = { added = " ", modified = " ", removed = " " } },
-              { "diagnostics", sources = { "nvim_lsp" } },
-            },
-            lualine_y = {
-              { "encoding", cond = hide_in_width },
-              {
-                "fileformat",
-                cond = function()
-                  local options = {
-                    unix = { "unix", "mac", "bsd", "wsl" },
-                    mac = { "mac" },
-                    dos = { "win32" },
-                  }
-                  for _, os in ipairs(options[vim.bo.fileformat]) do
-                    if vim.fn.has(os) then
-                      return false
-                    end
-                  end
-                  return true
-                end,
-              },
-            },
-          },
-          inactive_sections = {
-            lualine_a = { "winnr" },
-            lualine_b = {},
-            lualine_c = {
-              {
-                "filename",
-                file_status = true,
-                path = 0,
-                separator = { right = "" },
-                cond = function()
-                  return buffer_not_empty() and not hide_in_width()
-                end,
-              },
-              {
-                "filename",
-                file_status = true,
-                path = 1,
-                separator = { right = "" },
-                cond = function()
-                  return buffer_not_empty() and hide_in_width()
-                end,
-              },
-            },
-            lualine_x = { "location" },
-            lualine_y = {},
-            lualine_z = {},
-          },
-          extensions = {
-            "quickfix",
-            "toggleterm",
-            "fugitive",
-          },
-        })
+        require("config.lualine").setup()
       end,
       requires = {
         "arkav/lualine-lsp-progress",
@@ -331,109 +211,7 @@ return require("packer").startup({
     use({
       "folke/which-key.nvim",
       config = function()
-        local whichkey = require("which-key")
-        whichkey.setup({
-          plugins = {
-            spelling = {
-              enabled = true,
-            },
-          },
-        })
-
-        local normal_binds = {
-          b = {
-            name = "Buffer",
-            d = { "<cmd>Bdelete<CR>", "Kill buffer" },
-            p = { "<cmd>bp<CR>", "Previous buffer" },
-            n = { "<cmd>bn<CR>", "Next buffer" },
-          },
-          e = {
-            name = "Edit Files",
-            i = { "<cmd>e ~/.config/nvim/init.lua<CR>", "init.lua" },
-          },
-          f = {
-            name = "File",
-            f = {
-              "<cmd>lua if not pcall(require('telescope.builtin').git_files, {}) then require('telescope.builtin').find_files() end<CR>",
-              "Find file in project",
-            },
-            r = { "<cmd>Telescope frecency<CR>", "Find Recent File" },
-            n = { "<cmd>enew<CR>", "New File" },
-            s = { "<cmd>w<CR>", "Save file" },
-            U = { "<cmd>SudaRead<CR>", "Sudo read" },
-            S = { "<cmd>SudaWrite<CR>", "Sudo write" },
-            y = { "<cmd>let @+ = expand('%:p')<CR>", "Yank file path" },
-            Y = { "<cmd>let @+ = expand('%:~:.')<CR>", "Yank file path from project" },
-            -- D = { "<cmd>lua require('util').confirm('Delete this file?', print('hi'))<CR>", "Delete this file" }
-          },
-          g = {
-            name = "Git",
-            b = { "<cmd>lua require('neogit').open({'branch'})<CR>", "Open branch popup" },
-            D = { "<cmd>GDelete<CR>", "Delete current file from git" },
-            f = { "<cmd>G fetch<CR>", "Fetch" },
-            o = { "<cmd>GBrowse<CR>", "Open in browser" },
-            g = {
-              "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd = 'lazygit', direction = 'float'}):toggle()<CR>",
-              "Lazygit",
-            },
-            y = {
-              "<cmd>lua require('gitlinker').get_buf_range_url('n')<CR>",
-              "Yank link to current line",
-            },
-          },
-          h = {
-            name = "Hunk",
-            b = { "<cmd>Gitsigns blame_line<CR>", "Blame line" },
-            n = { "<cmd>Gitsigns next_hunk<CR>", "Next hunk" },
-            p = { "<cmd>Gitsigns prev_hunk<CR>", "Previous hunk" },
-            P = { "<cmd>Gitsigns preview_hunk<CR>", "Preview hunk" },
-            s = { "<cmd>Gitsigns stage_hunk<CR>", "Stage current hunk" },
-            S = { "<cmd>Gitsigns stage_buffer<CR>", "Stage current buffer" },
-            r = { "<cmd>Gitsigns reset_hunk<CR>", "Reset current hunk" },
-            R = { "<cmd>Gitsigns reset_buffer<CR>", "Reset current buffer" },
-            u = { "<cmd>Gitsigns undo_stage_hunk<CR>", "Undo stage hunk" },
-            U = { "<cmd>Gitsigns reset_buffer_index<CR>", "Reset buffer index" },
-          },
-          p = {
-            name = "Projects",
-            p = { "<cmd>:Telescope projects<CR>", "Switch Project" },
-          },
-          o = {
-            name = "Open",
-            t = { "<cmd>ToggleTerm<CR>", "Terminal" },
-            D = {
-              "<cmd>lua require('toggleterm.terminal').Terminal:new({cmd = 'lazydocker', direction = 'float'}):toggle()<CR>",
-              "Docker",
-            },
-            r = { "<cmd>RnvimrToggle<CR>", "Ranger" },
-          },
-          ["<space>"] = {
-            "<cmd>lua if not pcall(require('telescope.builtin').git_files, {}) then require('telescope.builtin').find_files() end<CR>",
-            "Find file in project",
-          },
-          [","] = { "<cmd>Telescope buffers<CR>", "Switch buffer" },
-          ["."] = { "<cmd>Telescope file_browser<CR>", "Find file" },
-          ["/"] = { "<cmd>Telescope live_grep<CR>", "Search in project" },
-        }
-
-        local visual_binds = {
-          g = {
-            y = {
-              "<cmd>lua require('gitlinker').get_buf_range_url('v')<CR>",
-              "Yank link to current selection",
-            },
-          },
-        }
-
-        if vim.fn.has("macos") then
-          normal_binds.o.o = {
-            string.format("<cmd>silent !open -a Finder.app %s<CR>", vim.fn.expand("%:p:h")),
-            "Open directory in Finder",
-          }
-        end
-
-        whichkey.register(normal_binds, { prefix = "<leader>" })
-        whichkey.register(vim.tbl_deep_extend("force", normal_binds, visual_binds), { prefix = "<leader>", mode = "v" })
+        require("config.which-key").setup()
       end,
     })
 
@@ -451,22 +229,7 @@ return require("packer").startup({
       cmd = "Telescope",
       module = "telescope",
       config = function()
-        if not vim.g.telescope_loaded then
-          local actions = require("telescope.actions")
-          require("telescope").setup({
-            defaults = {
-              mappings = {
-                i = {
-                  ["<esc>"] = actions.close,
-                },
-              },
-            },
-          })
-          require("project_nvim").setup({})
-          require("telescope").load_extension("projects")
-          require("telescope").load_extension("neoclip")
-          vim.g.telescope_loaded = true
-        end
+        require("config.telescope").setup()
       end,
       requires = {
         "nvim-lua/plenary.nvim",
@@ -522,164 +285,7 @@ return require("packer").startup({
       "nvim-treesitter/nvim-treesitter",
       run = ":TSUpdate",
       config = function()
-        if vim.fn.has("macos") then
-          require("nvim-treesitter.install").compilers = { "gcc-11" }
-        end
-
-        -- Extra parser configs
-        local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
-        parser_configs.haskell = {
-          install_info = {
-            url = "https://github.com/tree-sitter/tree-sitter-haskell",
-            files = { "src/parser.c", "src/scanner.cc" },
-          },
-          filetype = "haskell",
-        }
-        parser_configs.markdown = {
-          install_info = {
-            url = "https://github.com/ikatyang/tree-sitter-markdown",
-            files = { "src/parser.c", "src/scanner.cc" },
-          },
-          filetype = "markdown",
-        }
-
-        parser_configs.org = {
-          install_info = {
-            url = "https://github.com/milisims/tree-sitter-org",
-            revision = "main",
-            files = { "src/parser.c", "src/scanner.cc" },
-          },
-          filetype = "org",
-        }
-
-        -- Main treesitter config
-        require("nvim-treesitter.configs").setup({
-          ensure_installed = "all",
-          additional_vim_regex_highlighting = { "org" },
-
-          highlight = {
-            enable = true,
-          },
-
-          incremental_selection = {
-            enable = true,
-
-            keymaps = {
-              init_selection = "gnn",
-              node_incremental = "gnn",
-              scope_incremental = "gns",
-              node_decremental = "gnp",
-            },
-          },
-
-          indent = { enable = true },
-
-          textsubjects = {
-            enable = true,
-            keymaps = { [","] = "textsubjects-smart" },
-          },
-
-          autopairs = { enable = true },
-
-          textobjects = {
-            select = {
-              enable = true,
-              keymaps = {
-                ["af"] = "@function.outer",
-                ["if"] = "@function.inner",
-                ["icd"] = "@conditional.inner",
-                ["acd"] = "@conditional.outer",
-                ["acm"] = "@comment.outer",
-                ["ilp"] = "@loop.inner",
-                ["alp"] = "@loop.outer",
-                ["ast"] = "@statement.outer",
-                ["isc"] = "@scopename.inner",
-                ["iB"] = "@block.inner",
-                ["aB"] = "@block.outer",
-                ["p"] = "@parameter.inner",
-              },
-            },
-
-            move = {
-              enable = true,
-              set_jumps = true, -- Whether to set jumps in the jumplist
-              goto_next_start = {
-                ["gnf"] = "@function.outer",
-                ["gnif"] = "@function.inner",
-                ["gnp"] = "@parameter.inner",
-                ["gnc"] = "@call.outer",
-                ["gnic"] = "@call.inner",
-              },
-              goto_next_end = {
-                ["gnF"] = "@function.outer",
-                ["gniF"] = "@function.inner",
-                ["gnP"] = "@parameter.inner",
-                ["gnC"] = "@call.outer",
-                ["gniC"] = "@call.inner",
-              },
-              goto_previous_start = {
-                ["gpf"] = "@function.outer",
-                ["gpif"] = "@function.inner",
-                ["gpp"] = "@parameter.inner",
-                ["gpc"] = "@call.outer",
-                ["gpic"] = "@call.inner",
-              },
-              goto_previous_end = {
-                ["gpF"] = "@function.outer",
-                ["gpiF"] = "@function.inner",
-                ["gpP"] = "@parameter.inner",
-                ["gpC"] = "@call.outer",
-                ["gpiC"] = "@call.inner",
-              },
-            },
-          },
-
-          playground = {
-            enable = true,
-            updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
-            persist_queries = false, -- Whether the query persists across vim sessions
-            keybindings = {
-              toggle_query_editor = "o",
-              toggle_hl_groups = "i",
-              toggle_injected_languages = "t",
-              toggle_anonymous_nodes = "a",
-              toggle_language_display = "I",
-              focus_language = "f",
-              unfocus_language = "F",
-              update = "R",
-              goto_node = "<cr>",
-              show_help = "?",
-            },
-          },
-
-          rainbow = {
-            enable = true,
-            extended_mode = true,
-            max_file_lines = 1000,
-            colors = {
-              "#bf616a",
-              "#d08770",
-              "#ebcb8b",
-              "#a3be8c",
-              "#88c0d0",
-              "#5e81ac",
-              "#b48ead",
-            },
-          },
-          tree_docs = { enable = true },
-
-          context_commentstring = { enable = true },
-
-          refactor = {
-            highlight_definitions = { enable = true },
-            smart_rename = {
-              enable = true,
-              keymaps = {
-                smart_rename = "gR",
-              },
-            },
-          },
-        })
+        require("config.treesitter").setup()
       end,
       requires = {
         "RRethy/nvim-treesitter-textsubjects", -- Location & syntax-aware text objects
@@ -852,7 +458,7 @@ return require("packer").startup({
     use({
       "mfussenegger/nvim-dap",
       config = function()
-        vim.g.dap_virtual_text = true
+        -- require("nvim-dap-virtual-text").setup()
         local dap = require("dap")
         dap.configurations.lua = {
           {
@@ -903,149 +509,7 @@ return require("packer").startup({
     use({
       "neovim/nvim-lspconfig",
       config = function()
-        local whichkey = require("which-key")
-        function TelescopeCodeActions()
-          local opts = {
-            winblend = 15,
-            layout_config = {
-              prompt_position = "top",
-              width = 80,
-              height = 12,
-            },
-            borderchars = {
-              prompt = { "─", "│", " ", "│", "╭", "╮", "│", "│" },
-              results = { "─", "│", "─", "│", "├", "┤", "╯", "╰" },
-              preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
-            },
-            border = {},
-            previewer = false,
-            shorten_path = false,
-          }
-          require("telescope.builtin").lsp_code_actions(require("telescope.themes").get_dropdown(opts))
-        end
-
-        -- Borrowed from https://github.com/kabouzeid/nvim-lspinstall/wiki
-        -- keymaps
-        local on_attach = function(client, bufnr)
-          require("lsp_signature").on_attach({
-            bind = true,
-            handler_opts = {
-              border = "single",
-            },
-          }, bufnr)
-          local function buf_set_option(...)
-            vim.api.nvim_buf_set_option(bufnr, ...)
-          end
-
-          vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "single" })
-          vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "single" })
-          buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
-
-          -- Mappings
-          local opts = { noremap = true, silent = true, buffer = bufnr }
-          whichkey.register({
-            K = { "<cmd>lua vim.lsp.buf.hover()<CR>", "Show documentation for symbol" },
-            g = {
-              d = { "<cmd>lua vim.lsp.buf.definition()<CR>", "LSP definition" },
-              D = { "<cmd>lua vim.lsp.buf.declaration()<CR>", "LSP declaration" },
-              i = { "<cmd>lua vim.lsp.buf.implementation()<CR>", "LSP implementation" },
-              r = { "<cmd>lua vim.lsp.buf.references()<CR>", "LSP references" },
-            },
-            ["<leader>"] = {
-              c = {
-                name = "Code",
-                a = { "<cmd>lua TelescopeCodeActions()<CR>", "LSP Code Actions" },
-                c = { "<cmd>Make<CR>", "Compile" },
-                w = {
-                  name = "Workspaces",
-                  a = { "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", "Add workspace folder" },
-                  r = {
-                    "<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>",
-                    "Remove workspace folder",
-                  },
-                  l = {
-                    "<cmd> lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>",
-                    "List workspace folders",
-                  },
-                },
-                x = {
-                  "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics({border = 'single'})<CR>",
-                  "Show diagnostics for line",
-                },
-              },
-              ["["] = { "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", "Jump to previous error" },
-              ["]"] = { "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", "Jump to next error" },
-            },
-          }, opts)
-
-          -- Set some keybinds conditional on server capabilities
-          if client.resolved_capabilities.document_formatting then
-            whichkey.register({
-              ["<leader>cf"] = { "<cmd>lua vim.lsp.buf.formatting()<CR>", "Format buffer" },
-            }, opts)
-          elseif client.resolved_capabilities.document_range_formatting then
-            whichkey.register({
-              ["<leader>cf"] = { "<cmd>lua vim.lsp.buf.range_formatting()<CR>", "Format buffer/region" },
-            }, opts)
-          end
-
-          -- Set autocommands conditional on server_capabilities
-          if client.resolved_capabilities.document_highlight then
-            vim.api.nvim_exec(
-              [[
-                    augroup lsp_document_highlight
-                    autocmd! * <buffer>
-                    autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-                    autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-                    augroup END
-                        ]],
-              false
-            )
-          end
-        end
-
-        local capabilities = vim.lsp.protocol.make_client_capabilities()
-        capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
-
-        -- Include rtp for nvim
-        local runtime_path = vim.split(package.path, ";")
-        table.insert(runtime_path, "lua/?.lua")
-        table.insert(runtime_path, "lua/?/init.lua")
-
-        -- Configure lua language server for neovim development
-        local lua_settings = {
-          filetypes = { "lua" },
-          Lua = {
-            runtime = {
-              -- LuaJIT in the case of Neovim
-              version = "LuaJIT",
-              path = runtime_path,
-            },
-            diagnostics = {
-              -- Get the language server to recognize the `vim` global
-              globals = { "vim" },
-            },
-            workspace = {
-              -- Make the server aware of Neovim runtime files
-              library = vim.api.nvim_get_runtime_file("", true),
-            },
-          },
-        }
-
-        local lsp_installer = require("nvim-lsp-installer")
-        lsp_installer.on_server_ready(function(server)
-          local config = {
-            capabilities = capabilities,
-            on_attach = on_attach,
-          }
-
-          if server.name == "sumneko_lua" then
-            config.settings = lua_settings
-          end
-
-          server:setup(config)
-          vim.cmd("do User LspAttachBuffers")
-        end)
+        require("config.lspconfig").setup()
       end,
       after = "which-key.nvim",
       requires = {
@@ -1059,60 +523,7 @@ return require("packer").startup({
     use({
       "hrsh7th/nvim-cmp",
       config = function()
-        require("lspkind").init()
-        local cmp = require("cmp")
-        local luasnip = require("luasnip")
-        cmp.setup({
-          sources = {
-            { name = "nvim_lsp" },
-            { name = "nvim_lua" },
-            { name = "path" },
-            { name = "buffer" },
-            { name = "luasnip" },
-            { name = "orgmode" },
-          },
-          snippet = {
-            expand = function(args)
-              require("luasnip").lsp_expand(args.body)
-            end,
-          },
-          mapping = {
-            ["<C-p>"] = cmp.mapping.select_prev_item(),
-            ["<C-n>"] = cmp.mapping.select_next_item(),
-            ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-            ["<C-f>"] = cmp.mapping.scroll_docs(4),
-            ["<C-Space>"] = cmp.mapping.complete(),
-            ["<C-g>"] = cmp.mapping.close(),
-            ["<CR>"] = cmp.mapping.confirm({
-              behavior = cmp.ConfirmBehavior.Replace,
-              select = true,
-            }),
-            ["<Tab>"] = function(fallback)
-              if cmp.visible() then
-                cmp.select_next_item()
-              elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-              else
-                fallback()
-              end
-            end,
-            ["<S-Tab>"] = function(fallback)
-              if cmp.visible() then
-                cmp.select_prev_item()
-              elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-              else
-                fallback()
-              end
-            end,
-          },
-          formatting = {
-            format = require("lspkind").cmp_format({ with_text = false, maxwidth = 50 }),
-          },
-          documentation = {
-            border = "single",
-          },
-        })
+        require("config.cmp").setup()
       end,
       requires = {
         "nvim-treesitter",
@@ -1134,20 +545,11 @@ return require("packer").startup({
     use("LunarWatcher/auto-pairs")
 
     -- Async Lint Engine
-    use({
-      "dense-analysis/ale",
-      config = function()
-        -- vim.g.ale_fix_on_save = 1
-      end,
-      rocks = { "luaformatter", server = "https://luarocks.org/dev" },
-    })
+    use("dense-analysis/ale")
 
     -- Telescope most recently used
     use({
       "nvim-telescope/telescope-frecency.nvim",
-      config = function()
-        require("telescope").load_extension("frecency")
-      end,
       requires = { "tami5/sqlite.lua" },
     })
 
@@ -1209,11 +611,6 @@ return require("packer").startup({
     use({
       "AckslD/nvim-neoclip.lua",
       requires = { "tami5/sqlite.lua", module = "sqlite" },
-      config = function()
-        require("neoclip").setup({
-          enable_persistant_history = true,
-        })
-      end,
     })
 
     -- Dim inactive buffers
@@ -1228,7 +625,6 @@ return require("packer").startup({
 
     -- Named well, tree of undos
     use("mbbill/undotree")
-    use({ "mrjones2014/dash.nvim", requires = { "nvim-telescope/telescope.nvim" }, run = "make install" })
   end,
   config = {
     max_jobs = 50,
