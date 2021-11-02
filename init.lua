@@ -130,6 +130,15 @@ end
 
 return require("packer").startup({
   function(use)
+    -- Only load a package on macos
+    local use_mac = function(opts)
+      if vim.fn.has("macos") == 0 then
+        return
+      end
+
+      use(opts)
+    end
+
     -- Packer (needed to manage packer packages to manage packages to manage...)
     use("wbthomason/packer.nvim")
 
@@ -410,7 +419,7 @@ return require("packer").startup({
         require("toggleterm").setup({
           direction = "horizontal",
           shell = vim.o.shell, -- change the default shell
-          shade_terminals = false,
+          shade_terminals = true,
           float_opts = {
             -- The border key is *almost* the same as 'nvim_win_open'
             -- see :h nvim_win_open for details on borders however
@@ -621,7 +630,9 @@ return require("packer").startup({
 
     -- Named well, tree of undos
     use("mbbill/undotree")
-    use({
+
+    -- Dash docs are pretty damn useful
+    use_mac({
       "mrjones2014/dash.nvim",
       run = "make install",
     })
