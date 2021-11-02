@@ -94,7 +94,7 @@ _G.packer_plugins = {
     path = "/Users/elken/.local/share/nvim/site/pack/packer/start/bufdelete.nvim"
   },
   ["bufferline.nvim"] = {
-    config = { "\27LJ\2\nï\1\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\foptions\1\0\0\1\0\3\27always_show_bufferline\1\20separator_style\nslant\16diagnostics\rnvim_lsp\nsetup\15bufferline\frequire\0" },
+    config = { "\27LJ\2\nï\1\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\foptions\1\0\0\1\0\3\16diagnostics\rnvim_lsp\27always_show_bufferline\1\20separator_style\nslant\nsetup\15bufferline\frequire\0" },
     loaded = true,
     path = "/Users/elken/.local/share/nvim/site/pack/packer/start/bufferline.nvim"
   },
@@ -221,7 +221,7 @@ _G.packer_plugins = {
   },
   ["nvim-dap"] = {
     after = { "nvim-dap-ui" },
-    config = { "\27LJ\2\nb\0\2\6\0\4\0\14\18\2\0\0005\4\0\0009\5\1\1\14\0\5\0X\6\1Ä'\5\2\0=\5\1\0049\5\3\1\14\0\5\0X\6\1Ä)\5ò\31=\5\3\4B\2\2\1K\0\1\0\tport\014127.0.0.1\thost\1\0\1\ttype\vserver•\6\1\0\4\0\v\0\0166\0\0\0'\2\1\0B\0\2\0029\1\2\0004\2\3\0005\3\4\0>\3\1\2=\2\3\0019\1\5\0003\2\a\0=\2\6\0016\1\b\0009\1\t\1'\3\n\0B\1\2\1K\0\1\0Ë\4            nnoremap <silent> <F5> :lua require'dap'.continue()<CR>\n            nnoremap <silent> <F10> :lua require'dap'.step_over()<CR>\n            nnoremap <silent> <F11> :lua require'dap'.step_into()<CR>\n            nnoremap <silent> <F12> :lua require'dap'.step_out()<CR>\n            nnoremap <silent> <leader>db :lua require'dap'.toggle_breakpoint()<CR>\n            nnoremap <silent> <leader>dB :lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>\n            nnoremap <silent> <leader>dl :lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>\n        \bcmd\bvim\0\tnlua\radapters\1\0\3\frequest\vattach\ttype\tnlua\tname&Attach to running Neovim instance\blua\19configurations\bdap\frequire\0" },
+    config = { "\27LJ\2\nb\0\2\6\0\4\0\14\18\2\0\0005\4\0\0009\5\1\1\14\0\5\0X\6\1Ä'\5\2\0=\5\1\0049\5\3\1\14\0\5\0X\6\1Ä)\5ò\31=\5\3\4B\2\2\1K\0\1\0\tport\014127.0.0.1\thost\1\0\1\ttype\vserver•\6\1\0\4\0\v\0\0166\0\0\0'\2\1\0B\0\2\0029\1\2\0004\2\3\0005\3\4\0>\3\1\2=\2\3\0019\1\5\0003\2\a\0=\2\6\0016\1\b\0009\1\t\1'\3\n\0B\1\2\1K\0\1\0Ë\4            nnoremap <silent> <F5> :lua require'dap'.continue()<CR>\n            nnoremap <silent> <F10> :lua require'dap'.step_over()<CR>\n            nnoremap <silent> <F11> :lua require'dap'.step_into()<CR>\n            nnoremap <silent> <F12> :lua require'dap'.step_out()<CR>\n            nnoremap <silent> <leader>db :lua require'dap'.toggle_breakpoint()<CR>\n            nnoremap <silent> <leader>dB :lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>\n            nnoremap <silent> <leader>dl :lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>\n        \bcmd\bvim\0\tnlua\radapters\1\0\3\ttype\tnlua\tname&Attach to running Neovim instance\frequest\vattach\blua\19configurations\bdap\frequire\0" },
     loaded = false,
     needs_bufread = false,
     only_cond = false,
@@ -260,7 +260,7 @@ _G.packer_plugins = {
     path = "/Users/elken/.local/share/nvim/site/pack/packer/start/nvim-notify"
   },
   ["nvim-toggleterm.lua"] = {
-    config = { "\27LJ\2\n®\4\0\0\6\0\26\0/6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0006\3\4\0009\3\5\0039\3\6\3=\3\6\0025\3\a\0005\4\b\0=\4\t\3=\3\n\2B\0\2\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\14\0'\4\15\0005\5\16\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\17\0'\4\18\0005\5\19\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\20\0'\4\21\0005\5\22\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\23\0'\4\24\0005\5\25\0B\0\5\1K\0\1\0\1\0\2\vsilent\2\fnoremap\2\21<C-\\><C-n><C-w>l\n<C-l>\1\0\2\vsilent\2\fnoremap\2\21<C-\\><C-n><C-w>k\n<C-k>\1\0\2\vsilent\2\fnoremap\2\21<C-\\><C-n><C-w>j\n<C-j>\1\0\2\vsilent\2\fnoremap\2\21<C-\\><C-n><C-w>h\n<C-h>\6t\20nvim_set_keymap\bapi\15float_opts\15highlights\1\0\2\vborder\vNormal\15background\vNormal\1\0\2\rwinblend\3\0\vborder\vdouble\nshell\6o\bvim\1\0\2\20shade_terminals\1\14direction\15horizontal\nsetup\15toggleterm\frequire\0" },
+    config = { "\27LJ\2\n®\4\0\0\6\0\26\0/6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0006\3\4\0009\3\5\0039\3\6\3=\3\6\0025\3\a\0005\4\b\0=\4\t\3=\3\n\2B\0\2\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\14\0'\4\15\0005\5\16\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\17\0'\4\18\0005\5\19\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\20\0'\4\21\0005\5\22\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\23\0'\4\24\0005\5\25\0B\0\5\1K\0\1\0\1\0\2\fnoremap\2\vsilent\2\21<C-\\><C-n><C-w>l\n<C-l>\1\0\2\fnoremap\2\vsilent\2\21<C-\\><C-n><C-w>k\n<C-k>\1\0\2\fnoremap\2\vsilent\2\21<C-\\><C-n><C-w>j\n<C-j>\1\0\2\fnoremap\2\vsilent\2\21<C-\\><C-n><C-w>h\n<C-h>\6t\20nvim_set_keymap\bapi\15float_opts\15highlights\1\0\2\15background\vNormal\vborder\vNormal\1\0\2\rwinblend\3\0\vborder\vdouble\nshell\6o\bvim\1\0\2\20shade_terminals\1\14direction\15horizontal\nsetup\15toggleterm\frequire\0" },
     loaded = true,
     path = "/Users/elken/.local/share/nvim/site/pack/packer/start/nvim-toggleterm.lua"
   },
@@ -324,11 +324,8 @@ _G.packer_plugins = {
     path = "/Users/elken/.local/share/nvim/site/pack/packer/start/packer.nvim"
   },
   playground = {
-    commands = { "TSPlaygroundToggle" },
-    loaded = false,
-    needs_bufread = true,
-    only_cond = false,
-    path = "/Users/elken/.local/share/nvim/site/pack/packer/opt/playground"
+    loaded = true,
+    path = "/Users/elken/.local/share/nvim/site/pack/packer/start/playground"
   },
   ["plenary.nvim"] = {
     loaded = true,
@@ -459,54 +456,30 @@ if not vim.g.packer_custom_loader_enabled then
   vim.g.packer_custom_loader_enabled = true
 end
 
--- Config for: nvim-colorizer.lua
-time([[Config for nvim-colorizer.lua]], true)
-try_loadstring("\27LJ\2\n7\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\14colorizer\frequire\0", "config", "nvim-colorizer.lua")
-time([[Config for nvim-colorizer.lua]], false)
--- Config for: indent-blankline.nvim
-time([[Config for indent-blankline.nvim]], true)
-try_loadstring("\27LJ\2\nè\4\0\0\4\0\n\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0025\3\6\0=\3\a\0025\3\b\0=\3\t\2B\0\2\1K\0\1\0\21context_patterns\1\17\0\0\ntable\nclass\rfunction\vmethod\b^if\nwhile\bfor\twith\17func_literal\nblock\btry\vexcept\18argument_list\vobject\15dictionary\felement\20buftype_exclude\1\4\0\0\thelp\rterminal\vnofile\21filetype_exclude\1\0\3\24max_indent_increase\3\1\25show_current_context\2\19use_treesitter\2\1\22\0\0\rstartify\14dashboard\16dotooagenda\blog\rfugitive\14gitcommit\vpacker\fvimwiki\rmarkdown\tjson\btxt\nvista\thelp\ftodoist\rNvimTree\rpeekaboo\bgit\20TelescopePrompt\rundotree\24flutterToolsOutline\5\nsetup\21indent_blankline\frequire\0", "config", "indent-blankline.nvim")
-time([[Config for indent-blankline.nvim]], false)
--- Config for: neogit
-time([[Config for neogit]], true)
-try_loadstring("\27LJ\2\n]\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\17integrations\1\0\0\1\0\1\rdiffview\2\nsetup\vneogit\frequire\0", "config", "neogit")
-time([[Config for neogit]], false)
--- Config for: orgmode.nvim
-time([[Config for orgmode.nvim]], true)
-try_loadstring("\27LJ\2\n˜\1\0\0\4\0\v\0\0226\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\0016\0\0\0'\2\6\0B\0\2\0029\0\2\0005\2\b\0005\3\a\0=\3\t\2B\0\2\0016\0\0\0'\2\n\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\14headlines\fsymbols\1\0\0\1\2\0\0\b‚Ä∫\16org-bullets\21org_agenda_files\1\0\1\27org_default_notes_file\30~/Nextcloud/org/Notes.org\1\2\0\0\20~/Nextcloud/org\nsetup\forgmode\frequire\0", "config", "orgmode.nvim")
-time([[Config for orgmode.nvim]], false)
--- Config for: lualine.nvim
-time([[Config for lualine.nvim]], true)
-try_loadstring("\27LJ\2\n<\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\19config.lualine\frequire\0", "config", "lualine.nvim")
-time([[Config for lualine.nvim]], false)
 -- Config for: which-key.nvim
 time([[Config for which-key.nvim]], true)
 try_loadstring("\27LJ\2\n>\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\21config.which-key\frequire\0", "config", "which-key.nvim")
 time([[Config for which-key.nvim]], false)
--- Config for: markdown-preview.nvim
-time([[Config for markdown-preview.nvim]], true)
-try_loadstring("\27LJ\2\n6\0\0\2\0\4\0\0056\0\0\0009\0\1\0'\1\3\0=\1\2\0K\0\1\0\ffirefox\17mkdp_browser\6g\bvim\0", "config", "markdown-preview.nvim")
-time([[Config for markdown-preview.nvim]], false)
--- Config for: nvim-toggleterm.lua
-time([[Config for nvim-toggleterm.lua]], true)
-try_loadstring("\27LJ\2\n®\4\0\0\6\0\26\0/6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0006\3\4\0009\3\5\0039\3\6\3=\3\6\0025\3\a\0005\4\b\0=\4\t\3=\3\n\2B\0\2\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\14\0'\4\15\0005\5\16\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\17\0'\4\18\0005\5\19\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\20\0'\4\21\0005\5\22\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\23\0'\4\24\0005\5\25\0B\0\5\1K\0\1\0\1\0\2\vsilent\2\fnoremap\2\21<C-\\><C-n><C-w>l\n<C-l>\1\0\2\vsilent\2\fnoremap\2\21<C-\\><C-n><C-w>k\n<C-k>\1\0\2\vsilent\2\fnoremap\2\21<C-\\><C-n><C-w>j\n<C-j>\1\0\2\vsilent\2\fnoremap\2\21<C-\\><C-n><C-w>h\n<C-h>\6t\20nvim_set_keymap\bapi\15float_opts\15highlights\1\0\2\vborder\vNormal\15background\vNormal\1\0\2\rwinblend\3\0\vborder\vdouble\nshell\6o\bvim\1\0\2\20shade_terminals\1\14direction\15horizontal\nsetup\15toggleterm\frequire\0", "config", "nvim-toggleterm.lua")
-time([[Config for nvim-toggleterm.lua]], false)
 -- Config for: nvim-treesitter
 time([[Config for nvim-treesitter]], true)
 try_loadstring("\27LJ\2\n?\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\22config.treesitter\frequire\0", "config", "nvim-treesitter")
 time([[Config for nvim-treesitter]], false)
--- Config for: nvim-notify
-time([[Config for nvim-notify]], true)
-try_loadstring("\27LJ\2\n2\0\0\4\0\3\0\0066\0\0\0006\1\2\0'\3\1\0B\1\2\2=\1\1\0K\0\1\0\frequire\vnotify\bvim\0", "config", "nvim-notify")
-time([[Config for nvim-notify]], false)
--- Config for: firenvim
-time([[Config for firenvim]], true)
-try_loadstring("\27LJ\2\nˇ\4\0\0\3\0\3\0\0056\0\0\0009\0\1\0'\2\2\0B\0\2\1K\0\1\0ﬂ\4                au BufEnter github.com_*.txt set filetype=markdown\n                au BufEnter reddit.com_*.txt set filetype=markdown\n                let g:firenvim_config = { \"globalSettings\": { \"alt\": \"all\", }, \"localSettings\": { \".*\": { \"cmdline\": \"neovim\", \"content\": \"text\", \"priority\": 0, \"selector\": \"textarea\", \"takeover\": \"always\", }, } }\n                let fc = g:firenvim_config[\"localSettings\"]\n                let fc[\"https?://mail.google.com/\"] = { \"takeover\": \"never\", \"priority\": 1 }\n                let fc[\"https?://discord.com/\"] = { \"takeover\": \"never\", \"priority\": 1 }\n            \bcmd\bvim\0", "config", "firenvim")
-time([[Config for firenvim]], false)
--- Config for: bufferline.nvim
-time([[Config for bufferline.nvim]], true)
-try_loadstring("\27LJ\2\nï\1\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\foptions\1\0\0\1\0\3\27always_show_bufferline\1\20separator_style\nslant\16diagnostics\rnvim_lsp\nsetup\15bufferline\frequire\0", "config", "bufferline.nvim")
-time([[Config for bufferline.nvim]], false)
+-- Config for: lualine.nvim
+time([[Config for lualine.nvim]], true)
+try_loadstring("\27LJ\2\n<\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\19config.lualine\frequire\0", "config", "lualine.nvim")
+time([[Config for lualine.nvim]], false)
+-- Config for: markdown-preview.nvim
+time([[Config for markdown-preview.nvim]], true)
+try_loadstring("\27LJ\2\n6\0\0\2\0\4\0\0056\0\0\0009\0\1\0'\1\3\0=\1\2\0K\0\1\0\ffirefox\17mkdp_browser\6g\bvim\0", "config", "markdown-preview.nvim")
+time([[Config for markdown-preview.nvim]], false)
+-- Config for: nvim-tree.lua
+time([[Config for nvim-tree.lua]], true)
+try_loadstring("\27LJ\2\n;\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\14nvim-tree\frequire\0", "config", "nvim-tree.lua")
+time([[Config for nvim-tree.lua]], false)
+-- Config for: neogit
+time([[Config for neogit]], true)
+try_loadstring("\27LJ\2\n]\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\17integrations\1\0\0\1\0\1\rdiffview\2\nsetup\vneogit\frequire\0", "config", "neogit")
+time([[Config for neogit]], false)
 -- Config for: rnvimr
 time([[Config for rnvimr]], true)
 try_loadstring("\27LJ\2\nm\0\0\2\0\4\0\0056\0\0\0009\0\1\0'\1\3\0=\1\2\0K\0\1\0>HIGHLIGHT_STYLE=nord ranger --cmd=\"set draw_borders both\"\22rnvimr_ranger_cmd\6g\bvim\0", "config", "rnvimr")
@@ -519,14 +492,38 @@ time([[Config for gitlinker.nvim]], false)
 time([[Config for nvim-cmp]], true)
 try_loadstring("\27LJ\2\n8\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\15config.cmp\frequire\0", "config", "nvim-cmp")
 time([[Config for nvim-cmp]], false)
--- Config for: nvim-tree.lua
-time([[Config for nvim-tree.lua]], true)
-try_loadstring("\27LJ\2\n;\0\0\3\0\3\0\a6\0\0\0'\2\1\0B\0\2\0029\0\2\0004\2\0\0B\0\2\1K\0\1\0\nsetup\14nvim-tree\frequire\0", "config", "nvim-tree.lua")
-time([[Config for nvim-tree.lua]], false)
 -- Config for: gitsigns.nvim
 time([[Config for gitsigns.nvim]], true)
 try_loadstring("\27LJ\2\nM\0\0\4\0\5\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0004\3\0\0=\3\4\2B\0\2\1K\0\1\0\fkeymaps\1\0\0\nsetup\rgitsigns\frequire\0", "config", "gitsigns.nvim")
 time([[Config for gitsigns.nvim]], false)
+-- Config for: nvim-colorizer.lua
+time([[Config for nvim-colorizer.lua]], true)
+try_loadstring("\27LJ\2\n7\0\0\3\0\3\0\0066\0\0\0'\2\1\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\nsetup\14colorizer\frequire\0", "config", "nvim-colorizer.lua")
+time([[Config for nvim-colorizer.lua]], false)
+-- Config for: bufferline.nvim
+time([[Config for bufferline.nvim]], true)
+try_loadstring("\27LJ\2\nï\1\0\0\4\0\6\0\t6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\1K\0\1\0\foptions\1\0\0\1\0\3\16diagnostics\rnvim_lsp\27always_show_bufferline\1\20separator_style\nslant\nsetup\15bufferline\frequire\0", "config", "bufferline.nvim")
+time([[Config for bufferline.nvim]], false)
+-- Config for: indent-blankline.nvim
+time([[Config for indent-blankline.nvim]], true)
+try_loadstring("\27LJ\2\nè\4\0\0\4\0\n\0\r6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\0025\3\6\0=\3\a\0025\3\b\0=\3\t\2B\0\2\1K\0\1\0\21context_patterns\1\17\0\0\ntable\nclass\rfunction\vmethod\b^if\nwhile\bfor\twith\17func_literal\nblock\btry\vexcept\18argument_list\vobject\15dictionary\felement\20buftype_exclude\1\4\0\0\thelp\rterminal\vnofile\21filetype_exclude\1\0\3\24max_indent_increase\3\1\25show_current_context\2\19use_treesitter\2\1\22\0\0\rstartify\14dashboard\16dotooagenda\blog\rfugitive\14gitcommit\vpacker\fvimwiki\rmarkdown\tjson\btxt\nvista\thelp\ftodoist\rNvimTree\rpeekaboo\bgit\20TelescopePrompt\rundotree\24flutterToolsOutline\5\nsetup\21indent_blankline\frequire\0", "config", "indent-blankline.nvim")
+time([[Config for indent-blankline.nvim]], false)
+-- Config for: firenvim
+time([[Config for firenvim]], true)
+try_loadstring("\27LJ\2\nˇ\4\0\0\3\0\3\0\0056\0\0\0009\0\1\0'\2\2\0B\0\2\1K\0\1\0ﬂ\4                au BufEnter github.com_*.txt set filetype=markdown\n                au BufEnter reddit.com_*.txt set filetype=markdown\n                let g:firenvim_config = { \"globalSettings\": { \"alt\": \"all\", }, \"localSettings\": { \".*\": { \"cmdline\": \"neovim\", \"content\": \"text\", \"priority\": 0, \"selector\": \"textarea\", \"takeover\": \"always\", }, } }\n                let fc = g:firenvim_config[\"localSettings\"]\n                let fc[\"https?://mail.google.com/\"] = { \"takeover\": \"never\", \"priority\": 1 }\n                let fc[\"https?://discord.com/\"] = { \"takeover\": \"never\", \"priority\": 1 }\n            \bcmd\bvim\0", "config", "firenvim")
+time([[Config for firenvim]], false)
+-- Config for: nvim-notify
+time([[Config for nvim-notify]], true)
+try_loadstring("\27LJ\2\n2\0\0\4\0\3\0\0066\0\0\0006\1\2\0'\3\1\0B\1\2\2=\1\1\0K\0\1\0\frequire\vnotify\bvim\0", "config", "nvim-notify")
+time([[Config for nvim-notify]], false)
+-- Config for: nvim-toggleterm.lua
+time([[Config for nvim-toggleterm.lua]], true)
+try_loadstring("\27LJ\2\n®\4\0\0\6\0\26\0/6\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\3\0006\3\4\0009\3\5\0039\3\6\3=\3\6\0025\3\a\0005\4\b\0=\4\t\3=\3\n\2B\0\2\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\14\0'\4\15\0005\5\16\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\17\0'\4\18\0005\5\19\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\20\0'\4\21\0005\5\22\0B\0\5\0016\0\4\0009\0\v\0009\0\f\0'\2\r\0'\3\23\0'\4\24\0005\5\25\0B\0\5\1K\0\1\0\1\0\2\fnoremap\2\vsilent\2\21<C-\\><C-n><C-w>l\n<C-l>\1\0\2\fnoremap\2\vsilent\2\21<C-\\><C-n><C-w>k\n<C-k>\1\0\2\fnoremap\2\vsilent\2\21<C-\\><C-n><C-w>j\n<C-j>\1\0\2\fnoremap\2\vsilent\2\21<C-\\><C-n><C-w>h\n<C-h>\6t\20nvim_set_keymap\bapi\15float_opts\15highlights\1\0\2\15background\vNormal\vborder\vNormal\1\0\2\rwinblend\3\0\vborder\vdouble\nshell\6o\bvim\1\0\2\20shade_terminals\1\14direction\15horizontal\nsetup\15toggleterm\frequire\0", "config", "nvim-toggleterm.lua")
+time([[Config for nvim-toggleterm.lua]], false)
+-- Config for: orgmode.nvim
+time([[Config for orgmode.nvim]], true)
+try_loadstring("\27LJ\2\n˜\1\0\0\4\0\v\0\0226\0\0\0'\2\1\0B\0\2\0029\0\2\0005\2\4\0005\3\3\0=\3\5\2B\0\2\0016\0\0\0'\2\6\0B\0\2\0029\0\2\0005\2\b\0005\3\a\0=\3\t\2B\0\2\0016\0\0\0'\2\n\0B\0\2\0029\0\2\0B\0\1\1K\0\1\0\14headlines\fsymbols\1\0\0\1\2\0\0\b‚Ä∫\16org-bullets\21org_agenda_files\1\0\1\27org_default_notes_file\30~/Nextcloud/org/Notes.org\1\2\0\0\20~/Nextcloud/org\nsetup\forgmode\frequire\0", "config", "orgmode.nvim")
+time([[Config for orgmode.nvim]], false)
 -- Load plugins in order defined by `after`
 time([[Sequenced loading]], true)
 vim.cmd [[ packadd nvim-lspconfig ]]
@@ -539,13 +536,12 @@ time([[Sequenced loading]], false)
 -- Command lazy-loads
 time([[Defining lazy-load commands]], true)
 pcall(vim.cmd, [[command -nargs=* -range -bang -complete=file Telescope lua require("packer.load")({'telescope.nvim'}, { cmd = "Telescope", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args>, mods = "<mods>" }, _G.packer_plugins)]])
-pcall(vim.cmd, [[command -nargs=* -range -bang -complete=file DIInstall lua require("packer.load")({'DAPInstall.nvim'}, { cmd = "DIInstall", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args>, mods = "<mods>" }, _G.packer_plugins)]])
-pcall(vim.cmd, [[command -nargs=* -range -bang -complete=file TSPlaygroundToggle lua require("packer.load")({'playground'}, { cmd = "TSPlaygroundToggle", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args>, mods = "<mods>" }, _G.packer_plugins)]])
 pcall(vim.cmd, [[command -nargs=* -range -bang -complete=file SudaWrite lua require("packer.load")({'suda.vim'}, { cmd = "SudaWrite", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args>, mods = "<mods>" }, _G.packer_plugins)]])
 pcall(vim.cmd, [[command -nargs=* -range -bang -complete=file SudaRead lua require("packer.load")({'suda.vim'}, { cmd = "SudaRead", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args>, mods = "<mods>" }, _G.packer_plugins)]])
 pcall(vim.cmd, [[command -nargs=* -range -bang -complete=file Octo lua require("packer.load")({'octo.nvim'}, { cmd = "Octo", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args>, mods = "<mods>" }, _G.packer_plugins)]])
 pcall(vim.cmd, [[command -nargs=* -range -bang -complete=file DIUninstall lua require("packer.load")({'DAPInstall.nvim'}, { cmd = "DIUninstall", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args>, mods = "<mods>" }, _G.packer_plugins)]])
 pcall(vim.cmd, [[command -nargs=* -range -bang -complete=file DIList lua require("packer.load")({'DAPInstall.nvim'}, { cmd = "DIList", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args>, mods = "<mods>" }, _G.packer_plugins)]])
+pcall(vim.cmd, [[command -nargs=* -range -bang -complete=file DIInstall lua require("packer.load")({'DAPInstall.nvim'}, { cmd = "DIInstall", l1 = <line1>, l2 = <line2>, bang = <q-bang>, args = <q-args>, mods = "<mods>" }, _G.packer_plugins)]])
 time([[Defining lazy-load commands]], false)
 
 if should_profile then save_profiles() end

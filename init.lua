@@ -295,6 +295,7 @@ return require("packer").startup({
         "JoosepAlviste/nvim-ts-context-commentstring", -- Correctly guess which comment to use in a mixed-mode file
         "p00f/nvim-ts-rainbow", -- 🌈
         "spywhere/detect-language.nvim", -- Whose ls is it anyway?
+        "nvim-treesitter/playground", -- Debug tool for treesitter
       },
     })
 
@@ -305,12 +306,6 @@ return require("packer").startup({
     --         {"nvim-treesitter/nvim-treesitter"},
     --     },
     -- }
-
-    -- Debug tool for treesitter
-    use({
-      "nvim-treesitter/playground",
-      cmd = "TSPlaygroundToggle",
-    })
 
     -- Neovim anywhere
     -- TODO Refine this (remove barbar etc)
