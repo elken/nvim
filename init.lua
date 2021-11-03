@@ -105,7 +105,7 @@ vim.cmd([[
 vim.cmd("autocmd BufEnter * silent! lcd %:p:h")
 
 -- Make containing directory if missing
-vim.cmd("autocmd BufWritePre * silent! Mkdir ")
+vim.cmd("autocmd BufWritePre * silent! Mkdir! ")
 
 -- Highlight on yank
 vim.cmd([[
