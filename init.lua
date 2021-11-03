@@ -308,14 +308,6 @@ return require("packer").startup({
       },
     })
 
-    -- TODO Set this up
-    -- use {
-    --     "nvim-treesitter/nvim-tree-docs",
-    --     requires = {
-    --         {"nvim-treesitter/nvim-treesitter"},
-    --     },
-    -- }
-
     -- Neovim anywhere
     -- TODO Refine this (remove barbar etc)
     use({

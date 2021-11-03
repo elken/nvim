@@ -145,8 +145,6 @@ function M.setup()
         "#b48ead",
       },
     },
-    tree_docs = { enable = true },
-
     context_commentstring = { enable = true },
 
     refactor = {
