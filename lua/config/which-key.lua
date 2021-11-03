@@ -84,6 +84,7 @@ function M.setup()
     [","] = { "<cmd>Telescope buffers<CR>", "Switch buffer" },
     ["."] = { "<cmd>Telescope file_browser<CR>", "Find file" },
     ["/"] = { "<cmd>Telescope live_grep<CR>", "Search in project" },
+    [";"] = { "<cmd>nohl", "Turn off search highlight" },
   }
 
   local visual_binds = {
@@ -95,7 +96,7 @@ function M.setup()
     },
   }
 
-  if vim.fn.has("macos") then
+  if vim.fn.has("mac") == 1 then
     normal_binds.o.o = {
       string.format("<cmd>silent !open -a Finder.app %s<CR>", vim.fn.expand("%:p:h")),
       "Open directory in Finder",

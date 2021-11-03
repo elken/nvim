@@ -42,6 +42,7 @@ function M.setup()
         {
           "filename",
           file_status = true,
+          symbols = { modified = " ", readonly = " " },
           path = 0,
           separator = { right = "" },
           cond = function()
@@ -51,6 +52,7 @@ function M.setup()
         {
           "filename",
           file_status = true,
+          symbols = { modified = " ", readonly = " " },
           path = 1,
           separator = { right = "" },
           cond = function()

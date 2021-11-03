@@ -638,6 +638,14 @@ return require("packer").startup({
       "mrjones2014/dash.nvim",
       run = "make install",
     })
+
+    -- Better mapping tools
+    use({
+      "b0o/mapx.nvim",
+      config = function()
+        require("config.mappings").setup()
+      end,
+    })
   end,
   config = {
     max_jobs = 50,

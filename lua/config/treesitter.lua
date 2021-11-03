@@ -1,7 +1,7 @@
 local M = {}
 
 function M.setup()
-  if vim.fn.has("macos") then
+  if vim.fn.has("mac") == 1 then
     require("nvim-treesitter.install").compilers = { "gcc-11" }
   end
 
