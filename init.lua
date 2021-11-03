@@ -540,6 +540,8 @@ return require("packer").startup({
         "hrsh7th/cmp-buffer",
         "hrsh7th/cmp-emoji",
         "hrsh7th/cmp-nvim-lua",
+        "hrsh7th/cmp-cmdline",
+        "hrsh7th/cmp-nvim-lsp-document-symbol",
       },
     })
 
