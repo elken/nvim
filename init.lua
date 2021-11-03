@@ -118,6 +118,7 @@ vim.cmd([[
 -- Installed packer if it's missing
 local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
 
+-- TODO Improve this
 if fn.empty(fn.glob(install_path)) > 0 then
   fn.system({
     "git",
@@ -132,7 +133,7 @@ return require("packer").startup({
   function(use)
     -- Only load a package on macos
     local use_mac = function(opts)
-      if vim.fn.has("macos") == 0 then
+      if vim.fn.has("mac") == 0 then
         return
       end
 
@@ -236,7 +237,6 @@ return require("packer").startup({
     -- The big daddy
     use({
       "nvim-telescope/telescope.nvim",
-      cmd = "Telescope",
       module = "telescope",
       config = function()
         require("config.telescope").setup()
