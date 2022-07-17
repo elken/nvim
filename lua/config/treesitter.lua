@@ -7,21 +7,6 @@ function M.setup()
 
   -- Extra parser configs
   local parser_configs = require("nvim-treesitter.parsers").get_parser_configs()
-  parser_configs.haskell = {
-    install_info = {
-      url = "https://github.com/tree-sitter/tree-sitter-haskell",
-      files = { "src/parser.c", "src/scanner.cc" },
-    },
-    filetype = "haskell",
-  }
-  parser_configs.markdown = {
-    install_info = {
-      url = "https://github.com/ikatyang/tree-sitter-markdown",
-      files = { "src/parser.c", "src/scanner.cc" },
-    },
-    filetype = "markdown",
-  }
-
   parser_configs.org = {
     install_info = {
       url = "https://github.com/milisims/tree-sitter-org",

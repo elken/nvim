@@ -237,15 +237,14 @@ return require("packer").startup({
     -- The big daddy
     use({
       "nvim-telescope/telescope.nvim",
-      module = "telescope",
       config = function()
         require("config.telescope").setup()
       end,
       requires = {
         "nvim-lua/plenary.nvim",
         "nvim-lua/popup.nvim",
-        -- "ahmedkhalf/project.nvim"
-        "~/build/project.nvim",
+        "ahmedkhalf/project.nvim",
+        "nvim-telescope/telescope-file-browser.nvim",
       },
     })
 
@@ -284,9 +283,12 @@ return require("packer").startup({
 
     -- Pretty good test runner
     use({
-      "rcarriga/vim-ultest",
-      run = ":UpdateRemotePlugins",
-      requires = "vim-test/vim-test",
+      "nvim-neotest/neotest",
+      requires = {
+        "nvim-lua/plenary.nvim",
+        "nvim-treesitter/nvim-treesitter",
+        "antoinemadec/FixCursorHold.nvim",
+      },
     })
 
     -- Syntax and speed
@@ -376,12 +378,13 @@ return require("packer").startup({
     -- Not good enough yet, but getting there
     use({
       "kristijanhusak/orgmode.nvim",
-      branch = "tree-sitter",
       config = function()
         require("orgmode").setup({
           org_agenda_files = { "~/Nextcloud/org" },
           org_default_notes_file = "~/Nextcloud/org/Notes.org",
         })
+
+        require("orgmode").setup_ts_grammar()
         require("org-bullets").setup({
           symbols = { "›" },
         })
@@ -566,8 +569,11 @@ return require("packer").startup({
     -- File browser (depends on ranger)
     use({
       "kevinhwang91/rnvimr",
+      cmd = "RnvimrToggle",
       config = function()
-        vim.g.rnvimr_ranger_cmd = 'HIGHLIGHT_STYLE=nord ranger --cmd="set draw_borders both"'
+        vim.g.rnvimr_draw_border = 1
+        vim.g.rnvimr_pick_enable = 1
+        vim.g.rnvimr_bw_enable = 1
       end,
     })
 

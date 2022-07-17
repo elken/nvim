@@ -70,8 +70,8 @@ function M.setup()
         },
       }),
     },
-    documentation = {
-      border = "single",
+    window = {
+      documentation = cmp.config.window.bordered(),
     },
   })
 

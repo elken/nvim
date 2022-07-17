@@ -84,7 +84,7 @@ function M.setup()
     [","] = { "<cmd>Telescope buffers<CR>", "Switch buffer" },
     ["."] = { "<cmd>Telescope file_browser<CR>", "Find file" },
     ["/"] = { "<cmd>Telescope live_grep<CR>", "Search in project" },
-    [";"] = { "<cmd>nohl", "Turn off search highlight" },
+    [";"] = { "<cmd>nohl<CR>", "Turn off search highlight" },
   }
 
   local visual_binds = {
