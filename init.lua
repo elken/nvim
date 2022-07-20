@@ -326,7 +326,7 @@ return require("packer").startup({
                 let fc = g:firenvim_config["localSettings"]
                 let fc["https?://mail.google.com/"] = { "takeover": "never", "priority": 1 }
                 let fc["https?://discord.com/"] = { "takeover": "never", "priority": 1 }
-            ]])
+                ]])
       end,
     })
 
@@ -379,12 +379,15 @@ return require("packer").startup({
     use({
       "kristijanhusak/orgmode.nvim",
       config = function()
-        require("orgmode").setup({
+        local org = require("orgmode")
+
+        org.setup({
           org_agenda_files = { "~/Nextcloud/org" },
           org_default_notes_file = "~/Nextcloud/org/Notes.org",
         })
 
-        require("orgmode").setup_ts_grammar()
+        org.setup_ts_grammar()
+
         require("org-bullets").setup({
           symbols = { "›" },
         })
@@ -458,7 +461,7 @@ return require("packer").startup({
     use({
       "mfussenegger/nvim-dap",
       config = function()
-        -- require("nvim-dap-virtual-text").setup()
+        require("nvim-dap-virtual-text").setup()
         local dap = require("dap")
         dap.configurations.lua = {
           {
@@ -470,6 +473,11 @@ return require("packer").startup({
         dap.adapters.nlua = function(callback, config)
           callback({ type = "server", host = config.host or "127.0.0.1", port = config.port or 8088 })
         end
+        dap.adapters.flutter = {
+          type = "executable",
+          command = "flutter",
+          args = { "debug_adapter" },
+        }
         vim.cmd([[
             nnoremap <silent> <F5> :lua require'dap'.continue()<CR>
             nnoremap <silent> <F10> :lua require'dap'.step_over()<CR>
@@ -478,9 +486,8 @@ return require("packer").startup({
             nnoremap <silent> <leader>db :lua require'dap'.toggle_breakpoint()<CR>
             nnoremap <silent> <leader>dB :lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
             nnoremap <silent> <leader>dl :lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>
-        ]])
+            ]])
       end,
-      module = "dap",
       requires = {
         "theHamsta/nvim-dap-virtual-text",
         "jbyuki/one-small-step-for-vimkind",
@@ -488,11 +495,27 @@ return require("packer").startup({
     })
 
     -- UI for above
-    use({ "rcarriga/nvim-dap-ui", after = "nvim-dap" })
+    use({
+      "rcarriga/nvim-dap-ui",
+      config = function()
+        local dap, dapui = require("dap"), require("dapui")
+        dapui.setup()
+        dap.listeners.after.event_initialized["dapui_config"] = function()
+          dapui.open()
+        end
+        dap.listeners.before.event_terminated["dapui_config"] = function()
+          dapui.close()
+        end
+        dap.listeners.before.event_exited["dapui_config"] = function()
+          dapui.close()
+        end
+      end,
+      after = "nvim-dap",
+    })
 
     -- EZ installer for DAP servers
     use({
-      "Pocco81/DAPInstall.nvim",
+      "Pocco81/dap-buddy.nvim",
       config = function()
         local dap = require("dap-install")
 
@@ -643,6 +666,32 @@ return require("packer").startup({
       config = function()
         require("config.mappings").setup()
       end,
+    })
+    use({
+      "akinsho/flutter-tools.nvim",
+      config = function()
+        require("flutter-tools").setup({
+          widget_guides = {
+            enabled = true,
+          },
+          lsp = {
+            color = {
+              enabled = true,
+            },
+          },
+          debugger = {
+            enabled = true,
+            run_via_dap = true,
+            register_configurations = function(_)
+              require("dap").configurations.dart = {}
+              require("dap.ext.vscode").load_launchjs()
+              -- require("dap.ext.vscode").load_launchjs(vim.lsp.buf.list_workspace_folders()[1] .. "/.vscode/launch.json")
+            end,
+          },
+        })
+      end,
+      requires = "nvim-lua/plenary.nvim",
+      after = "nvim-dap",
     })
   end,
   config = {

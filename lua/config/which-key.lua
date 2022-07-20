@@ -66,7 +66,7 @@ function M.setup()
     },
     p = {
       name = "Projects",
-      p = { "<cmd>:Telescope projects<CR>", "Switch Project" },
+      p = { "<cmd>Telescope projects<CR>", "Switch Project" },
     },
     o = {
       name = "Open",
