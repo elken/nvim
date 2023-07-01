@@ -212,7 +212,6 @@ return require("packer").startup({
         require("config.lualine").setup()
       end,
       requires = {
-        "arkav/lualine-lsp-progress",
         "kyazdani42/nvim-web-devicons",
         "rlch/github-notifications.nvim",
       },
@@ -224,6 +223,39 @@ return require("packer").startup({
       config = function()
         require("config.which-key").setup()
       end,
+    })
+
+    -- UI improvements
+    use({
+      "folke/noice.nvim",
+      config = function()
+        require("noice").setup({
+          lsp = {
+            signature = { enabled = false },
+            hover = { enabled = false },
+            message = { enabled = false },
+            -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+            override = {
+              ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+              ["vim.lsp.util.stylize_markdown"] = true,
+              ["cmp.entry.get_documentation"] = true,
+            },
+          },
+          -- you can enable a preset for easier configuration
+          presets = {
+            bottom_search = true, -- use a classic bottom cmdline for search
+            command_palette = true, -- position the cmdline and popupmenu together
+            long_message_to_split = true, -- long messages will be sent to a split
+            inc_rename = false, -- enables an input dialog for inc-rename.nvim
+            lsp_doc_border = false, -- add a border to hover docs and signature help
+          },
+        })
+      end,
+      requires = {
+        "MunifTanjim/nui.nvim",
+
+        "rcarriga/nvim-notify",
+      },
     })
 
     -- Highlight colours (sometimes, currently)
@@ -334,9 +366,7 @@ return require("packer").startup({
     use({
       "lewis6991/gitsigns.nvim",
       config = function()
-        require("gitsigns").setup({
-          keymaps = {},
-        })
+        require("gitsigns").setup({})
       end,
       requires = "nvim-lua/plenary.nvim",
     })
@@ -536,7 +566,8 @@ return require("packer").startup({
       end,
       after = "which-key.nvim",
       requires = {
-        "williamboman/nvim-lsp-installer",
+        "williamboman/mason.nvim",
+        "williamboman/mason-lspconfig.nvim",
         "ray-x/lsp_signature.nvim",
       },
     })
@@ -576,14 +607,6 @@ return require("packer").startup({
     use({
       "nvim-telescope/telescope-frecency.nvim",
       requires = { "tami5/sqlite.lua" },
-    })
-
-    -- Simple popup notification library
-    use({
-      "rcarriga/nvim-notify",
-      config = function()
-        vim.notify = require("notify")
-      end,
     })
 
     -- Free real estate for startup perf

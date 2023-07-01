@@ -240,8 +240,7 @@ local on_attach = function(client, bufnr)
 end
 
 function M.setup()
-  local capabilities = vim.lsp.protocol.make_client_capabilities()
-  capabilities = require("cmp_nvim_lsp").update_capabilities(capabilities)
+  local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
   -- Include rtp for nvim
   local runtime_path = vim.split(package.path, ";")
@@ -252,6 +251,9 @@ function M.setup()
   local lua_settings = {
     filetypes = { "lua" },
     Lua = {
+      format = {
+        enable = true,
+      },
       runtime = {
         -- LuaJIT in the case of Neovim
         version = "LuaJIT",
@@ -271,20 +273,59 @@ function M.setup()
     },
   }
 
-  local lsp_installer = require("nvim-lsp-installer")
-  lsp_installer.on_server_ready(function(server)
+  local mason = require("mason")
+  mason.setup({})
+
+  require("mason-lspconfig").setup({
+    ensure_installed = {
+      "lua_ls",
+      "clojure_lsp",
+    },
+  })
+
+  local on_log_message = function(err, result, ctx, config)
+    print(vim.inspect(result), vim.inspect(ctx))
+    vim.lsp.handlers["window/logMessage"](err, result, ctx, config)
+
+    -- Only do it for info/log type logs
+    if result.type > 2 then
+      local opts = { client_id = ctx.client_id }
+      local token = tostring({}):sub(10) -- random string hack
+
+      vim.lsp.handlers["$/progress"](nil, {
+        token = token,
+        value = { kind = "begin", title = result.message },
+      }, opts)
+
+      vim.lsp.handlers["$/progress"](nil, {
+        token = token,
+        value = { kind = "end" },
+      }, opts)
+    end
+  end
+
+  local lspconfig = require("lspconfig")
+  local servers = { "lua_ls", "clojure_lsp" }
+
+  for _, lsp in ipairs(servers) do
     local config = {
-      capabilities = capabilities,
       on_attach = on_attach,
+      capabilities = capabilities,
     }
 
-    if server.name == "sumneko_lua" then
+    if lsp == "lua_ls" then
       config.settings = lua_settings
     end
 
-    server:setup(config)
+    if lsp == "clojure_lsp" then
+      config.handlers = {
+        ["window/logMessage"] = on_log_message,
+      }
+    end
+
+    lspconfig[lsp].setup(config)
     vim.cmd("do User LspAttachBuffers")
-  end)
+  end
 end
 
 return M

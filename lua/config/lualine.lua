@@ -3,12 +3,15 @@ local M = {}
 local function lsp_in_use()
   return table.maxn(vim.lsp.get_active_clients()) > 0
 end
+
 local function hide_in_width()
   return vim.fn.winwidth(0) > 80
 end
+
 local function buffer_not_empty()
   return vim.fn.empty(vim.fn.expand("%:t")) ~= 1
 end
+
 local function lsp_servers()
   local buf_ft = vim.api.nvim_buf_get_option(0, "filetype")
   local servers = vim.lsp.get_active_clients()
@@ -63,7 +66,6 @@ function M.setup()
           "%=",
           separator = { left = "", right = "" },
         },
-        "lsp-progress",
       },
       lualine_x = {
         { "diff", symbols = { added = " ", modified = " ", removed = " " } },
