@@ -3,28 +3,38 @@
 -- Help documentation can be viewed with `:h <property>`
 local fn = vim.fn
 
+-- Setup leader key to be space and localleader to be comma
+vim.g.mapleader = " "
+vim.g.maplocalleader = ","
+
 -- Only run these settings once
-if not packer_plugins then
-  vim.api.nvim_set_keymap("", "<Space>", "<Nop>", { noremap = true, silent = true })
-  vim.g.mapleader = " "
-  vim.g.maplocalleader = " "
-  vim.opt.termguicolors = true
-end
+-- if not packer_plugins then
+--   vim.api.nvim_set_keymap("", "<Space>", "<Nop>", { noremap = true, silent = true })
+--   vim.g.mapleader = " "
+--   vim.g.maplocalleader = " "
+--   vim.opt.termguicolors = true
+-- end
 
 vim.g.did_load_filetypes = 1
+vim.opt.termguicolors = true
 vim.g.formatoptions = "qrn1"
 vim.opt.guifont = "Iosevka Nerd Font Mono"
 vim.opt.showmode = false
-vim.opt.timeoutlen = 500
+vim.opt.timeoutlen = 300
 vim.opt.updatetime = 100
 vim.wo.signcolumn = "yes"
-vim.opt.scrolloff = 5
+vim.opt.scrolloff = 10
 vim.opt.wrap = false
 vim.opt.ttimeoutlen = 5
 vim.opt.virtualedit = "block"
 vim.opt.undofile = true
 vim.opt.undodir = fn.stdpath("data") .. "undo"
 vim.opt.shell = "/bin/zsh"
+-- vim.opt.cursorline = true
+
+-- Ignore case when searching if applicable
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
 -- Mouse
 vim.opt.mouse = "a"
@@ -45,6 +55,7 @@ vim.opt.clipboard = "unnamedplus"
 vim.opt.shortmess:append("c")
 
 -- Indent Settings
+vim.opt.breakindent = true
 vim.opt.expandtab = true
 vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
@@ -55,7 +66,9 @@ vim.opt.wrap = true
 -- Completion
 vim.opt.completeopt = "menu,menuone,noselect"
 
--- Fillchars
+-- Characters to display in certain circumstances
+vim.opt.list = true
+vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 vim.opt.fillchars = {
   vert = "│",
   fold = "⠀",
@@ -74,14 +87,14 @@ if fn.executable("rg") > 0 then
 end
 
 -- Firenvim setup
-function _G.FirenvimSetup(channel)
-  local channel_info = vim.api.nvim_get_chan_info(channel)
-  if channel_info.client and channel_info.client.name == "Firenvim" then
-    vim.opt.laststatus = 0
-  end
-end
+-- function _G.FirenvimSetup(channel)
+--   local channel_info = vim.api.nvim_get_chan_info(channel)
+--   if channel_info.client and channel_info.client.name == "Firenvim" then
+--     vim.opt.laststatus = 0
+--   end
+-- end
 
-vim.cmd("autocmd UIEnter * call v:lua.FirenvimSetup(deepcopy(v:event.chan))")
+-- vim.cmd("autocmd UIEnter * call v:lua.FirenvimSetup(deepcopy(v:event.chan))")
 
 -- Get a project root from vimL
 function _G.get_project_root()
@@ -90,72 +103,75 @@ end
 
 -- Jump to last line when opening a file
 vim.cmd([[
-	au BufWinEnter * if line("'\"") > 0 && line("'\"") <= line("$") | execute 'normal! g`"zvzz' | endif
-]])
-
--- Run PackerCompile after saving init.lua
-vim.cmd([[
-  augroup packer_user_config
-    autocmd!
-    autocmd BufWritePost init.lua source <afile> | PackerCompile
-  augroup end
+ au BufWinEnter * if line("'\"") > 0 && line("'\"") <= line("$") | execute 'normal! g`"zvzz' | endif
 ]])
 
 -- Change directory to the current buffer
-vim.cmd("autocmd BufEnter * silent! lcd %:p:h")
+vim.g.autochdir = true
 
 -- Make containing directory if missing
-vim.cmd("autocmd BufWritePre * silent! Mkdir! ")
+vim.api.nvim_create_autocmd("BufWritePre", {
+  command = "silent! Mkdir!",
+})
 
 -- Highlight on yank
-vim.cmd([[
-  augroup YankHighlight
-    autocmd!
-    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-  augroup end
-]])
+vim.api.nvim_create_autocmd("TextYankPost", {
+  desc = "Highlight when yanking (copying) text",
+  group = vim.api.nvim_create_augroup("hi-yank", { clear = true }),
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+})
 
--- Installed packer if it's missing
-local install_path = fn.stdpath("data") .. "/site/pack/packer/start/packer.nvim"
-
--- TODO Improve this
-if fn.empty(fn.glob(install_path)) > 0 then
-  fn.system({
-    "git",
-    "clone",
-    "https://github.com/wbthomason/packer.nvim",
-    install_path,
-  })
-  vim.cmd("autocmd VimEnter * PackerSync")
+-- Install lazy.nvim if it's missing
+-- NOTE: This is where things get bootstrapped
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+--@diagnostic disable-next-line: undefine-field
+if not vim.loop.fs_stat(lazypath) and not vim.g.started_by_firenvim then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end
+vim.opt.rtp:prepend(lazypath)
 
-return require("packer").startup({
-  function(use)
-    -- Only load a package on macos
-    local use_mac = function(opts)
-      if vim.fn.has("mac") == 0 then
-        return
-      end
+-- NOTE: Start of plugin config
+require("lazy").setup({
+  -- Most important package; the colour scheme
+  "EdenEast/nightfox.nvim",
 
-      use(opts)
-    end
+  -- Add fancy indent markers, which integrate nicely with treesitter
+  -- and shows the current context
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    config = function()
+      local highlight = {
+        "RainbowRed",
+        "RainbowYellow",
+        "RainbowBlue",
+        "RainbowOrange",
+        "RainbowGreen",
+        "RainbowViolet",
+        "RainbowCyan",
+      }
+      local hooks = require("ibl.hooks")
+      -- create the highlight groups in the highlight setup hook, so they are reset
+      -- every time the colorscheme changes
+      hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+        vim.api.nvim_set_hl(0, "RainbowRed", { fg = "#E06C75" })
+        vim.api.nvim_set_hl(0, "RainbowYellow", { fg = "#E5C07B" })
+        vim.api.nvim_set_hl(0, "RainbowBlue", { fg = "#61AFEF" })
+        vim.api.nvim_set_hl(0, "RainbowOrange", { fg = "#D19A66" })
+        vim.api.nvim_set_hl(0, "RainbowGreen", { fg = "#98C379" })
+        vim.api.nvim_set_hl(0, "RainbowViolet", { fg = "#C678DD" })
+        vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
+      end)
 
-    -- Packer (needed to manage packer packages to manage packages to manage...)
-    use("wbthomason/packer.nvim")
+      vim.g.rainbow_delimiters = { highlight = highlight }
 
-    -- Most important package; the colour scheme
-    use({
-      "shaunsingh/nord.nvim",
-      requires = "folke/lsp-colors.nvim",
-    })
-
-    -- Add fancy indent markers, which integrate nicely with treesitter
-    -- and shows the current context
-    use({
-      "lukas-reineke/indent-blankline.nvim",
-      config = function()
-        require("indent_blankline").setup({
-          filetype_exclude = {
+      require("ibl").setup({
+        scope = { highlight = highlight },
+        exclude = {
+          filetypes = {
             "startify",
             "dashboard",
             "dotooagenda",
@@ -178,337 +194,340 @@ return require("packer").startup({
             "flutterToolsOutline",
             "", -- for all buffers without a file type
           },
-          buftype_exclude = { "help", "terminal", "nofile" },
-          use_treesitter = true,
-          show_current_context = true,
-          max_indent_increase = 1,
-          context_patterns = {
-            "table",
-            "class",
-            "function",
-            "method",
-            "^if",
-            "while",
-            "for",
-            "with",
-            "func_literal",
-            "block",
-            "try",
-            "except",
-            "argument_list",
-            "object",
-            "dictionary",
-            "element",
-          },
-        })
-      end,
-    })
+        },
+      })
 
-    -- Pointless rice project; the statusline. Pick a nice one that works
-    -- ootb and leave it there.
-    use({
-      "nvim-lualine/lualine.nvim",
-      config = function()
-        require("config.lualine").setup()
-      end,
-      requires = {
-        "kyazdani42/nvim-web-devicons",
-        "rlch/github-notifications.nvim",
+      hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
+    end,
+  },
+
+  -- Use TS to colourize matching delimiters. Not just brackets, HTML tags, do .. end in Lua/Elixir, etc
+  {
+    "https://gitlab.com/HiPhish/rainbow-delimiters.nvim",
+    config = function()
+      require("rainbow-delimiters.setup").setup({})
+    end,
+  },
+
+  -- Pointless rice project; the statusline. Pick a nice one that works
+  -- ootb and leave it there.
+  {
+    "nvim-lualine/lualine.nvim",
+    config = function()
+      require("config.lualine").setup()
+    end,
+    requires = {
+      "kyazdani42/nvim-web-devicons",
+      "rlch/github-notifications.nvim",
+    },
+  },
+
+  -- Which key is that? Which-key!
+  {
+    "folke/which-key.nvim",
+    config = function()
+      require("config.which-key").setup()
+    end,
+  },
+
+  -- UI improvements
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {
+      lsp = {
+        signature = { enabled = false },
+        hover = { enabled = false },
+        message = { enabled = false },
+        -- override markdown rendering so that **cmp** and other plugins  **Treesitter**
+        override = {
+          ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+          ["vim.lsp.util.stylize_markdown"] = true,
+          ["cmp.entry.get_documentation"] = true,
+        },
       },
-    })
-
-    -- Which key is that? Which-key!
-    use({
-      "folke/which-key.nvim",
-      config = function()
-        require("config.which-key").setup()
-      end,
-    })
-
-    -- UI improvements
-    use({
-      "folke/noice.nvim",
-      config = function()
-        require("noice").setup({
-          lsp = {
-            signature = { enabled = false },
-            hover = { enabled = false },
-            message = { enabled = false },
-            -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
-            override = {
-              ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-              ["vim.lsp.util.stylize_markdown"] = true,
-              ["cmp.entry.get_documentation"] = true,
-            },
-          },
-          -- you can enable a preset for easier configuration
-          presets = {
-            bottom_search = true, -- use a classic bottom cmdline for search
-            command_palette = true, -- position the cmdline and popupmenu together
-            long_message_to_split = true, -- long messages will be sent to a split
-            inc_rename = false, -- enables an input dialog for inc-rename.nvim
-            lsp_doc_border = false, -- add a border to hover docs and signature help
-          },
-        })
-      end,
-      requires = {
-        "MunifTanjim/nui.nvim",
-
-        "rcarriga/nvim-notify",
+      -- you can enable a preset for easier configuration
+      presets = {
+        bottom_search = true, --  a classic bottom cmdline for search
+        command_palette = true, -- position the cmdline and popupmenu together
+        long_message_to_split = true, -- long messages will be sent to a split
+        inc_rename = false, -- enables an input dialog for inc-rename.nvim
+        lsp_doc_border = false, -- add a border to hover docs and signature help
       },
-    })
+    },
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
+    },
+  },
 
-    -- Highlight colours (sometimes, currently)
-    use({
-      "norcalli/nvim-colorizer.lua",
-      config = function()
-        require("colorizer").setup()
-      end,
-    })
-
-    -- The big daddy
-    use({
-      "nvim-telescope/telescope.nvim",
-      config = function()
-        require("config.telescope").setup()
-      end,
-      requires = {
-        "nvim-lua/plenary.nvim",
-        "nvim-lua/popup.nvim",
-        "ahmedkhalf/project.nvim",
-        "nvim-telescope/telescope-file-browser.nvim",
+  -- Highlight colours (sometimes, currently)
+  {
+    "norcalli/nvim-colorizer.lua",
+    opts = {
+      "css",
+      "javascript",
+      html = {
+        mode = "foreground",
       },
-    })
+    },
+  },
 
-    -- 􏿽
-    use("chrisbra/unicode.vim")
+  -- The big daddy
+  {
+    "nvim-telescope/telescope.nvim",
+    config = function()
+      require("config.telescope").setup()
+    end,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-lua/popup.nvim",
+      "ahmedkhalf/project.nvim",
+      "nvim-telescope/telescope-file-browser.nvim",
+      "nvim-telescope/telescope-ui-select.nvim",
+    },
+  },
 
-    -- :w !sudo tee % > /dev/null
-    use({
-      "lambdalisue/suda.vim",
-      cmd = { "SudaWrite", "SudaRead" },
-    })
+  -- 􏿽
+  "chrisbra/unicode.vim",
 
-    -- Comment all the things
-    use("tpope/vim-commentary")
+  -- :w !sudo tee % > /dev/null
+  {
+    "lambdalisue/suda.vim",
+    cmd = { "SudaWrite", "SudaRead" },
+  },
 
-    -- Add "end" in ruby, lua, etc
-    use("tpope/vim-endwise")
+  -- Comment all the things
+  "tpope/vim-commentary",
 
-    -- Unix helpers
-    use("tpope/vim-eunuch")
+  -- Add "end" in ruby, lua, etc
+  "tpope/vim-endwise",
 
-    -- The git plugin so good, it should be illegal
-    use("tpope/vim-fugitive")
+  -- Unix helpers
+  "tpope/vim-eunuch",
 
-    -- Enable repeating supported plugin maps with "."
-    use("tpope/vim-repeat")
+  -- The git plugin so good, it should be illegal
+  "tpope/vim-fugitive",
 
-    -- GitHub extension for fugitive.vim
-    use("tpope/vim-rhubarb")
+  -- Enable repeating supported plugin maps with "."
+  "tpope/vim-repeat",
 
-    -- Increment dates/times
-    use("tpope/vim-speeddating")
+  -- GitHub extension for fugitive.vim
+  "tpope/vim-rhubarb",
 
-    --  Quoting/parenthesizing made simple
-    use("tpope/vim-surround")
+  -- Increment dates/times
+  "tpope/vim-speeddating",
 
-    -- Pretty good test runner
-    use({
-      "nvim-neotest/neotest",
-      requires = {
-        "nvim-lua/plenary.nvim",
-        "nvim-treesitter/nvim-treesitter",
-        "antoinemadec/FixCursorHold.nvim",
-      },
-    })
+  --  Quoting/parenthesizing made simple
+  "tpope/vim-surround",
 
-    -- Syntax and speed
-    -- Sitting in a tree
-    use({
+  {
+    "folke/neodev.nvim",
+    lazy = false,
+    dependencies = {
+      "folke/neoconf.nvim",
+    },
+  },
+
+  -- Pretty good test runner
+  {
+    "nvim-neotest/neotest",
+    lazy = true,
+    config = function()
+      require("neotest").setup({
+        adapters = {
+          require("neotest-rspec"),
+        },
+      })
+    end,
+    dependencies = {
+      "olimorris/neotest-rspec",
+      "nvim-neotest/nvim-nio",
+      "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      run = ":TSUpdate",
-      config = function()
-        require("config.treesitter").setup()
-      end,
-      requires = {
-        "RRethy/nvim-treesitter-textsubjects", -- Location & syntax-aware text objects
-        "nvim-treesitter/nvim-treesitter-textobjects", -- Custom objects using treesitter
-        "nvim-treesitter/nvim-treesitter-refactor", -- Slightly better refactorings
-        "JoosepAlviste/nvim-ts-context-commentstring", -- Correctly guess which comment to use in a mixed-mode file
-        "p00f/nvim-ts-rainbow", -- 🌈
-        "spywhere/detect-language.nvim", -- Whose ls is it anyway?
-        "nvim-treesitter/playground", -- Debug tool for treesitter
+      "antoinemadec/FixCursorHold.nvim",
+    },
+  },
+
+  -- Syntax and speed
+  -- Sitting in a tree
+  {
+    "nvim-treesitter/nvim-treesitter",
+    build = ":TSUpdate",
+    config = function()
+      require("config.treesitter").setup()
+    end,
+    dependencies = {
+      "RRethy/nvim-treesitter-textsubjects", -- Location & syntax-aware text objects
+      "nvim-treesitter/nvim-treesitter-textobjects", -- Custom objects using treesitter
+      "JoosepAlviste/nvim-ts-context-commentstring", -- Correctly guess which comment to  in a mixed-mode file
+    },
+  },
+
+  -- Neovim anywhere
+  {
+    "glacambre/firenvim",
+    build = function()
+      vim.fn["firenvim#install"](0)
+    end,
+    lazy = not vim.g.started_by_firenvim,
+    config = function()
+      -- _Soon_ this can be removed
+      vim.api.nvim_create_autocmd({ "BufEnter" }, {
+        pattern = "(reddit|github).com_*.txt",
+        command = "set filetype=markdown",
+      })
+      vim.g.firenvim_config = {
+        globalSettings = { alt = "all" },
+        localSettings = {
+          [".*"] = {
+            cmdline = "neovim",
+            content = "text",
+            priority = 0,
+            selector = "textarea",
+            takeover = "never",
+          },
+          ["https?://mail.google.com/"] = {
+            takeover = "never",
+            priority = 1,
+          },
+          ["https?://discord.com/"] = {
+            takeover = "never",
+            priority = 1,
+          },
+        },
+      }
+    end,
+  },
+
+  -- Git changes in the gutter
+  {
+    "lewis6991/gitsigns.nvim",
+    lazy = vim.g.started_by_firenvim,
+    opts = {},
+    dependencies = "nvim-lua/plenary.nvim",
+  },
+
+  -- Markdown preview
+  {
+    "iamcco/markdown-preview.nvim",
+    build = "cd app && yarn install",
+  },
+
+  -- WIP Magit
+  -- Not good enough yet, but getting there
+  {
+    "NeogitOrg/neogit",
+    opts = {
+      graph_style = "unicode",
+      integrations = {
+        telescope = true,
+        diffview = true,
       },
-    })
+    },
+    lazy = vim.g.started_by_firenvim,
+    dependencies = {
+      "sindrets/diffview.nvim",
+      "nvim-lua/plenary.nvim",
+    },
+  },
 
-    -- Neovim anywhere
-    -- TODO Refine this (remove barbar etc)
-    use({
-      "glacambre/firenvim",
-      run = function()
-        vim.fn["firenvim#install"](0)
-      end,
-      config = function()
-        -- _Soon_ this can be removed
-        vim.cmd([[
-                au BufEnter github.com_*.txt set filetype=markdown
-                au BufEnter reddit.com_*.txt set filetype=markdown
-                let g:firenvim_config = { "globalSettings": { "alt": "all", }, "localSettings": { ".*": { "cmdline": "neovim", "content": "text", "priority": 0, "selector": "textarea", "takeover": "always", }, } }
-                let fc = g:firenvim_config["localSettings"]
-                let fc["https?://mail.google.com/"] = { "takeover": "never", "priority": 1 }
-                let fc["https?://discord.com/"] = { "takeover": "never", "priority": 1 }
-                ]])
-      end,
-    })
+  -- WIP orgmode
+  -- Not good enough yet, but getting there
+  {
+    "nvim-orgmode/orgmode",
+    event = "VeryLazy",
+    config = function()
+      local org = require("orgmode")
 
-    -- Git changes in the gutter
-    use({
-      "lewis6991/gitsigns.nvim",
-      config = function()
-        require("gitsigns").setup({})
-      end,
-      requires = "nvim-lua/plenary.nvim",
-    })
+      org.setup({
+        org_agenda_files = { "~/Nextcloud/org/agenda" },
+        org_default_notes_file = "~/Nextcloud/org/Notes.org",
+      })
 
-    -- Better markdown editing
-    -- use {
-    --     "SidOfc/mkdx",
-    --     config = function ()
-    --     end
-    -- }
+      org.setup_ts_grammar()
 
-    -- Markdown preview
-    use({
-      "iamcco/markdown-preview.nvim",
-      run = "cd app && yarn install",
-      config = function()
-        vim.g.mkdp_browser = "firefox"
-      end,
-    })
-
-    -- WIP Magit
-    -- Not good enough yet, but getting there
-    use({
-      "TimUntersberger/neogit",
-      config = function()
-        require("neogit").setup({
-          integrations = {
-            diffview = true,
+      require("org-bullets").setup({
+        symbols = {
+          list = "‣",
+          headlines = "› ",
+          checkboxes = {
+            half = { "", "OrgTSCheckboxHalfChecked" },
+            done = { "✓ ", "OrgDone" },
+            todo = { "˟", "OrgTODO" },
           },
-        })
-      end,
-      requires = {
-        "sindrets/diffview.nvim",
-        "nvim-lua/plenary.nvim",
-      },
-    })
+        },
+      })
+      require("headlines").setup()
+    end,
+    dependencies = {
+      "akinsho/org-bullets.nvim",
+      "lukas-reineke/headlines.nvim",
+    },
+  },
 
-    -- WIP orgmode
-    -- Not good enough yet, but getting there
-    use({
-      "kristijanhusak/orgmode.nvim",
-      config = function()
-        local org = require("orgmode")
+  -- Github integration (making issues etc)
+  {
+    "pwntester/octo.nvim",
+    cmd = "Octo",
+    opts = {
+      default_remote = { "upstream", "elken", "origin" },
+    },
+  },
 
-        org.setup({
-          org_agenda_files = { "~/Nextcloud/org" },
-          org_default_notes_file = "~/Nextcloud/org/Notes.org",
-        })
+  -- Toggleable terminal buffer
+  {
+    "akinsho/nvim-toggleterm.lua",
+    config = function()
+      require("toggleterm").setup({
+        direction = "horizontal",
+        shell = vim.o.shell, -- change the default shell
+        shade_terminals = true,
+        float_opts = {
+          -- The border key is *almost* the same as 'nvim_win_open'
+          -- see :h nvim_win_open for details on borders however
+          -- the 'curved' border is a custom border type
+          -- not natively supported but implemented in this plugin.
+          border = "double",
+          winblend = 0,
+          highlights = { border = "Normal", background = "Normal" },
+        },
+      })
 
-        org.setup_ts_grammar()
+      -- Easier escape from terminal buffers
+      vim.api.nvim_set_keymap("t", "<C-h>", "<C-\\><C-n><C-w>h", { noremap = true, silent = true })
+      vim.api.nvim_set_keymap("t", "<C-j>", "<C-\\><C-n><C-w>j", { noremap = true, silent = true })
+      vim.api.nvim_set_keymap("t", "<C-k>", "<C-\\><C-n><C-w>k", { noremap = true, silent = true })
+      vim.api.nvim_set_keymap("t", "<C-l>", "<C-\\><C-n><C-w>l", { noremap = true, silent = true })
+    end,
+  },
 
-        require("org-bullets").setup({
-          symbols = { "›" },
-        })
-        require("headlines").setup()
-      end,
-      requires = {
-        "akinsho/org-bullets.nvim",
-        "lukas-reineke/headlines.nvim",
-      },
-    })
+  -- Better QuickFix
+  "kevinhwang91/nvim-bqf",
 
-    -- Github integration (making issues etc)
-    use({
-      "pwntester/octo.nvim",
-      cmd = "Octo",
-      config = function()
-        require("octo").setup({
-          default_remote = { "upstream", "elken", "origin" },
-        })
-      end,
-    })
-
-    -- Toggleable terminal buffer
-    use({
-      "akinsho/nvim-toggleterm.lua",
-      config = function()
-        require("toggleterm").setup({
-          direction = "horizontal",
-          shell = vim.o.shell, -- change the default shell
-          shade_terminals = true,
-          float_opts = {
-            -- The border key is *almost* the same as 'nvim_win_open'
-            -- see :h nvim_win_open for details on borders however
-            -- the 'curved' border is a custom border type
-            -- not natively supported but implemented in this plugin.
-            border = "double",
-            winblend = 0,
-            highlights = { border = "Normal", background = "Normal" },
-          },
-        })
-
-        -- Easier escape from terminal buffers
-        vim.api.nvim_set_keymap("t", "<C-h>", "<C-\\><C-n><C-w>h", { noremap = true, silent = true })
-        vim.api.nvim_set_keymap("t", "<C-j>", "<C-\\><C-n><C-w>j", { noremap = true, silent = true })
-        vim.api.nvim_set_keymap("t", "<C-k>", "<C-\\><C-n><C-w>k", { noremap = true, silent = true })
-        vim.api.nvim_set_keymap("t", "<C-l>", "<C-\\><C-n><C-w>l", { noremap = true, silent = true })
-      end,
-    })
-
-    -- Tab bar plugin
-    -- TODO Hide this in firenvim
-    use({
-      "akinsho/bufferline.nvim",
-      config = function()
-        require("bufferline").setup({
-          options = {
-            diagnostics = "nvim_lsp",
-            separator_style = "slant",
-            always_show_bufferline = false,
-          },
-        })
-      end,
-      requires = "kyazdani42/nvim-web-devicons",
-    })
-
-    -- Better QuickFix
-    use("kevinhwang91/nvim-bqf")
-
-    -- Main DAP plugin
-    -- TODO Get DAP setup neatly
-    use({
-      "mfussenegger/nvim-dap",
-      config = function()
-        require("nvim-dap-virtual-text").setup()
-        local dap = require("dap")
-        dap.configurations.lua = {
-          {
-            type = "nlua",
-            request = "attach",
-            name = "Attach to running Neovim instance",
-          },
-        }
-        dap.adapters.nlua = function(callback, config)
-          callback({ type = "server", host = config.host or "127.0.0.1", port = config.port or 8088 })
-        end
-        dap.adapters.flutter = {
-          type = "executable",
-          command = "flutter",
-          args = { "debug_adapter" },
-        }
-        vim.cmd([[
+  -- Main DAP plugin
+  -- TODO Get DAP setup neatly
+  {
+    "mfussenegger/nvim-dap",
+    config = function()
+      require("nvim-dap-virtual-text").setup({})
+      local dap = require("dap")
+      dap.configurations.lua = {
+        {
+          type = "nlua",
+          request = "attach",
+          name = "Attach to running Neovim instance",
+        },
+      }
+      dap.adapters.nlua = function(callback, config)
+        callback({ type = "server", host = config.host or "127.0.0.1", port = config.port or 8088 })
+      end
+      dap.adapters.flutter = {
+        type = "executable",
+        command = "flutter",
+        args = { "debug_adapter" },
+      }
+      vim.cmd([[
             nnoremap <silent> <F5> :lua require'dap'.continue()<CR>
             nnoremap <silent> <F10> :lua require'dap'.step_over()<CR>
             nnoremap <silent> <F11> :lua require'dap'.step_into()<CR>
@@ -517,212 +536,264 @@ return require("packer").startup({
             nnoremap <silent> <leader>dB :lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<CR>
             nnoremap <silent> <leader>dl :lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<CR>
             ]])
-      end,
-      requires = {
-        "theHamsta/nvim-dap-virtual-text",
-        "jbyuki/one-small-step-for-vimkind",
+    end,
+    dependencies = {
+      "theHamsta/nvim-dap-virtual-text",
+      "jbyuki/one-small-step-for-vimkind",
+    },
+  },
+
+  -- UI for above
+  {
+    "rcarriga/nvim-dap-ui",
+    config = function()
+      local dap, dapui = require("dap"), require("dapui")
+      dapui.setup()
+      dap.listeners.after.event_initialized["dapui_config"] = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated["dapui_config"] = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited["dapui_config"] = function()
+        dapui.close()
+      end
+    end,
+    after = "nvim-dap",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+    },
+  },
+
+  -- EZ installer for DAP servers
+  {
+    "Pocco81/dap-buddy.nvim",
+    config = function()
+      local dap = require("dap-install")
+
+      local debugger_list = require("dap-install.debuggers_list").debuggers
+
+      for debugger, _ in pairs(debugger_list) do
+        dap.config(debugger, {})
+      end
+    end,
+    cmd = { "DIInstall", "DIUninstall", "DIList" },
+  },
+
+  -- Fancy IDE stuff
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      require("config.lspconfig").setup()
+    end,
+    dependencies = {
+      "folke/which-key.nvim",
+      "williamboman/mason.nvim",
+      "williamboman/mason-lspconfig.nvim",
+      "ray-x/lsp_signature.nvim",
+    },
+  },
+
+  {
+    "nvimdev/lspsaga.nvim",
+    opts = {
+      finder = {
+        max_height = 0.6,
+        keys = {
+          toggle_or_open = "<Enter>",
+        },
       },
-    })
-
-    -- UI for above
-    use({
-      "rcarriga/nvim-dap-ui",
-      config = function()
-        local dap, dapui = require("dap"), require("dapui")
-        dapui.setup()
-        dap.listeners.after.event_initialized["dapui_config"] = function()
-          dapui.open()
-        end
-        dap.listeners.before.event_terminated["dapui_config"] = function()
-          dapui.close()
-        end
-        dap.listeners.before.event_exited["dapui_config"] = function()
-          dapui.close()
-        end
-      end,
-      after = "nvim-dap",
-    })
-
-    -- EZ installer for DAP servers
-    use({
-      "Pocco81/dap-buddy.nvim",
-      config = function()
-        local dap = require("dap-install")
-
-        local debugger_list = require("dap-install.debuggers_list").debuggers
-
-        for debugger, _ in pairs(debugger_list) do
-          dap.config(debugger, {})
-        end
-      end,
-      cmd = { "DIInstall", "DIUninstall", "DIList" },
-    })
-
-    -- Fancy IDE stuff
-    use({
-      "neovim/nvim-lspconfig",
-      config = function()
-        require("config.lspconfig").setup()
-      end,
-      after = "which-key.nvim",
-      requires = {
-        "williamboman/mason.nvim",
-        "williamboman/mason-lspconfig.nvim",
-        "ray-x/lsp_signature.nvim",
+      lightbulb = {
+        virtual_text = false,
       },
-    })
+    },
+    event = "LspAttach",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons",
+    },
+  },
 
-    -- Completion framework
-    -- TODO Customize the new popup window
-    use({
-      "hrsh7th/nvim-cmp",
-      config = function()
-        require("config.cmp").setup()
-      end,
-      requires = {
-        "nvim-treesitter",
-        "hrsh7th/cmp-nvim-lsp",
-        "onsails/lspkind-nvim",
+  -- Completion framework
+  -- TODO Customize the new popup window
+  {
+    "hrsh7th/nvim-cmp",
+    config = function()
+      require("config.cmp").setup()
+    end,
+    dependencies = {
+      "nvim-treesitter",
+      "hrsh7th/cmp-nvim-lsp",
+      "onsails/lspkind-nvim",
+      {
         "L3MON4D3/LuaSnip",
-        "saadparwaiz1/cmp_luasnip",
-        "hrsh7th/cmp-path",
-        "hrsh7th/cmp-buffer",
-        "hrsh7th/cmp-emoji",
-        "hrsh7th/cmp-nvim-lua",
-        "hrsh7th/cmp-cmdline",
-        "hrsh7th/cmp-nvim-lsp-document-symbol",
-      },
-    })
-
-    -- Faster-than-light jumping
-    use("ggandor/lightspeed.nvim")
-
-    -- Automatic pair matching
-    use("LunarWatcher/auto-pairs")
-
-    -- Async Lint Engine
-    use("dense-analysis/ale")
-
-    -- Telescope most recently used
-    use({
-      "nvim-telescope/telescope-frecency.nvim",
-      requires = { "tami5/sqlite.lua" },
-    })
-
-    -- Free real estate for startup perf
-    use("nathom/filetype.nvim")
-
-    -- File browser (depends on ranger)
-    use({
-      "kevinhwang91/rnvimr",
-      cmd = "RnvimrToggle",
-      config = function()
-        vim.g.rnvimr_draw_border = 1
-        vim.g.rnvimr_pick_enable = 1
-        vim.g.rnvimr_bw_enable = 1
-      end,
-    })
-
-    -- Trying out nvimtree, probably won't last
-    use({
-      "kyazdani42/nvim-tree.lua",
-      requires = "kyazdani42/nvim-web-devicons",
-      config = function()
-        require("nvim-tree").setup({})
-      end,
-    })
-
-    -- Delete buffers without wiping layout
-    use("famiu/bufdelete.nvim")
-
-    -- Improve word motions
-    -- CamelCaseACRONYMWords_underscore1234
-    -- w--------------------------------->w
-    -- e--------------------------------->e
-    -- b<---------------------------------b
-    --
-    -- to
-    --
-    -- CamelCaseACRONYMWords_underscore1234
-    -- w--->w-->w----->w---->w-------->w->w
-    -- e-->e-->e----->e--->e--------->e-->e
-    -- b<---b<--b<-----b<----b<--------b<-b
-    use("chaoren/vim-wordmotion")
-
-    -- Link lines from repo host
-    use({
-      "ruifm/gitlinker.nvim",
-      requires = "nvim-lua/plenary.nvim",
-      config = function()
-        require("gitlinker").setup()
-      end,
-    })
-
-    -- Clipboard manager
-    use({
-      "AckslD/nvim-neoclip.lua",
-      requires = { "tami5/sqlite.lua", module = "sqlite" },
-    })
-
-    -- Dim inactive buffers
-    -- use({
-    --   "sunjon/shade.nvim",
-    --   config = function()
-    --     require("shade").setup({
-    --       overlay_opacity = 50,
-    --     })
-    --   end,
-    -- })
-
-    -- Named well, tree of undos
-    use("mbbill/undotree")
-
-    -- Dash docs are pretty damn useful
-    use_mac({
-      "mrjones2014/dash.nvim",
-      run = "make install",
-    })
-
-    -- Better mapping tools
-    use({
-      "b0o/mapx.nvim",
-      config = function()
-        require("config.mappings").setup()
-      end,
-    })
-    use({
-      "akinsho/flutter-tools.nvim",
-      config = function()
-        require("flutter-tools").setup({
-          widget_guides = {
-            enabled = true,
-          },
-          lsp = {
-            color = {
-              enabled = true,
-            },
-          },
-          debugger = {
-            enabled = true,
-            run_via_dap = true,
-            register_configurations = function(_)
-              require("dap").configurations.dart = {}
-              require("dap.ext.vscode").load_launchjs()
-              -- require("dap.ext.vscode").load_launchjs(vim.lsp.buf.list_workspace_folders()[1] .. "/.vscode/launch.json")
+        version = "v2.*",
+        build = "make install_jsregexp",
+        dependencies = {
+          {
+            "rafamadriz/friendly-snippets",
+            config = function()
+              require("luasnip").filetype_extend("ruby", { "rails" })
             end,
           },
-        })
-      end,
-      requires = "nvim-lua/plenary.nvim",
-      after = "nvim-dap",
-    })
-  end,
-  config = {
-    max_jobs = 50,
-    display = {
-      open_fn = function()
-        return require("packer.util").float({ border = "rounded" })
+        },
+      },
+      "saadparwaiz1/cmp_luasnip",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-emoji",
+      "hrsh7th/cmp-nvim-lua",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-nvim-lsp-document-symbol",
+    },
+  },
+
+  -- Faster-than-light jumping
+  "ggandor/lightspeed.nvim",
+
+  -- Automatic pair matching
+  "LunarWatcher/auto-pairs",
+
+  -- Formatting
+  "dense-analysis/ale",
+
+  -- Telescope most recently used
+  {
+    "nvim-telescope/telescope-frecency.nvim",
+    dependencies = { "tami5/sqlite.lua" },
+  },
+
+  -- Free real estate for startup perf
+  "nathom/filetype.nvim",
+
+  -- File browser (depends on ranger)
+  {
+    "kevinhwang91/rnvimr",
+    cmd = "RnvimrToggle",
+    config = function()
+      vim.g.rnvimr_draw_border = 1
+      vim.g.rnvimr_pick_enable = 1
+      vim.g.rnvimr_bw_enable = 1
+    end,
+  },
+
+  -- Trying out nvimtree, probably won't last
+  {
+    "kyazdani42/nvim-tree.lua",
+    opts = {},
+    dependencies = "kyazdani42/nvim-web-devicons",
+  },
+
+  -- Delete buffers without wiping layout
+  "famiu/bufdelete.nvim",
+
+  -- Improve word motions
+  -- CamelCaseACRONYMWords_underscore1234
+  -- w--------------------------------->w
+  -- e--------------------------------->e
+  -- b<---------------------------------b
+  --
+  -- to
+  --
+  -- CamelCaseACRONYMWords_underscore1234
+  -- w--->w-->w----->w---->w-------->w->w
+  -- e-->e-->e----->e--->e--------->e-->e
+  -- b<---b<--b<-----b<----b<--------b<-b
+  "chaoren/vim-wordmotion",
+
+  -- Link lines from repo host
+  {
+    "ruifm/gitlinker.nvim",
+    opts = {},
+    dependencies = "nvim-lua/plenary.nvim",
+  },
+
+  -- Clipboard manager
+  {
+    "AckslD/nvim-neoclip.lua",
+    dependencies = { "tami5/sqlite.lua", module = "sqlite" },
+  },
+
+  -- Named well, tree of undos
+  "mbbill/undotree",
+
+  -- Better mapping tools
+  -- NOTE This is dead now, as I add more bindings this should migrate elsewhere
+  {
+    "b0o/mapx.nvim",
+    config = function()
+      require("config.mappings").setup()
+    end,
+  },
+
+  -- Flutter tools
+  {
+    "akinsho/flutter-tools.nvim",
+    config = function()
+      require("flutter-tools").setup({
+        widget_guides = {
+          enabled = true,
+        },
+        lsp = {
+          color = {
+            enabled = true,
+          },
+        },
+        debugger = {
+          enabled = true,
+          run_via_dap = true,
+          register_configurations = function(_)
+            require("dap").configurations.dart = {}
+            require("dap.ext.vscode").load_launchjs()
+            -- require("dap.ext.vscode").load_launchjs(vim.lsp.buf.list_workspace_folders()[1] .. "/.vscode/launch.json")
+          end,
+        },
+      })
+    end,
+    dependencies = "nvim-lua/plenary.nvim",
+    after = "nvim-dap",
+  },
+
+  {
+    "kevinhwang91/nvim-ufo",
+    dependencies = {
+      "kevinhwang91/promise-async",
+      {
+        "luukvbaal/statuscol.nvim",
+        config = function()
+          local builtin = require("statuscol.builtin")
+          require("statuscol").setup({
+            relculright = true,
+            segments = {
+              { text = { builtin.foldfunc }, click = "v:lua.ScFa" },
+              { text = { "%s" }, click = "v:lua.ScSa" },
+              { text = { builtin.lnumfunc, " " }, click = "v:lua.ScLa" },
+            },
+          })
+        end,
+      },
+    },
+    event = "BufReadPost",
+    opts = {
+      provider_selector = function()
+        return { "treesitter", "indent" }
       end,
     },
+
+    init = function()
+      -- UFO folding
+      vim.o.foldcolumn = "1" -- '0' is not bad
+      vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+      vim.o.foldlevelstart = 99
+      vim.o.foldenable = true
+      vim.o.fillchars = [[eob: ,fold: ,foldopen:,foldsep: ,foldclose:]]
+
+      vim.keymap.set("n", "zR", function()
+        require("ufo").openAllFolds()
+      end)
+      vim.keymap.set("n", "zM", function()
+        require("ufo").closeAllFolds()
+      end)
+    end,
   },
 })

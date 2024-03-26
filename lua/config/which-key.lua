@@ -13,6 +13,7 @@ function M.setup()
   local normal_binds = {
     b = {
       name = "Buffer",
+      b = { "<cmd>Telescope buffers<CR>", "Buffer picker" },
       d = { "<cmd>Bdelete<CR>", "Kill buffer" },
       p = { "<cmd>bp<CR>", "Previous buffer" },
       n = { "<cmd>bn<CR>", "Next buffer" },
