@@ -1,10 +1,12 @@
 local M = {}
 require("neoconf").setup({})
 require("neodev").setup({
-  override = function(_, library)
-    library.enabled = true
-    library.plugins = true
-  end,
+  library = {
+    plugins = {
+      "neotest",
+    },
+    types = true,
+  },
 })
 
 -- Borrowed from https://github.com/kabouzeid/nvim-lspinstall/wiki
