@@ -7,6 +7,9 @@ function M.setup()
         theme = "ivy",
         hijack_netrw = true,
       },
+      frecency = {
+        db_safe_mode = false,
+      },
     },
   })
 
