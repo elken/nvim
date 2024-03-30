@@ -251,8 +251,8 @@ require("lazy").setup({
         bottom_search = true, --  a classic bottom cmdline for search
         command_palette = true, -- position the cmdline and popupmenu together
         long_message_to_split = true, -- long messages will be sent to a split
-        inc_rename = false, -- enables an input dialog for inc-rename.nvim
-        lsp_doc_border = false, -- add a border to hover docs and signature help
+        inc_rename = true, -- enables an input dialog for inc-rename.nvim
+        lsp_doc_border = true, -- add a border to hover docs and signature help
       },
     },
     dependencies = {
@@ -629,29 +629,48 @@ require("lazy").setup({
     end,
     dependencies = {
       "folke/which-key.nvim",
-      "williamboman/mason.nvim",
+      {
+        "williamboman/mason.nvim",
+        build = function()
+          local ensure_installed = {
+            "bash-language-server",
+            "clj-kondo",
+            "cljfmt",
+            "clojure_lsp",
+            "docker-compose-language-server",
+            "dockerfile-language-server",
+            "dot-language-server",
+            "elixir-ls",
+            "emmet-ls",
+            "html-lsp",
+            "json-lsp",
+            "lua-language-server",
+            "lua_ls",
+            "markdownlint",
+            "mdformat",
+            "prettierd",
+            "rustywind",
+            "shellcheck",
+            "shfmt",
+            "sql-formatter",
+            "stylua",
+            "tailwindcss-language-server",
+            "taplo",
+            "terraform-ls",
+            "typst-lsp",
+            "typstfmt",
+            "vale",
+            "vim-language-server",
+          }
+          return ":MasonInstall " .. table.concat(ensure_installed, " ")
+        end,
+      },
       "williamboman/mason-lspconfig.nvim",
       "ray-x/lsp_signature.nvim",
-    },
-  },
-
-  {
-    "nvimdev/lspsaga.nvim",
-    opts = {
-      finder = {
-        max_height = 0.6,
-        keys = {
-          toggle_or_open = "<Enter>",
-        },
+      {
+        "smjonas/inc-rename.nvim",
+        opts = {},
       },
-      lightbulb = {
-        virtual_text = false,
-      },
-    },
-    event = "LspAttach",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons",
     },
   },
 
@@ -837,4 +856,7 @@ require("lazy").setup({
       end)
     end,
   },
+
+  -- Lua language in help docs
+  "milisims/nvim-luaref",
 })

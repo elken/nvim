@@ -9,38 +9,60 @@ require("neodev").setup({
   },
 })
 
--- Borrowed from https://github.com/kabouzeid/nvim-lspinstall/wiki
--- keymaps
-local on_attach = function(_client, bufnr)
-  require("lsp_signature").on_attach({
-    bind = true,
-    handler_opts = {
-      border = "single",
-    },
-  }, bufnr)
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
 
-  local function buf_set_option(...)
-    vim.api.nvim_buf_set_option(bufnr, ...)
-  end
+    local function make_opts(desc, ...)
+      return vim.tbl_deep_extend("force", { buffer = ev.buf, desc = desc }, ... or {})
+    end
 
-  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "single" })
-  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "single" })
-  buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
+    require("lsp_signature").on_attach({
+      bind = true,
+      handler_opts = {
+        border = "rounded",
+      },
+    }, ev.buf)
 
-  -- Mappings
-  local function make_opts(desc)
-    return { noremap = true, silent = true, buffer = bufnr, desc = desc }
-  end
+    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
+    -- Enable completion triggered by <c-x><c-o>
+    vim.bo[ev.buf].omnifunc = "v:lua.vim.lsp.omnifunc"
 
-  vim.keymap.set("n", "K", vim.lsp.buf.hover, make_opts("Show documentation for symbol"))
-  vim.keymap.set("n", "ga", "<cmd>Lspsaga code_action<cr>", make_opts("Code Actions"))
-  vim.keymap.set("n", "gd", "<cmd>Lspsaga goto_definition<cr>", make_opts("Go To Definition"))
-  vim.keymap.set("n", "gD", "<cmd>Lspsaga goto_type_definition<cr>", make_opts("Go To Type Definition"))
-  vim.keymap.set("n", "gr", "<cmd>Lspsaga finder<cr>", make_opts("Find References"))
-  vim.keymap.set("n", "gR", "<cmd>Lspsaga rename<cr>", make_opts("Rename Symbol"))
-  vim.keymap.set("n", "]d", vim.lsp.diagnostic.goto_next(), make_opts("Go To Next Error"))
-  vim.keymap.set("n", "[d", vim.lsp.diagnostic.goto_prev(), make_opts("Go To Previous Error"))
-end
+    -- Buffer local mappings based on server support
+    -- When an LSP server is sent initialize, it returns the list of capabilities it supports.
+    -- We use that here to prevent binding things that will just cause errors.
+    if client and client.server_capabilities.declarationProvider then
+      vim.keymap.set("n", "gD", vim.lsp.buf.declaration, make_opts("Go To Declaration"))
+    end
+
+    if client and client.server_capabilities.definitionProvider then
+      vim.keymap.set("n", "gd", vim.lsp.buf.definition, make_opts("Go To Definition"))
+    end
+
+    if client and client.server_capabilities.documentationSymbolProvider then
+      vim.keymap.set("n", "K", vim.lsp.buf.hover, make_opts("Show documentation for symbol"))
+    end
+
+    if client and client.server_capabilities.implementationProvider then
+      vim.keymap.set("n", "gi", vim.lsp.buf.implementation, make_opts("Go To Implementations"))
+    end
+
+    if client and client.server_capabilities.renameProvider then
+      vim.keymap.set("n", "gR", function()
+        return ":IncRename " .. vim.fn.expand("<cword>")
+      end, make_opts("Rename Symbol", { expr = true }))
+    end
+
+    if client and client.server_capabilities.codeActionProvider then
+      vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, make_opts("Code actions"))
+    end
+    if client and client.server_capabilities.referencesProvider then
+      vim.keymap.set("n", "gr", vim.lsp.buf.references, make_opts("Find References"))
+    end
+  end,
+})
 
 function M.setup()
   local capabilities = require("cmp_nvim_lsp").default_capabilities()
@@ -52,34 +74,23 @@ function M.setup()
   require("mason-lspconfig").setup({
     automatic_installation = true,
     ensure_installed = {
-      "bash-language-server",
-      "clj-kondo",
-      "cljfmt",
+      "bashls",
       "clojure_lsp",
-      "docker-compose-language-server",
-      "dockerfile-language-server",
-      "dot-language-server",
-      "elixir-ls",
-      "emmet-ls",
-      "html-lsp",
-      "json-lsp",
-      "lua-language-server",
+      "docker_compose_language_service",
+      "dockerls",
+      "dotls",
+      "elixirls",
+      "emmet_ls",
+      "html",
+      "jsonls",
       "lua_ls",
-      "markdownlint",
-      "mdformat",
-      "prettierd",
-      "rustywind",
-      "shellcheck",
-      "shfmt",
-      "sql-formatter",
-      "stylua",
-      "tailwindcss-language-server",
+      "marksman",
+      "sqlls",
+      "tailwindcss",
       "taplo",
-      "terraform-ls",
-      "typst-lsp",
-      "typstfmt",
-      "vale",
-      "vim-language-server",
+      "terraformls",
+      "typst_lsp",
+      "vimls",
     },
   })
 
@@ -103,12 +114,10 @@ function M.setup()
     end
   end
 
-  local lspconfig = require("lspconfig")
-
   local config = {
-    on_attach = on_attach,
     capabilities = capabilities,
   }
+
   require("mason-lspconfig").setup_handlers({
     function(server_name)
       require("lspconfig")[server_name].setup(config)
