@@ -859,4 +859,41 @@ require("lazy").setup({
 
   -- Lua language in help docs
   "milisims/nvim-luaref",
+
+  -- Allow jumping between "alternative" files (eg tests and their source files)
+  {
+    "rgroli/other.nvim",
+    keys = {
+      {
+        "go",
+        "<cmd>Other<cr>",
+        desc = "Other file",
+      },
+    },
+    config = function()
+      require("other-nvim").setup({
+        mappings = {
+          "laravel",
+          "livewire",
+          -- Lib -> Test
+          {
+            pattern = "/lib/(.*).rb",
+            target = {
+              { context = "test", target = "/spec/%1_spec.rb" },
+            },
+          },
+          -- Test -> Lib
+          {
+            pattern = "/spec/(.*)_spec.rb",
+            target = {
+              { context = "source", target = "/lib/%1.rb" },
+            },
+          },
+        },
+        style = {
+          border = "rounded",
+        },
+      })
+    end,
+  },
 })

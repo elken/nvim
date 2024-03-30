@@ -63,6 +63,7 @@
   "one-small-step-for-vimkind": { "branch": "main", "commit": "cd2500ab74addeed6ac260a008dd649c01d3ba12" },
   "org-bullets.nvim": { "branch": "main", "commit": "3623e86e0fa6d07f45042f7207fc333c014bf167" },
   "orgmode": { "branch": "master", "commit": "c79e06c6aa6b0a9a897ba132aca14c77685fedb4" },
+  "other.nvim": { "branch": "main", "commit": "d36a66af270b63459c080d4589126a06cf56578c" },
   "plenary.nvim": { "branch": "master", "commit": "8aad4396840be7fc42896e3011751b7609ca4119" },
   "popup.nvim": { "branch": "master", "commit": "b7404d35d5d3548a82149238289fa71f7f6de4ac" },
   "project.nvim": { "branch": "main", "commit": "8c6bad7d22eef1b71144b401c9f74ed01526a4fb" },
