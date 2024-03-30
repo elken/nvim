@@ -10,6 +10,9 @@ function M.setup()
       frecency = {
         db_safe_mode = false,
       },
+      lazy_plugins = {
+        lazy_spec_table = vim.fn.stdpath("config") .. "/init.lua",
+      },
     },
   })
 
@@ -24,6 +27,7 @@ function M.setup()
   end
   require("telescope").load_extension("file_browser")
   require("telescope").load_extension("ui-select")
+  require("telescope").load_extension("lazy_plugins")
 end
 
 return M

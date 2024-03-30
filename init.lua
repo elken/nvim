@@ -281,6 +281,7 @@ require("lazy").setup({
     end,
     dependencies = {
       "nvim-lua/plenary.nvim",
+      "polirritmico/telescope-lazy-plugins.nvim",
       "nvim-lua/popup.nvim",
       "ahmedkhalf/project.nvim",
       "nvim-telescope/telescope-file-browser.nvim",

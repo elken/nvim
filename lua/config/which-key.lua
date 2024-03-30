@@ -18,9 +18,10 @@ function M.setup()
       p = { "<cmd>bp<CR>", "Previous buffer" },
       n = { "<cmd>bn<CR>", "Next buffer" },
     },
-    e = {
-      name = "Edit Files",
-      i = { "<cmd>e ~/.config/nvim/init.lua<CR>", "init.lua" },
+    c = {
+      name = "Configuration",
+      f = { "<cmd>lua require('telescope.builtin').find_files({cwd = '" .. vim.fn.stdpath("config") .. "'})<cr>", "Find file" },
+      s = { "<cmd>Telescope lazy_plugins<CR>", "Jump to spec" },
     },
     f = {
       name = "File",
