@@ -903,4 +903,7 @@ require("lazy").setup({
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     opts = {},
   },
+
+  -- Multiple cursors
+  "mg979/vim-visual-multi",
 })
