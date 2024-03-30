@@ -3,6 +3,11 @@
 -- Help documentation can be viewed with `:h <property>`
 local fn = vim.fn
 
+function _G.P(arg)
+  print(vim.inspect(arg))
+  return arg
+end
+
 -- Setup leader key to be space and localleader to be comma
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
