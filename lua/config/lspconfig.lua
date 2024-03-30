@@ -89,6 +89,7 @@ function M.setup()
       "tailwindcss",
       "taplo",
       "terraformls",
+      "tsserver",
       "typst_lsp",
       "vimls",
     },

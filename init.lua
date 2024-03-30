@@ -897,4 +897,10 @@ require("lazy").setup({
       })
     end,
   },
+  -- Useful additions for tailwind
+  {
+    "luckasRanarison/tailwind-tools.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter" },
+    opts = {},
+  },
 })
