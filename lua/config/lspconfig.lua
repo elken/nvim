@@ -18,13 +18,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
       return vim.tbl_deep_extend("force", { buffer = ev.buf, desc = desc }, ... or {})
     end
 
-    require("lsp_signature").on_attach({
-      bind = true,
-      handler_opts = {
-        border = "rounded",
-      },
-    }, ev.buf)
-
     vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
     vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
     -- Enable completion triggered by <c-x><c-o>
@@ -41,9 +34,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.keymap.set("n", "gd", vim.lsp.buf.definition, make_opts("Go To Definition"))
     end
 
-    if client and client.server_capabilities.documentationSymbolProvider then
-      vim.keymap.set("n", "K", vim.lsp.buf.hover, make_opts("Show documentation for symbol"))
-    end
+    vim.keymap.set("n", "K", vim.lsp.buf.hover, make_opts("Show documentation for symbol"))
 
     if client and client.server_capabilities.implementationProvider then
       vim.keymap.set("n", "gi", vim.lsp.buf.implementation, make_opts("Go To Implementations"))

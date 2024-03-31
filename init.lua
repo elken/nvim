@@ -3,6 +3,7 @@
 -- Help documentation can be viewed with `:h <property>`
 local fn = vim.fn
 
+-- From https://github.com/tjdevries/config_manager/blob/b1bd25a063326d4a1d35439c2c3af42c465347ab/xdg_config/nvim/lua/tj/globals.lua
 -- Save the local require here
 local require = require
 
@@ -683,7 +684,6 @@ require("lazy").setup({
         end,
       },
       "williamboman/mason-lspconfig.nvim",
-      "ray-x/lsp_signature.nvim",
       {
         "smjonas/inc-rename.nvim",
         opts = {},
