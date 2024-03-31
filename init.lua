@@ -37,7 +37,6 @@ vim.g.maplocalleader = ","
 vim.g.did_load_filetypes = 1
 vim.opt.termguicolors = true
 vim.g.formatoptions = "qrn1"
-vim.opt.guifont = "Iosevka Nerd Font Mono"
 vim.opt.showmode = false
 vim.opt.timeoutlen = 300
 vim.opt.updatetime = 100
@@ -156,6 +155,7 @@ vim.opt.rtp:prepend(lazypath)
 
 -- NOTE: Start of plugin config
 require("lazy").setup({
+  { import = "plugins" },
   -- Most important package; the colour scheme
   "EdenEast/nightfox.nvim",
 
