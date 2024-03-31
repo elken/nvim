@@ -901,7 +901,11 @@ require("lazy").setup({
   {
     "luckasRanarison/tailwind-tools.nvim",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
-    opts = {},
+    opts = {
+      document_color = {
+        kind = vim.version().minor < 10 and "foreground" or "inline",
+      },
+    },
   },
 
   -- Multiple cursors
