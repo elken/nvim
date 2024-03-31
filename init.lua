@@ -36,6 +36,8 @@ vim.opt.undofile = true
 vim.opt.undodir = fn.stdpath("data") .. "undo"
 vim.opt.shell = "/bin/zsh"
 -- vim.opt.cursorline = true
+vim.opt.winblend = 30
+vim.opt.pumblend = 30
 
 -- Ignore case when searching if applicable
 vim.opt.ignorecase = true

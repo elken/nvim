@@ -2,6 +2,9 @@ local M = {}
 
 function M.setup()
   require("telescope").setup({
+    defaults = {
+      winblend = 70,
+    },
     extensions = {
       file_browser = {
         theme = "ivy",
