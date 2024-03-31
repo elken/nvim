@@ -926,4 +926,8 @@ require("lazy").setup({
 
   -- Multiple cursors
   "mg979/vim-visual-multi",
+}, {
+  dev = {
+    path = "~/build/nvim/plugins",
+  },
 })
