@@ -3,11 +3,33 @@
 -- Help documentation can be viewed with `:h <property>`
 local fn = vim.fn
 
-function _G.P(arg)
-  print(vim.inspect(arg))
-  return arg
+-- Save the local require here
+local require = require
+
+local ok, plenary_reload = pcall(require, "plenary.reload")
+local reloader = require
+if ok then
+  reloader = plenary_reload.reload_module
 end
 
+P = function(v)
+  print(vim.inspect(v))
+  return v
+end
+
+RELOAD = function(...)
+  local ok, plenary_reload = pcall(require, "plenary.reload")
+  if ok then
+    reloader = plenary_reload.reload_module
+  end
+
+  return reloader(...)
+end
+
+R = function(name)
+  RELOAD(name)
+  return require(name)
+end
 -- Setup leader key to be space and localleader to be comma
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
