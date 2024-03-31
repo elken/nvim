@@ -34,14 +34,6 @@ end
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
--- Only run these settings once
--- if not packer_plugins then
---   vim.api.nvim_set_keymap("", "<Space>", "<Nop>", { noremap = true, silent = true })
---   vim.g.mapleader = " "
---   vim.g.maplocalleader = " "
---   vim.opt.termguicolors = true
--- end
-
 vim.g.did_load_filetypes = 1
 vim.opt.termguicolors = true
 vim.g.formatoptions = "qrn1"
@@ -57,7 +49,7 @@ vim.opt.virtualedit = "block"
 vim.opt.undofile = true
 vim.opt.undodir = fn.stdpath("data") .. "undo"
 vim.opt.shell = "/bin/zsh"
--- vim.opt.cursorline = true
+vim.opt.cursorline = true
 vim.opt.winblend = 30
 vim.opt.pumblend = 30
 
