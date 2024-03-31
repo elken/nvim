@@ -507,9 +507,10 @@ require("lazy").setup({
       org.setup_ts_grammar()
 
       require("org-bullets").setup({
+        concealcursor = true,
         symbols = {
           list = "‣",
-          headlines = "› ",
+          headlines = { "› " },
           checkboxes = {
             half = { "", "OrgTSCheckboxHalfChecked" },
             done = { "✓ ", "OrgDone" },
@@ -520,7 +521,7 @@ require("lazy").setup({
       require("headlines").setup()
     end,
     dependencies = {
-      "akinsho/org-bullets.nvim",
+      "nvim-orgmode/org-bullets.nvim",
       "lukas-reineke/headlines.nvim",
     },
   },
