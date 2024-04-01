@@ -1,0 +1,27 @@
+-- FLutter tools, don't really use it anymore
+return {
+  -- "akinsho/flutter-tools.nvim",
+  -- config = function()
+  --   require("flutter-tools").setup({
+  --     widget_guides = {
+  --       enabled = true,
+  --     },
+  --     lsp = {
+  --       color = {
+  --         enabled = true,
+  --       },
+  --     },
+  --     debugger = {
+  --       enabled = true,
+  --       run_via_dap = true,
+  --       register_configurations = function(_)
+  --         require("dap").configurations.dart = {}
+  --         require("dap.ext.vscode").load_launchjs()
+  --         -- require("dap.ext.vscode").load_launchjs(vim.lsp.buf.list_workspace_folders()[1] .. "/.vscode/launch.json")
+  --       end,
+  --     },
+  --   })
+  -- end,
+  -- dependencies = "nvim-lua/plenary.nvim",
+  -- after = "nvim-dap",
+}
