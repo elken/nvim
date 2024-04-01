@@ -33,7 +33,7 @@ return {
   config = function()
     require("telescope").setup({
       defaults = {
-        winblend = 70,
+        winblend = vim.g.neovide and 70 or 0,
       },
       extensions = {
         file_browser = {
