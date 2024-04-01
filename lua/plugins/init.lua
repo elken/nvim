@@ -25,7 +25,14 @@ Otherwise they'll end up as a module under `lua/plugins` here.
 return {
   -- Most important package; the colour scheme
   -- This gets set in `after/plugin/colors.lua`
-  "EdenEast/nightfox.nvim",
+  {
+    "EdenEast/nightfox.nvim",
+    lazy = false,
+    priority = 1000,
+    config = function()
+      vim.cmd([[colorscheme nordfox]])
+    end,
+  },
 
   -- Use TS to colourize matching delimiters. Not just brackets, HTML tags, do .. end in Lua/Elixir, etc
   {

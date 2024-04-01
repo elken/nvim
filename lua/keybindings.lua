@@ -9,9 +9,9 @@ vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
 
 -- Global leader binds
 vim.keymap.set("n", "<leader>;", "<cmd>nohl<cr>", { desc = "Turn off search highlight" })
-vim.keymap.set("n", "<leader>l", ":lua ", { desc = "Open lua prompt"})
-vim.keymap.set("n", "<leader>!", ":! ", { desc = "Open shell prompt"})
-vim.keymap.set("n", "<leader>%", "<cmd>so %<cr>", { desc = "Reload current file"})
+vim.keymap.set("n", "<leader>l", ":lua ", { desc = "Open lua prompt" })
+vim.keymap.set("n", "<leader>!", ":! ", { desc = "Open shell prompt" })
+vim.keymap.set("n", "<leader>%", "<cmd>so %<cr>", { desc = "Reload current file" })
 
 -- [B]uffer
 vim.keymap.set("n", "<leader>bd", "<cmd>Bdelete<cr>", { desc = "Kill buffer" })
@@ -64,5 +64,5 @@ vim.keymap.set("n", "<leader>gu", "<cmd>Gitsigns blame_line<cr>", { desc = "Undo
 vim.keymap.set("n", "<leader>gU", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset buffer index" })
 
 -- [H]elp/quick prompts
-vim.keymap.set("n", "<leader>ht", "<cmd>Telescope help_tags<cr>", { desc = "Search help tags"})
-vim.keymap.set("n", "<leader>hh", ":h ", { desc = "Open help prompt"})
+vim.keymap.set("n", "<leader>ht", "<cmd>Telescope help_tags<cr>", { desc = "Search help tags" })
+vim.keymap.set("n", "<leader>hh", ":h ", { desc = "Open help prompt" })

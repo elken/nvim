@@ -9,6 +9,7 @@ We leverage a fantastic package here called Mason to pull in the various servers
 
 Want to add a new language? Add the server name to `ensure_installed`, install it in Mason manually (or restart) then restart so the new language will be configured at startup and ... that's it.
 --]]
+
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("UserLspConfig", {}),
   callback = function(ev)
@@ -67,6 +68,7 @@ return {
         types = true,
       },
     })
+
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
     -- Configure lua language server for neovim development
@@ -146,50 +148,77 @@ return {
   dependencies = {
     "folke/which-key.nvim",
     {
+      "nvimtools/none-ls.nvim",
+      config = function()
+        local null_ls = require("null-ls")
+
+        local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
+        local formatting = null_ls.builtins.formatting
+        local completion = null_ls.builtins.completion
+        local diagnostics = null_ls.builtins.diagnostics
+
+        null_ls.setup({
+          -- Format on save
+          on_attach = function(client, bufnr)
+            if client.supports_method("textDocument/formatting") then
+              vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+              vim.api.nvim_create_autocmd("BufWritePre", {
+                group = augroup,
+                buffer = bufnr,
+                callback = function()
+                  vim.lsp.buf.format({
+                    async = false,
+                    filter = function(client)
+                      return client.name == "null-ls"
+                    end,
+                  })
+                end,
+              })
+            end
+          end,
+          debug = true,
+          sources = {
+            formatting.stylua,
+            formatting.prettier,
+            diagnostics.selene,
+            completion.spell,
+          },
+        })
+      end,
+    },
+    {
+      "jay-babu/mason-null-ls.nvim",
+      opts = {
+        automatic_installation = true,
+        ensure_installed = {
+          "clj-kondo",
+          "cljfmt",
+          "markdownlint",
+          "mdformat",
+          "prettierd",
+          "rustywind",
+          "selene",
+          "shellcheck",
+          "shfmt",
+          "sql-formatter",
+          "stylua",
+          "typstfmt",
+          "vale",
+        },
+      },
+    },
+    {
       "williamboman/mason.nvim",
       opts = {
         ui = {
           border = "rounded",
         },
       },
-      build = function()
-        local ensure_installed = {
-          "bash-language-server",
-          "clj-kondo",
-          "cljfmt",
-          "clojure_lsp",
-          "docker-compose-language-server",
-          "dockerfile-language-server",
-          "dot-language-server",
-          "elixir-ls",
-          "emmet-ls",
-          "html-lsp",
-          "json-lsp",
-          "lua-language-server",
-          "lua_ls",
-          "markdownlint",
-          "mdformat",
-          "prettierd",
-          "rustywind",
-          "shellcheck",
-          "shfmt",
-          "sql-formatter",
-          "stylua",
-          "tailwindcss-language-server",
-          "taplo",
-          "terraform-ls",
-          "typst-lsp",
-          "typstfmt",
-          "vale",
-          "vim-language-server",
-        }
-        return ":MasonInstall " .. table.concat(ensure_installed, " ")
-      end,
-    },
-    "williamboman/mason-lspconfig.nvim",
-    {
-      "smjonas/inc-rename.nvim",
-      opts = {},
+      "williamboman/mason-lspconfig.nvim",
+      {
+        "smjonas/inc-rename.nvim",
+        opts = {},
+      },
     },
   },
 }
