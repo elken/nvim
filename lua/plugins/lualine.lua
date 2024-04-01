@@ -1,5 +1,3 @@
-local M = {}
-
 local function lsp_in_use()
   return table.maxn(vim.lsp.get_active_clients()) > 0
 end
@@ -24,8 +22,9 @@ local function lsp_servers()
   return (table.concat(result, ","))
 end
 
-function M.setup()
-  require("lualine").setup({
+return {
+  "nvim-lualine/lualine.nvim",
+  opts = {
     options = {
       theme = "nordfox",
       section_separators = { left = "", right = "" },
@@ -124,7 +123,9 @@ function M.setup()
       "toggleterm",
       "fugitive",
     },
-  })
-end
-
-return M
+  },
+  dependencies = {
+    "kyazdani42/nvim-web-devicons",
+    "rlch/github-notifications.nvim",
+  },
+}
