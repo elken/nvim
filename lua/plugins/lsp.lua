@@ -57,7 +57,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 return {
   "neovim/nvim-lspconfig",
-  init = function()
+  config = function()
     require("neoconf").setup({})
     require("neodev").setup({
       library = {
@@ -67,8 +67,6 @@ return {
         types = true,
       },
     })
-  end,
-  config = function()
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
     -- Configure lua language server for neovim development
