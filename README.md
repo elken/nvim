@@ -6,7 +6,7 @@ There are many like it; but this config is mine.
 
 A modular setup based on [lazy.nvim](https://github.com/folke/lazy.nvim)'s ability to load things "lazily" based on specific conditions, key invocations or commands.
 
-Due to how fast neovim is already, I've taken a very ... Lazy approach, it starts up in several hundred milliseconds and that's plenty good enough for me.
+Due to how fast neovim is already, I've taken a very ... Lazy approach, it starts up in about 80 milliseconds and that's plenty good enough for me.
 
 ## Dependencies
 Nothing concrete, I will in time add a healthcheck setup but for now just:
