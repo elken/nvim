@@ -2,23 +2,31 @@
 
 ![preview](.github/assets/preview.png)
 
-Seems like this is just one refactor away from being good...
+There are many like it; but this config is mine.
 
-In any case, I'm pretty happy with how this has come together now so I can
-finally add "some" docs.
+A modular setup based on [lazy.nvim](https://github.com/folke/lazy.nvim)'s ability to load things "lazily" based on specific conditions, key invocations or commands.
 
-Thanks to lazy.nvim making a more modular configuration possible, that'll be
-the next step. Breaking up the massive table in init.lua into multiple files
-and _then_ this will be documented.
+Due to how fast neovim is already, I've taken a very ... Lazy approach, it starts up in several hundred milliseconds and that's plenty good enough for me.
+
+## Dependencies
+Nothing concrete, I will in time add a healthcheck setup but for now just:
+
+- `neovim` 0.9+
+- `git`
+- `ripgrep`
+- `ranger`
+- `gh`
+- `xdg-mime`/`xdg-query` (Linux only)
+- A C compiler
+- `make`
+
+Off the top of my head
 
 ## Usage
 
-Clone to $XDG_CONFIG_HOME/nvim (usually ~/.config/nvim) and open nvim.
+Clone to `$XDG_CONFIG_HOME/nvim` (usually `~/.config/nvim`) and open nvim. Lazy will bootstrap everything plugin-wise and once it's done you're good to go!
 
-See `:checkhealth` for missing programs, I should probably add a few of my own
-for this config, but it's pretty much just `git` and `rg`.
-
-This also has setup for both Neovide and regular terminal; the former is where
+This also has setup for both [Neovide](https://neovide.dev/) and regular terminal; the former is where
 most of my "project" work happens. I use an XDG desktop file like the below to
 set this up:
 
@@ -38,7 +46,7 @@ MimeType=text/english;text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;tex
 ```
 
 The `XCURSOR_THEME` setup is needed to ensure that my cursor theme carries
-over, then we launch via ZSH to ensure that `$PATH` and the like are configured
+over, then we launch via `zsh` to ensure that `$PATH` and the like are configured
 correctly.
 
 As for terminal, that'd be [wezterm](https://wezfurlong.org/wezterm/). Hard to
