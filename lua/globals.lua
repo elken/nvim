@@ -126,6 +126,27 @@ function _G.get_project_root()
   return require("project_nvim.project").get_project_root()
 end
 
+-- Change the default diagnostic signs used (requires a nerd font or fallback)
+local signs = {
+  Error = "󰅚 ",
+  Warn = "󰀪 ",
+  Hint = "󰌶 ",
+  Info = " ",
+}
+
+-- Sign column changes
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+end
+
+-- Virtual text changes
+vim.diagnostic.config({
+  virtual_text = {
+    prefix = signs.Warn,
+  },
+})
+
 --[[
 Autocommands are a way for neovim to run specific code on specific events.
 

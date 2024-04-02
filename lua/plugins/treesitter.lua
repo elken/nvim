@@ -47,6 +47,7 @@ return {
         "lua",
         "luadoc",
         "markdown",
+        "markdown_inline",
         "passwd",
         "properties",
         "query",

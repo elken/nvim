@@ -34,6 +34,18 @@ return {
       desc = "Lazydocker",
     },
     {
+      "<leader>gG",
+      function()
+        require("toggleterm.terminal").Terminal
+          :new({
+            cmd = "lazygit --work-tree ~ --git-dir ~/.local/share/yadm/repo.git",
+            direction = "float",
+          })
+          :toggle()
+      end,
+      desc = "Lazygit for YADM",
+    },
+    {
       "<leader>gg",
       function()
         require("toggleterm.terminal").Terminal

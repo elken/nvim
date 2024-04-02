@@ -59,6 +59,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 return {
   "neovim/nvim-lspconfig",
   config = function()
+    require("lspconfig.ui.windows").default_options.border = "rounded"
     require("neoconf").setup({})
     require("neodev").setup({
       library = {
@@ -90,6 +91,7 @@ return {
         "lua_ls",
         "marksman",
         "sqlls",
+        "solargraph",
         "tailwindcss",
         "taplo",
         "terraformls",
@@ -127,6 +129,7 @@ return {
       function(server_name)
         require("lspconfig")[server_name].setup(config)
       end,
+      ["rubocop"] = function() end,
       ["clojure_lsp"] = function()
         config.handlers = {
           ["window/logMessage"] = on_log_message,
@@ -178,9 +181,15 @@ return {
           end,
           debug = true,
           sources = {
+            -- Formatters
             formatting.stylua,
             formatting.prettier,
+            formatting.rubocop,
+
+            -- Linters
             diagnostics.selene,
+
+            -- Extra completion
             completion.spell,
           },
         })
@@ -190,12 +199,14 @@ return {
       "jay-babu/mason-null-ls.nvim",
       opts = {
         automatic_installation = true,
+        -- TODO Derive this list from the sources in none-ls
         ensure_installed = {
           "clj-kondo",
           "cljfmt",
           "markdownlint",
           "mdformat",
           "prettierd",
+          "rubocop",
           "rustywind",
           "selene",
           "shellcheck",
