@@ -8,27 +8,29 @@ return {
       desc = "Other file",
     },
   },
-  opts = {
-    mappings = {
-      "laravel",
-      "livewire",
-      -- Lib -> Test
-      {
-        pattern = "/lib/(.*).rb",
-        target = {
-          { context = "test", target = "/spec/%1_spec.rb" },
+  config = function()
+    require("other-nvim").setup({
+      mappings = {
+        "laravel",
+        "livewire",
+        -- Lib -> Test
+        {
+          pattern = "/lib/(.*).rb",
+          target = {
+            { context = "test", target = "/spec/%1_spec.rb" },
+          },
+        },
+        -- Test -> Lib
+        {
+          pattern = "/spec/(.*)_spec.rb",
+          target = {
+            { context = "source", target = "/lib/%1.rb" },
+          },
         },
       },
-      -- Test -> Lib
-      {
-        pattern = "/spec/(.*)_spec.rb",
-        target = {
-          { context = "source", target = "/lib/%1.rb" },
-        },
+      style = {
+        border = "rounded",
       },
-    },
-    style = {
-      border = "rounded",
-    },
-  },
+    })
+  end,
 }
