@@ -55,7 +55,6 @@ return {
         "ruby",
         "sql",
         "ssh_config",
-        "swift",
         "tmux",
         "toml",
         "typescript",
