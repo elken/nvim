@@ -171,8 +171,8 @@ return {
                 callback = function()
                   vim.lsp.buf.format({
                     async = false,
-                    filter = function(client)
-                      return client.name == "null-ls"
+                    filter = function(format_client)
+                      return format_client.name == "null-ls"
                     end,
                   })
                 end,
@@ -190,7 +190,6 @@ return {
             diagnostics.selene,
 
             -- Extra completion
-            completion.spell,
           },
         })
       end,
