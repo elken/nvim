@@ -113,19 +113,14 @@ if vim.fn.executable("rg") > 0 then
 end
 
 -- Firenvim setup
--- function _G.FirenvimSetup(channel)
---   local channel_info = vim.api.nvim_get_chan_info(channel)
---   if channel_info.client and channel_info.client.name == "Firenvim" then
---     vim.opt.laststatus = 0
---   end
--- end
-
--- vim.cmd("autocmd UIEnter * call v:lua.FirenvimSetup(deepcopy(v:event.chan))")
-
--- Get a project root from vimL
-function _G.get_project_root()
-  return require("project_nvim.project").get_project_root()
+function _G.FirenvimSetup(channel)
+  local channel_info = vim.api.nvim_get_chan_info(channel)
+  if channel_info.client and channel_info.client.name == "Firenvim" then
+    vim.opt.laststatus = 0
+  end
 end
+
+vim.cmd("autocmd UIEnter * call v:lua.FirenvimSetup(deepcopy(v:event.chan))")
 
 -- Change the default diagnostic signs used (requires a nerd font or fallback)
 local signs = {
