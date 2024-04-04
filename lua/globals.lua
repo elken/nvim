@@ -15,21 +15,21 @@ if ok then
   reloader = plenary_reload.reload_module
 end
 
-P = function(v)
+_G.P = function(v)
   print(vim.inspect(v))
   return v
 end
 
-RELOAD = function(...)
-  local ok, plenary_reload = pcall(require, "plenary.reload")
-  if ok then
-    reloader = plenary_reload.reload_module
+local RELOAD = function(...)
+  local _ok, _plenary_reload = pcall(require, "plenary.reload")
+  if _ok then
+    reloader = _plenary_reload.reload_module
   end
 
   return reloader(...)
 end
 
-R = function(name)
+_G.R = function(name)
   RELOAD(name)
   return require(name)
 end
@@ -52,6 +52,7 @@ vim.opt.undofile = true
 vim.opt.undodir = vim.fn.stdpath("data") .. "undo"
 vim.opt.shell = "/bin/zsh"
 vim.opt.cursorline = true
+vim.opt.autochdir = true
 
 -- Spelling is gud sumtims
 vim.opt.spelllang = "en_gb"
