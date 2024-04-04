@@ -1,4 +1,5 @@
 -- Long-time muscle memory
+vim.cmd [[cabbrev wq execute "Format sync" <bar> wq]]
 vim.keymap.set("n", "<C-s>", "<cmd>w<cr>", { silent = true, desc = "Save buffer" })
 
 -- Slightly faster window navigation
@@ -12,6 +13,7 @@ vim.keymap.set("n", "<leader>;", "<cmd>nohl<cr>", { desc = "Turn off search high
 vim.keymap.set("n", "<leader>l", ":lua ", { desc = "Open lua prompt" })
 vim.keymap.set("n", "<leader>!", ":! ", { desc = "Open shell prompt" })
 vim.keymap.set("n", "<leader>%", "<cmd>so %<cr>", { desc = "Reload current file" })
+vim.keymap.set("n", "<leader>-", "<cmd>FormatToggle<cr>", { desc = "Toggle autoformat status" })
 
 -- [B]uffer
 vim.keymap.set("n", "<leader>bd", "<cmd>Bdelete<cr>", { desc = "Kill buffer" })
