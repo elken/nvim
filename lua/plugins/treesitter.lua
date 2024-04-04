@@ -105,7 +105,8 @@ return {
             ["isc"] = "@scopename.inner",
             ["iB"] = "@block.inner",
             ["aB"] = "@block.outer",
-            ["p"] = "@parameter.inner",
+            ["ip"] = "@parameter.inner",
+            ["ap"] = "@parameter.outer",
           },
         },
 
