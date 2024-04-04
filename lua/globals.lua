@@ -117,6 +117,20 @@ function _G.FirenvimSetup(channel)
   local channel_info = vim.api.nvim_get_chan_info(channel)
   if channel_info.client and channel_info.client.name == "Firenvim" then
     vim.opt.laststatus = 0
+
+    vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+      nested = true,
+      callback = function()
+        if vim.g.timer_started == true then
+          return
+        end
+        vim.g.timer_started = true
+        vim.fn.timer_start(3000, function()
+          vim.g.timer_started = false
+          vim.cmd("write")
+        end)
+      end,
+    })
   end
 end
 
