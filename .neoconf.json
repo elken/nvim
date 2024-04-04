@@ -13,6 +13,8 @@
     }
   },
   "lspconfig": {
-    "sumneko_lua": {}
+    "lua_ls": {
+      "Lua.format.enable": false
+    }
   }
 }
