@@ -19,14 +19,22 @@ vim.keymap.set("n", "<leader>bp", "<cmd>bp<cr>", { desc = "Previous buffer" })
 vim.keymap.set("n", "<leader>bn", "<cmd>bn<cr>", { desc = "Next buffer" })
 
 -- [F]ile
-vim.keymap.set("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New file" })
-
 local function yank_to_clipboard(value)
   return function()
     vim.fn.setreg("+", vim.fn.expand(value))
   end
 end
 
+vim.keymap.set("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New file" })
+vim.keymap.set("n", "<leader>fd", function()
+  local current_file = vim.fn.expand("%")
+  local choice = vim.fn.confirm("Delete " .. current_file .. "?\n\nThis is an irrevocable action.", "&No\n&Yes")
+
+  if choice == 2 then
+    os.remove(current_file)
+    vim.cmd("Bdelete")
+  end
+end, { desc = "Delete current file" })
 vim.keymap.set("n", "<leader>fy", yank_to_clipboard("%:p"), { desc = "Yank file path" })
 vim.keymap.set("n", "<leader>fY", yank_to_clipboard("%:~:."), { desc = "Yank file path" })
 
