@@ -15,7 +15,6 @@ return {
   end,
   lazy = not vim.g.started_by_firenvim,
   config = function()
-    -- _Soon_ this can be removed
     vim.api.nvim_create_autocmd({ "BufEnter" }, {
       pattern = "(reddit|github).com_*.txt",
       command = "set filetype=markdown",

@@ -20,7 +20,7 @@ return {
 
     -- Main treesitter config
     require("nvim-treesitter.configs").setup({
-      ensure_installed = {
+      ensure_installed = vim.g.started_by_firenvim and {} or {
         "c",
         "clojure",
         "commonlisp",

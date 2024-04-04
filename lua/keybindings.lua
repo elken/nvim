@@ -52,7 +52,10 @@ local function open_in_folder_label()
     return "Open current directory in Finder"
   end
 
-  local default_fm = vim.fn.system({ "xdg-mime", "query", "default", "inode/directory" })
+  local default_fm = "file browser"
+  if vim.fn.executable("xdg-mime") == 1 then
+     default_fm = vim.fn.system({ "xdg-mime", "query", "default", "inode/directory" })
+  end
 
   return string.format("Open current directory in %s", default_fm:gsub(".desktop", ""):gsub("\n", ""):gsub("org.gnome.", ""))
 end
