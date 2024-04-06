@@ -1,5 +1,4 @@
 -- Long-time muscle memory
-vim.cmd [[cabbrev wq execute "Format sync" <bar> wq]]
 vim.keymap.set("n", "<C-s>", "<cmd>w<cr>", { silent = true, desc = "Save buffer" })
 
 -- Slightly faster window navigation
@@ -13,7 +12,7 @@ vim.keymap.set("n", "<leader>;", "<cmd>nohl<cr>", { desc = "Turn off search high
 vim.keymap.set("n", "<leader>l", ":lua ", { desc = "Open lua prompt" })
 vim.keymap.set("n", "<leader>!", ":! ", { desc = "Open shell prompt" })
 vim.keymap.set("n", "<leader>%", "<cmd>so %<cr>", { desc = "Reload current file" })
-vim.keymap.set("n", "<leader>-", "<cmd>FormatToggle<cr>", { desc = "Toggle autoformat status" })
+vim.keymap.set("n", "<leader>-", "<cmd>LspFormatToggle<cr>", { desc = "Toggle autoformat status" })
 
 -- [B]uffer
 vim.keymap.set("n", "<leader>bd", "<cmd>Bdelete<cr>", { desc = "Kill buffer" })
@@ -56,7 +55,7 @@ local function open_in_folder_label()
 
   local default_fm = "file browser"
   if vim.fn.executable("xdg-mime") == 1 then
-     default_fm = vim.fn.system({ "xdg-mime", "query", "default", "inode/directory" })
+    default_fm = vim.fn.system({ "xdg-mime", "query", "default", "inode/directory" })
   end
 
   return string.format("Open current directory in %s", default_fm:gsub(".desktop", ""):gsub("\n", ""):gsub("org.gnome.", ""))

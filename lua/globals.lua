@@ -138,10 +138,10 @@ vim.cmd("autocmd UIEnter * call v:lua.FirenvimSetup(deepcopy(v:event.chan))")
 
 -- Change the default diagnostic signs used (requires a nerd font or fallback)
 local signs = {
-  Error = "󰅚 ",
-  Warn = "󰀪 ",
-  Hint = "󰌶 ",
-  Info = " ",
+  Error = " ",
+  Warn = " ",
+  Hint = " ",
+  Info = " ",
 }
 
 -- Sign column changes
@@ -153,7 +153,7 @@ end
 -- Virtual text changes
 vim.diagnostic.config({
   virtual_text = {
-    prefix = signs.Warn,
+    prefix = " " .. signs.Warn,
   },
 })
 
@@ -164,26 +164,12 @@ They're extremely useful for doing things say when a buffer is opened or saved, 
 
 As always, consult the help docs `:h` as they will do a much more superior job than I.
 --]]
-local user_event = vim.api.nvim_create_augroup("UserGroup", {})
 
 -- Jump to last line when opening a file
--- From vim defaults.vim
--- ---
--- When editing a file, always jump to the last known cursor position.
--- Don't do it when the position is invalid, when inside an event handler
--- (happens when dropping a file on gvim) and for a commit message (it's
--- likely a different one than last time).
-vim.api.nvim_create_autocmd("BufWinEnter", {
-  group = user_event,
-  callback = function(args)
-    local valid_line = vim.fn.line([['"]]) >= 1 and vim.fn.line([['"]]) < vim.fn.line("$")
-    local not_commit = vim.b[args.buf].filetype ~= "commit"
-
-    if valid_line and not_commit then
-      vim.cmd([[normal! g`"zvzz]])
-    end
-  end,
-})
+-- The more I touch this to try and make it work with Lua API, the more it randomly breaks so I concede.
+vim.cmd([[
+    au BufWinEnter * if line("'\"") > 0 && line("'\"") <= line("$") | execute 'normal! g`"zvzz' | endif
+]])
 
 -- Make containing directory if missing
 vim.api.nvim_create_autocmd("BufWritePre", {

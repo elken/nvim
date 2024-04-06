@@ -1,20 +1,24 @@
 --[[
 LSP is short for "Language Server Protocol" and in essence, it defines a standard for tools to interact with a codebase.
 
-Using a server-client arcitecture, a "server" can be written in any language but MUST implement the protocol. Then any client, which would be a plugin in your editor, can interact with that server to gain more context about the rest of the project.
+Using a server-client architecture, a "server" can be written in any language but MUST implement the protocol. Then any client, which would be a plugin in your editor, can interact with that server to gain more context about the rest of the project.
 
-Similar to how treesitter works with providing an AST of the single buffer, LSP works in the opposite direction and provdies a kind-of tree of the entire project; which symbol maps to where, where it comes from, where it's used etc.
+Similar to how tree-sitter works with providing an AST of the single buffer, LSP works in the opposite direction and provides a kind-of tree of the entire project; which symbol maps to where, where it comes from, where it's used etc.
 
-We leverage a fantastic package here called Mason to pull in the various servers we need as well as linters, formatters, etc and use the servers we pull from Mason to seed the list of servers we autoconfigure.
+We leverage a fantastic package here called Mason to pull in the various servers we need as well as linters, formatters, etc. and use the servers we pull from Mason to seed the list of servers we autoconfigure.
 
-Want to add a new language? Add the server name to `ensure_installed`, install it in Mason manually (or restart) then restart so the new language will be configured at startup and ... that's it.
+Want to add a new language? Add the server name to `ensure_installed`, install it in Mason manually (or restart) then restart so the new language will be configured at start-up and ... that's it.
 --]]
 
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("UserLspConfig", {}),
   callback = function(ev)
     local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    require("lsp-format").on_attach(client, ev.buf)
+    -- require("lsp-format").on_attach(client, ev.buf)
+
+    if client.server_capabilities.documentSymbolProvider then
+      require("nvim-navic").attach(client, ev.buf)
+    end
 
     local function make_opts(desc, ...)
       return vim.tbl_deep_extend("force", { buffer = ev.buf, desc = desc }, ... or {})
@@ -140,9 +144,7 @@ return {
       ["lua_ls"] = function()
         config.settings = {
           Lua = {
-            completion = {
-              callSnippet = "Replace",
-            },
+            completion = {},
           },
         }
         require("lspconfig")["lua_ls"].setup(config)
@@ -150,6 +152,7 @@ return {
     })
   end,
   dependencies = {
+    "SmiteshP/nvim-navic",
     "folke/which-key.nvim",
     {
       "lukas-reineke/lsp-format.nvim",

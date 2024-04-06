@@ -23,11 +23,15 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Last, bootstrap everything
-require("lazy").setup("plugins", {
+require("lazy").setup("specs", {
   dev = {
     path = "~/build/nvim/plugins",
   },
   ui = {
     border = vim.g.neovide and "rounded" or "none",
+  },
+  checker = {
+    enabled = true,
+    notify = false,
   },
 })
