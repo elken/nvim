@@ -376,7 +376,7 @@ return {
           end
           local ft_icon, ft_color = devicons.get_icon_color(filename)
           local modified = vim.bo[props.buf].modified
-          local ro_icon = (not vim.bo.modifiable or vim.bo.readonly) and { "  ", guifg = palette.orange.base } or ""
+          local ro_icon = (not vim.bo[props.buf].modifiable or vim.bo[props.buf].readonly) and { "  ", guifg = palette.orange.base } or ""
           local res = {
             ro_icon,
             ft_icon and { " ", ft_icon, "  ", guibg = ft_color, guifg = helpers.contrast_color(ft_color) } or "",
