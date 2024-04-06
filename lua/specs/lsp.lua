@@ -153,10 +153,6 @@ return {
     },
     "folke/which-key.nvim",
     {
-      "lukas-reineke/lsp-format.nvim",
-      opts = {},
-    },
-    {
       "nvimtools/none-ls.nvim",
       config = function()
         local null_ls = require("null-ls")
