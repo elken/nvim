@@ -1,3 +1,11 @@
+--[[
+Module based on https://github.com/lukas-reineke/lsp-format.nvim
+
+Creates a system that lets me control automatic formatting based on LSP by creating a global table to track whether or not a specific buffer ID has been added. Over time, this may grow to handling default file paths to "always" ignore but my usage for now is fine.
+
+Thanks to autocommands, we can also call "redrawstatus" to update the modeline segment that denotes whether autoformatting is enabled or not.
+--]]
+
 local M = {}
 M.disabled_buffers = {}
 
@@ -14,20 +22,8 @@ end
 
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = vim.api.nvim_create_augroup("LspFormat", { clear = true }),
-  callback = function()
-    if M.is_enabled() then
-      vim.lsp.buf.format({ async = false })
-    end
-  end,
+  command = "LspFormat",
 })
-
-vim.api.nvim_create_user_command("LspFormatDisable", function()
-  set_buffer(true)
-end, {})
-
-vim.api.nvim_create_user_command("LspFormatEnable", function()
-  set_buffer(nil)
-end, {})
 
 vim.api.nvim_create_user_command("LspFormatToggle", function()
   set_buffer(M.is_enabled() and true or nil)
@@ -47,5 +43,12 @@ vim.api.nvim_create_user_command("LspFormat", function()
     vim.lsp.buf.format({ async = false })
   end
 end, {})
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "LspFormatToggle",
+  callback = vim.schedule_wrap(function()
+    vim.cmd("redrawstatus")
+  end),
+})
 
 return M
