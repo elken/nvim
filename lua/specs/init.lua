@@ -74,15 +74,6 @@ return {
   -- Increment dates/times
   "tpope/vim-speeddating",
 
-  -- Hands-free setup to get LSP for your config
-  {
-    "folke/neodev.nvim",
-    lazy = false,
-    dependencies = {
-      "folke/neoconf.nvim",
-    },
-  },
-
   -- Git changes in the gutter
   {
     "lewis6991/gitsigns.nvim",

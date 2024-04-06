@@ -16,7 +16,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local client = vim.lsp.get_client_by_id(ev.data.client_id)
     -- require("lsp-format").on_attach(client, ev.buf)
 
-    if client.server_capabilities.documentSymbolProvider then
+    if client and client.server_capabilities.documentSymbolProvider then
       require("nvim-navic").attach(client, ev.buf)
     end
 
@@ -64,16 +64,15 @@ vim.api.nvim_create_autocmd("LspAttach", {
 return {
   "neovim/nvim-lspconfig",
   config = function()
-    require("lspconfig.ui.windows").default_options.border = "rounded"
     require("neoconf").setup({})
     require("neodev").setup({
-      library = {
-        plugins = {
-          "neotest",
-        },
-        types = true,
-      },
+      override = function(_, library)
+        library.enabled = true
+        library.plugins = true
+      end,
+      pathStrict = true,
     })
+    require("lspconfig.ui.windows").default_options.border = "rounded"
 
     local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -141,18 +140,17 @@ return {
         }
         require("lspconfig")["clojure_lsp"].setup(config)
       end,
-      ["lua_ls"] = function()
-        config.settings = {
-          Lua = {
-            completion = {},
-          },
-        }
-        require("lspconfig")["lua_ls"].setup(config)
-      end,
     })
   end,
   dependencies = {
     "SmiteshP/nvim-navic",
+    {
+      "folke/neodev.nvim",
+      lazy = false,
+      dependencies = {
+        "folke/neoconf.nvim",
+      },
+    },
     "folke/which-key.nvim",
     {
       "lukas-reineke/lsp-format.nvim",
