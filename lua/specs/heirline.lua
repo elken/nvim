@@ -213,7 +213,7 @@ return {
           condition = function(self)
             return self.info > 0
           end,
-          hl = { fg = palette.green.bright, bg = bg },
+          hl = { bg = palette.green.bright, fg = bg },
           {
             {
               provider = LeftRounded,
