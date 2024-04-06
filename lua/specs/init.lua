@@ -62,9 +62,6 @@ return {
   -- Unix helpers
   "tpope/vim-eunuch",
 
-  -- The git plugin so good, it should be illegal
-  "tpope/vim-fugitive",
-
   -- Enable repeating supported plugin maps with "."
   "tpope/vim-repeat",
 
