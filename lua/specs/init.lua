@@ -182,4 +182,22 @@ return {
     "mrjones2014/smart-splits.nvim",
     opts = {},
   },
+
+  -- Tint inactive buffers
+  {
+    "levouh/tint.nvim",
+    opts = {
+      tint = -35,
+      highlight_ignore_patterns = { "WinSeparator", "Status.*", "DropBar.*", "WinBar" },
+      tint_background_colors = true,
+      window_ignore_function = function(winid)
+        local bufid = vim.api.nvim_win_get_buf(winid)
+        local buftype = vim.api.nvim_get_option_value("buftype", { buf = bufid })
+        local floating = vim.api.nvim_win_get_config(winid).relative ~= ""
+
+        -- Do not tint `terminal` or floating windows, tint everything else
+        return buftype == "terminal" or floating
+      end,
+    },
+  },
 }
