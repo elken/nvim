@@ -106,6 +106,26 @@ vim.opt.fillchars = {
   foldclose = "▸",
 }
 
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    if vim.opt.foldmethod:get() == "expr" then
+      vim.schedule(function()
+        vim.opt.foldmethod = "expr"
+      end)
+    end
+  end,
+})
+
+vim.opt.foldcolumn = "1"
+vim.opt.foldmethod = "expr"
+
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldtext = require("config.foldtext")
+
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
+vim.opt.foldnestmax = 4
+
 -- Prefer ripgrep if it exists
 if vim.fn.executable("rg") > 0 then
   vim.o.grepprg = "rg --hidden --glob '!.git' --no-heading --smart-case --vimgrep --follow $*"
