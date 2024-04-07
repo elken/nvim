@@ -281,7 +281,7 @@ local macro = {
   },
   {
     provider = RightRounded,
-    hl = { fg = bg, bg = palette.blue.base },
+    hl = { fg = palette.blue.base, bg = bg },
   },
 }
 
