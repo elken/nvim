@@ -230,7 +230,6 @@ local lsp_servers = {
     end
   end,
   {
-
     {
       provider = LeftRounded,
       hl = { bg = bg, fg = statusline_bg },
@@ -255,7 +254,6 @@ local lsp_servers = {
       end,
       hl = { fg = palette.fg, bg = statusline_bg, bold = true },
     },
-
     {
       provider = RightRounded,
       hl = { bg = bg, fg = statusline_bg },
