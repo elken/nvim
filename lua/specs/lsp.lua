@@ -14,7 +14,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("UserLspConfig", {}),
   callback = function(ev)
     local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    -- require("lsp-format").on_attach(client, ev.buf)
 
     if client and client.server_capabilities.documentSymbolProvider then
       require("nvim-navic").attach(client, ev.buf)
