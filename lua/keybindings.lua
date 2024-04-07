@@ -12,12 +12,29 @@ vim.keymap.set("n", "<leader>;", "<cmd>nohl<cr>", { desc = "Turn off search high
 vim.keymap.set("n", "<leader>l", ":lua ", { desc = "Open lua prompt" })
 vim.keymap.set("n", "<leader>!", ":! ", { desc = "Open shell prompt" })
 vim.keymap.set("n", "<leader>%", "<cmd>so %<cr>", { desc = "Reload current file" })
-vim.keymap.set("n", "<leader>-", "<cmd>LspFormatToggle<cr>", { desc = "Toggle autoformat status" })
+vim.keymap.set("n", "<leader>-", "<cmd>LspFormatToggle<cr>", { desc = "Toggle Autoformatter" })
+
+vim.keymap.set("n", "<leader>,", "<cmd>Telescope buffers<cr>", { desc = "Switch Buffer" })
+vim.keymap.set("n", "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", { desc = "File browser" })
+vim.keymap.set("n", "<leader>/", "<cmd>Telescope live_grep<cr>", { desc = "Search in project" })
+
+vim.keymap.set("n", "<leader><space>", function()
+  if not pcall(require("telescope.builtin").git_files, {}) then
+    require("telescope.builtin").find_files()
+  end
+end, { desc = "Find file" })
 
 -- [B]uffer
 vim.keymap.set("n", "<leader>bd", "<cmd>Bdelete<cr>", { desc = "Kill buffer" })
 vim.keymap.set("n", "<leader>bp", "<cmd>bp<cr>", { desc = "Previous buffer" })
 vim.keymap.set("n", "<leader>bn", "<cmd>bn<cr>", { desc = "Next buffer" })
+
+-- [C]onfiguration
+vim.keymap.set("n", "<leader>cf", function()
+  require("telescope.builtin").find_files({ cwd = vim.fn.stdpath("config") })
+end, { desc = "Find config file" })
+
+vim.keymap.set("n", "<leader>cs", "<cmd>Telescope lazy_plugins<cr>", { desc = "Jump to spec" })
 
 -- [F]ile
 local function yank_to_clipboard(value)
@@ -36,8 +53,25 @@ vim.keymap.set("n", "<leader>fd", function()
     vim.cmd("Bdelete")
   end
 end, { desc = "Delete current file" })
+vim.keymap.set("n", "<leader>fr", "<cmd>Telescope frecency<cr>", { desc = "Find Recent File" })
 vim.keymap.set("n", "<leader>fy", yank_to_clipboard("%:p"), { desc = "Yank file path" })
 vim.keymap.set("n", "<leader>fY", yank_to_clipboard("%:~:."), { desc = "Yank file path" })
+
+-- [G]it
+vim.keymap.set("n", "<leader>gB", "<cmd>Gitsigns blame_line<cr>", { desc = "Blame line" })
+vim.keymap.set("n", "<leader>gn", "<cmd>Gitsigns next_hunk<cr>", { desc = "Next hunk" })
+vim.keymap.set("n", "<leader>gp", "<cmd>Gitsigns blame_line<cr>", { desc = "Previous hunk" })
+vim.keymap.set("n", "<leader>gP", "<cmd>Gitsigns blame_line<cr>", { desc = "Preview hunk" })
+vim.keymap.set("n", "<leader>gr", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset current hunk" })
+vim.keymap.set("n", "<leader>gR", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset current buffer" })
+vim.keymap.set("n", "<leader>gs", "<cmd>Gitsigns blame_line<cr>", { desc = "Stage current hunk" })
+vim.keymap.set("n", "<leader>gS", "<cmd>Gitsigns blame_line<cr>", { desc = "Stage current buffer" })
+vim.keymap.set("n", "<leader>gu", "<cmd>Gitsigns blame_line<cr>", { desc = "Undo stage hunk" })
+vim.keymap.set("n", "<leader>gU", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset buffer index" })
+
+-- [H]elp/quick prompts
+vim.keymap.set("n", "<leader>ht", "<cmd>Telescope help_tags<cr>", { desc = "Search help tags" })
+vim.keymap.set("n", "<leader>hh", ":h ", { desc = "Open help prompt" })
 
 -- [O]pen
 local function open_in_folder()
@@ -63,18 +97,5 @@ end
 
 vim.keymap.set("n", "<leader>oo", open_in_folder(), { desc = open_in_folder_label(), silent = true })
 
--- [G]it
-vim.keymap.set("n", "<leader>gB", "<cmd>Gitsigns blame_line<cr>", { desc = "Blame line" })
-vim.keymap.set("n", "<leader>gn", "<cmd>Gitsigns next_hunk<cr>", { desc = "Next hunk" })
-vim.keymap.set("n", "<leader>gp", "<cmd>Gitsigns blame_line<cr>", { desc = "Previous hunk" })
-vim.keymap.set("n", "<leader>gP", "<cmd>Gitsigns blame_line<cr>", { desc = "Preview hunk" })
-vim.keymap.set("n", "<leader>gr", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset current hunk" })
-vim.keymap.set("n", "<leader>gR", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset current buffer" })
-vim.keymap.set("n", "<leader>gs", "<cmd>Gitsigns blame_line<cr>", { desc = "Stage current hunk" })
-vim.keymap.set("n", "<leader>gS", "<cmd>Gitsigns blame_line<cr>", { desc = "Stage current buffer" })
-vim.keymap.set("n", "<leader>gu", "<cmd>Gitsigns blame_line<cr>", { desc = "Undo stage hunk" })
-vim.keymap.set("n", "<leader>gU", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset buffer index" })
-
--- [H]elp/quick prompts
-vim.keymap.set("n", "<leader>ht", "<cmd>Telescope help_tags<cr>", { desc = "Search help tags" })
-vim.keymap.set("n", "<leader>hh", ":h ", { desc = "Open help prompt" })
+-- [P]roject
+vim.keymap.set("n", "<leader>pp", "<cmd>Telescope projects<cr>", { desc = "Switch Project" })

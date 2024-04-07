@@ -6,30 +6,6 @@ Adds a new UI feature to allow various kinds of selections in a very fast interf
 
 return {
   "nvim-telescope/telescope.nvim",
-  keys = {
-    {
-      "<leader>cf",
-      function()
-        require("telescope.builtin").find_files({ cwd = vim.fn.stdpath("config") })
-      end,
-      desc = "Find config file",
-    },
-    { "<leader>cs", "<cmd>Telescope lazy_plugins<cr>", desc = "Jump to spec" },
-    {
-      "<leader><space>",
-      function()
-        if not pcall(require("telescope.builtin").git_files, {}) then
-          require("telescope.builtin").find_files()
-        end
-      end,
-      desc = "Find file",
-    },
-    { "<leader>fr", "<cmd>Telescope frecency<cr>", desc = "Find Recent File" },
-    { "<leader>pp", "<cmd>Telescope projects<cr>", desc = "Switch Project" },
-    { "<leader>,", "<cmd>Telescope buffers<cr>", desc = "Switch Buffer" },
-    { "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", desc = "File browser" },
-    { "<leader>/", "<cmd>Telescope live_grep<cr>", desc = "Search in project" },
-  },
   config = function()
     require("telescope").setup({
       defaults = {

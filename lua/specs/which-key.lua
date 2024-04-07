@@ -15,6 +15,10 @@ return {
       window = {
         winblend = vim.g.neovide and 30 or 0,
       },
+      icons = {
+        group = "",
+        separator = "-",
+      },
       plugins = {
         spelling = {
           enabled = true,
@@ -24,27 +28,39 @@ return {
 
     local normal_binds = {
       b = {
-        name = "Buffer",
+        name = "󰓩  Buffers",
         _ = "which_key_ignore",
       },
       c = {
-        name = "Configuration",
+        name = "  Configuration",
         _ = "which_key_ignore",
       },
       f = {
-        name = "File",
+        name = "  File",
+        _ = "which_key_ignore",
+      },
+      g = {
+        name = "  Git",
         _ = "which_key_ignore",
       },
       h = {
-        name = "Help",
+        name = "  Help",
         _ = "which_key_ignore",
       },
       p = {
-        name = "Projects",
+        name = "P Projects",
         _ = "which_key_ignore",
       },
       o = {
-        name = "Open",
+        name = "  Open",
+        _ = "which_key_ignore",
+      },
+      t = {
+        name = "  Test",
+        _ = "which_key_ignore",
+      },
+      x = {
+        name = "  Trouble",
         _ = "which_key_ignore",
       },
     }
