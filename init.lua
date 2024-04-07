@@ -1,4 +1,4 @@
--- TODO Refactor this to use the new version API when 10 drops
+-- TODO: Refactor this to use the new version API when 10 drops
 if vim.version().minor < 9 then
   vim.api.nvim_echo(
     { { "You need to be on at least neovim 0.9 because that's what I'm on. Don't report errors if you see this, thanks!", "ErrorMsg" } },

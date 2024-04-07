@@ -3,7 +3,7 @@ if vim.g.neovide then
   vim.opt.guifont = "Iosevka Nerd Font,Symbols Nerd Font,Noto Color Emoji"
 
   -- Increase the resolution
-  -- TODO Make this dynamic
+  -- TODO: Make this dynamic
   vim.g.neovide_refresh_rate = 144
 
   -- Keep the same window size on restart

@@ -97,6 +97,14 @@ return {
     },
   },
 
+  -- TODO: but nicer
+  {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    lazy = false,
+    opts = {},
+  },
+
   -- Automatic pair matching
   {
     "windwp/nvim-autopairs",

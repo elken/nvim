@@ -180,7 +180,7 @@ return {
       "jay-babu/mason-null-ls.nvim",
       opts = {
         automatic_installation = true,
-        -- TODO Derive this list from the sources in none-ls
+        -- TODO: Derive this list from the sources in none-ls
         ensure_installed = {
           "clj-kondo",
           "cljfmt",
