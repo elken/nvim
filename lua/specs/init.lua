@@ -82,15 +82,19 @@ return {
   -- Better QuickFix
   "kevinhwang91/nvim-bqf",
 
-  -- Faster-than-light jumping
-  -- Leap gets a free-pass since all we do is setup keybinds
+  -- Jumping in a flash
   {
-    "ggandor/leap.nvim",
-    config = function()
-      vim.keymap.set({ "n", "x", "o" }, "-", "<Plug>(leap-forward)")
-      vim.keymap.set({ "n", "x", "o" }, "_", "<Plug>(leap-backward)")
-      vim.keymap.set({ "n", "x", "o" }, "gS", "<Plug>(leap-from-window)")
-    end,
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    opts = {},
+    -- stylua: ignore
+    keys = {
+      { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end, desc = "Flash" },
+      { "S", mode = { "n", "x", "o" }, function() require("flash").treesitter() end, desc = "Flash Treesitter" },
+      { "r", mode = "o", function() require("flash").remote() end, desc = "Remote Flash" },
+      { "R", mode = { "o", "x" }, function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
+    },
   },
 
   -- Automatic pair matching
