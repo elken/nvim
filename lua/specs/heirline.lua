@@ -11,8 +11,8 @@ return {
       vim.opt.laststatus = 3
     end,
     config = function()
-      local heirline = require("heirline")
-      heirline.setup({
+      -- Config inspired by https://github.com/olimorris/dotfiles/blob/main/.config/nvim/lua/plugins/heirline/init.lua
+      require("heirline").setup({
         statusline = require("specs.heirline.statusline"),
         statuscolumn = require("specs.heirline.statuscolumn"),
       })
