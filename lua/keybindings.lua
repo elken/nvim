@@ -60,14 +60,13 @@ vim.keymap.set("n", "<leader>fY", yank_to_clipboard("%:~:."), { desc = "Yank fil
 -- [G]it
 vim.keymap.set("n", "<leader>gB", "<cmd>Gitsigns blame_line<cr>", { desc = "Blame line" })
 vim.keymap.set("n", "<leader>gn", "<cmd>Gitsigns next_hunk<cr>", { desc = "Next hunk" })
-vim.keymap.set("n", "<leader>gp", "<cmd>Gitsigns blame_line<cr>", { desc = "Previous hunk" })
-vim.keymap.set("n", "<leader>gP", "<cmd>Gitsigns blame_line<cr>", { desc = "Preview hunk" })
-vim.keymap.set("n", "<leader>gr", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset current hunk" })
-vim.keymap.set("n", "<leader>gR", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset current buffer" })
-vim.keymap.set("n", "<leader>gs", "<cmd>Gitsigns blame_line<cr>", { desc = "Stage current hunk" })
-vim.keymap.set("n", "<leader>gS", "<cmd>Gitsigns blame_line<cr>", { desc = "Stage current buffer" })
-vim.keymap.set("n", "<leader>gu", "<cmd>Gitsigns blame_line<cr>", { desc = "Undo stage hunk" })
-vim.keymap.set("n", "<leader>gU", "<cmd>Gitsigns blame_line<cr>", { desc = "Reset buffer index" })
+vim.keymap.set("n", "<leader>gp", "<cmd>Gitsigns prev_hunk<cr>", { desc = "Previous hunk" })
+vim.keymap.set("n", "<leader>gr", "<cmd>Gitsigns reset_hunk<CR>", { desc = "Reset current hunk" })
+vim.keymap.set("n", "<leader>gR", "<cmd>Gitsigns reset_buffer<CR>", { desc = "Reset current buffer" })
+vim.keymap.set("n", "<leader>gs", "<cmd>Gitsigns stage_hunk<cr>", { desc = "Stage current hunk" })
+vim.keymap.set("n", "<leader>gS", "<cmd>Gitsigns stage_buffer<cr>", { desc = "Stage current buffer" })
+vim.keymap.set("n", "<leader>gu", "<cmd>Gitsigns undo_stage_hunk<cr>", { desc = "Undo stage hunk" })
+vim.keymap.set("n", "<leader>gU", "<cmd>Gitsigns reset_buffer_index<cr>", { desc = "Reset buffer index" })
 
 -- [H]elp/quick prompts
 vim.keymap.set("n", "<leader>ht", "<cmd>Telescope help_tags<cr>", { desc = "Search help tags" })
