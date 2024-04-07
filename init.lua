@@ -10,8 +10,6 @@ end
 -- First things first load all our global options
 require("globals")
 
--- Then load all our keybindings
-require("keybindings")
 
 -- Install lazy.nvim if it's missing
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -22,7 +20,7 @@ if not vim.loop.fs_stat(lazypath) and not vim.g.started_by_firenvim then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Last, bootstrap everything
+-- Next bootstrap everything
 require("lazy").setup("specs", {
   dev = {
     path = "~/build/nvim/plugins",
@@ -35,3 +33,6 @@ require("lazy").setup("specs", {
     notify = false,
   },
 })
+
+-- Lastly load all our keybindings
+require("keybindings")

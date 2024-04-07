@@ -2,10 +2,10 @@
 vim.keymap.set("n", "<C-s>", "<cmd>w<cr>", { silent = true, desc = "Save buffer" })
 
 -- Slightly faster window navigation
-vim.keymap.set("n", "<C-h>", "<C-w>h", { desc = "Move to left window" })
-vim.keymap.set("n", "<C-j>", "<C-w>j", { desc = "Move to window below" })
-vim.keymap.set("n", "<C-k>", "<C-w>k", { desc = "Move to window above" })
-vim.keymap.set("n", "<C-l>", "<C-w>l", { desc = "Move to right window" })
+vim.keymap.set("n", "<C-h>", require("smart-splits").move_cursor_left, { desc = "Move to left window" })
+vim.keymap.set("n", "<C-j>", require("smart-splits").move_cursor_down, { desc = "Move to window below" })
+vim.keymap.set("n", "<C-k>", require("smart-splits").move_cursor_up, { desc = "Move to window above" })
+vim.keymap.set("n", "<C-l>", require("smart-splits").move_cursor_right, { desc = "Move to right window" })
 
 -- Global leader binds
 vim.keymap.set("n", "<leader>;", "<cmd>nohl<cr>", { desc = "Turn off search highlight" })

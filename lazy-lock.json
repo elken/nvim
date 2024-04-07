@@ -61,6 +61,7 @@
   "project.nvim": { "branch": "main", "commit": "8c6bad7d22eef1b71144b401c9f74ed01526a4fb" },
   "rainbow-delimiters.nvim": { "branch": "master", "commit": "0563a31b1f46a911865cb85df3ddde2eff9fdada" },
   "rnvimr": { "branch": "main", "commit": "3c41af742a61caf74a9f83fb82b9ed03ef13b880" },
+  "smart-splits.nvim": { "branch": "master", "commit": "50f52146e4504a3fc0f0d5830c8560a16a95dd08" },
   "sqlite.lua": { "branch": "master", "commit": "40701b6151f8883980c1548647116de39b763540" },
   "suda.vim": { "branch": "master", "commit": "66727b416837836712975e748bc8a19fb6cf4ec3" },
   "tailwind-tools.nvim": { "branch": "master", "commit": "2a23bc6ea5fe5f6fc2125d381d0c9525e9a3738b" },

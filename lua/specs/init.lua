@@ -176,4 +176,10 @@ return {
 
   -- Multiple cursors
   "mg979/vim-visual-multi",
+
+  -- Improved handling of splits across terminal
+  {
+    "mrjones2014/smart-splits.nvim",
+    opts = {},
+  },
 }
