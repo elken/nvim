@@ -222,7 +222,7 @@ local lsp_servers = {
   condition = conditions.lsp_attached,
   init = function(self)
     self.servers = {}
-    for _, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
+    for _, server in pairs(vim.lsp.get_clients({ bufnr = 0 })) do
       local len = #self.servers
       if len == 0 or self.servers[len] ~= server.name then
         self.servers[len + 1] = server.name
