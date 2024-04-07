@@ -14,6 +14,7 @@ return {
       local heirline = require("heirline")
       heirline.setup({
         statusline = require("specs.heirline.statusline"),
+        statuscolumn = require("specs.heirline.statuscolumn"),
       })
     end,
   },
