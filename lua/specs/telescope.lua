@@ -20,7 +20,7 @@ return {
           db_safe_mode = false,
         },
         lazy_plugins = {
-          lazy_spec_table = vim.fn.stdpath("config") .. "/init.lua",
+          lazy_config = vim.fn.stdpath("config") .. "/init.lua",
         },
       },
     })

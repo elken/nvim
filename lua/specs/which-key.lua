@@ -12,12 +12,11 @@ return {
   config = function()
     local whichkey = require("which-key")
     whichkey.setup({
-      window = {
-        winblend = vim.g.neovide and 30 or 0,
-      },
-      icons = {
-        group = "",
-        separator = "-",
+      preset = "helix",
+      win = {
+        wo = {
+          winblend = vim.g.neovide and 30 or 0,
+        },
       },
       plugins = {
         spelling = {
@@ -27,51 +26,27 @@ return {
     })
 
     local normal_binds = {
-      b = {
-        name = "󰓩  Buffers",
-        _ = "which_key_ignore",
-      },
-      c = {
-        name = "  Configuration",
-        _ = "which_key_ignore",
-      },
-      f = {
-        name = "  File",
-        _ = "which_key_ignore",
-      },
-      g = {
-        name = "  Git",
-        _ = "which_key_ignore",
-      },
-      h = {
-        name = "  Help",
-        _ = "which_key_ignore",
-      },
-      p = {
-        name = "P Projects",
-        _ = "which_key_ignore",
-      },
-      o = {
-        name = "  Open",
-        _ = "which_key_ignore",
-      },
-      t = {
-        name = "  Test",
-        _ = "which_key_ignore",
-      },
-      x = {
-        name = "  Trouble",
-        _ = "which_key_ignore",
-      },
+      { "<leader>b", group = "Buffers" },
+      { "<leader>b_", hidden = true },
+      { "<leader>c", group = "Configuration" },
+      { "<leader>c_", hidden = true },
+      { "<leader>f", group = "File" },
+      { "<leader>f_", hidden = true },
+      { "<leader>g", group = "Git" },
+      { "<leader>g_", hidden = true },
+      { "<leader>h", group = "Help" },
+      { "<leader>h_", hidden = true },
+      { "<leader>o", group = "Open" },
+      { "<leader>o_", hidden = true },
+      { "<leader>oo", "<cmd>silent !open -a Finder.app /Users/ellis.kenyo/.config/nvim<CR>", desc = "Open directory in Finder" },
+      { "<leader>p", group = "Projects" },
+      { "<leader>p_", hidden = true },
+      { "<leader>t", group = "Test" },
+      { "<leader>t_", hidden = true },
+      { "<leader>x", group = "Trouble" },
+      { "<leader>x_", hidden = true },
     }
 
-    if vim.fn.has("mac") == 1 then
-      normal_binds.o.o = {
-        string.format("<cmd>silent !open -a Finder.app %s<CR>", vim.fn.expand("%:p:h")),
-        "Open directory in Finder",
-      }
-    end
-
-    whichkey.register(normal_binds, { prefix = "<leader>" })
+    whichkey.add(normal_binds)
   end,
 }
