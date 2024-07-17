@@ -5,7 +5,6 @@ A nicer UI for diagnostics. Also includes some extra panes for workspace diagnos
 return {
   {
     "folke/trouble.nvim",
-    branch = "dev", -- IMPORTANT!
     keys = {
       {
         "<leader>xx",
