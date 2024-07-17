@@ -1,6 +1,6 @@
 if vim.g.neovide then
   -- Setup default font with fallbacks
-  vim.opt.guifont = "Iosevka Nerd Font,Symbols Nerd Font,Noto Color Emoji"
+  vim.opt.guifont = "Iosevka Nerd Font,Symbols Nerd Font Mono,Noto Color Emoji"
 
   -- Increase the resolution
   -- TODO: Make this dynamic
@@ -16,6 +16,14 @@ if vim.g.neovide then
   vim.opt.winblend = 30
   vim.opt.pumblend = 30
 
+  vim.g.neovide_window_blurred = true
+
+  vim.g.neovide_floating_shadow = true
+  vim.g.neovide_floating_z_height = 10
+  vim.g.neovide_light_angle_degrees = 45
+  vim.g.neovide_light_radius = 5
+
+  vim.g.neovide_show_border = false
   return {}
 end
 
