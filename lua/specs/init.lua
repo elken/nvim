@@ -30,7 +30,14 @@ return {
     lazy = false,
     priority = 1000,
     config = function()
-      vim.cmd([[colorscheme nordfox]])
+      require("nightfox").setup({
+        groups = {
+          nordfox = {
+            DapBreakpoint = { fg = "#bf616a" },
+          },
+        },
+      })
+      vim.cmd("colorscheme nordfox")
     end,
   },
 

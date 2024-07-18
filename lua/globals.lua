@@ -158,22 +158,26 @@ vim.cmd("autocmd UIEnter * call v:lua.FirenvimSetup(deepcopy(v:event.chan))")
 
 -- Change the default diagnostic signs used (requires a nerd font or fallback)
 local signs = {
-  Error = " ",
-  Warn = " ",
-  Hint = " ",
-  Info = " ",
+  DiagnosticSignError = " ",
+  DiagnosticSignWarn = " ",
+  DiagnosticSignHint = " ",
+  DiagnosticSignInfo = " ",
+  DapBreakpoint = " ",
+  DapBreakpointCondition = " ",
+  DapBreakpointRejected = " ",
+  DapLogPoint = " ",
+  DapStopped = " ",
 }
 
 -- Sign column changes
 for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+  vim.fn.sign_define(type, { text = icon, texthl = type, numhl = "" })
 end
 
 -- Virtual text changes
 vim.diagnostic.config({
   virtual_text = {
-    prefix = " " .. signs.Warn,
+    prefix = " " .. signs.DiagnosticSignWarn,
   },
 })
 

@@ -147,7 +147,7 @@ return {
         condition = function(self)
           return v.virtnum == 0 and self.can_fold
         end,
-        provider = "%C ",
+        provider = " %C ",
       },
       {
         condition = function(self)
@@ -164,7 +164,7 @@ return {
     },
     -- Line Numbers
     {
-      provider = "%=%4{v:virtnum ? '' : &nu ? (&rnu && v:relnum ? v:relnum : v:lnum) . ' ' : ''}",
+      provider = "%= %4{v:virtnum ? '' : &nu ? (&rnu && v:relnum ? v:relnum : v:lnum) . ' ' : ''}",
       on_click = {
         name = "sc_linenumber_click",
         callback = function(self, ...)
