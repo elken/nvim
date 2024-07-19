@@ -10,6 +10,10 @@ return {
     require("lspkind").init()
     local cmp = require("cmp")
     local luasnip = require("luasnip")
+
+    -- Load vscode snippets
+    require("luasnip.loaders.from_vscode").lazy_load()
+
     cmp.setup({
       sources = cmp.config.sources({
         { name = "nvim_lsp" },
