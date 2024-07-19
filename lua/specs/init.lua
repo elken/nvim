@@ -41,14 +41,6 @@ return {
     end,
   },
 
-  -- Use TS to colourize matching delimiters. Not just brackets, HTML tags, do .. end in Lua/Elixir, etc
-  {
-    "HiPhish/rainbow-delimiters.nvim",
-    config = function()
-      require("rainbow-delimiters.setup").setup({})
-    end,
-  },
-
   -- :w !sudo tee % > /dev/null
   {
     "lambdalisue/suda.vim",

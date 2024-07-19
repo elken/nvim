@@ -24,7 +24,6 @@ if vim.g.neovide then
   vim.g.neovide_light_radius = 5
 
   vim.g.neovide_show_border = false
-  return {}
 end
 
 return {
@@ -40,9 +39,11 @@ return {
   },
   {
     "lukas-reineke/indent-blankline.nvim",
-    lazy = vim.g.neovide,
     main = "ibl",
     opts = {},
+    dependencies = {
+      "HiPhish/rainbow-delimiters.nvim",
+    },
     config = function()
       local highlight = {
         "RainbowRed",
@@ -66,7 +67,9 @@ return {
         vim.api.nvim_set_hl(0, "RainbowCyan", { fg = "#56B6C2" })
       end)
 
-      vim.g.rainbow_delimiters = { highlight = highlight }
+      require("rainbow-delimiters.setup").setup({
+        highlight = highlight,
+      })
 
       require("ibl").setup({
         scope = { highlight = highlight },
