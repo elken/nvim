@@ -32,6 +32,7 @@ return {
     require("telescope").load_extension("file_browser")
     require("telescope").load_extension("ui-select")
     require("telescope").load_extension("lazy_plugins")
+    require("telescope").load_extension("fzf")
   end,
   dependencies = {
     "nvim-lua/plenary.nvim",
