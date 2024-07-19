@@ -10,7 +10,6 @@ end
 -- First things first load all our global options
 require("globals")
 
-
 -- Install lazy.nvim if it's missing
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 --@diagnostic disable-next-line: undefine-field
@@ -31,6 +30,9 @@ require("lazy").setup("specs", {
   checker = {
     enabled = true,
     notify = false,
+  },
+  rocks = {
+    hererocks = true,
   },
 })
 
