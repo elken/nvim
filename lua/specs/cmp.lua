@@ -88,6 +88,14 @@ return {
         { name = "cmdline" },
       }),
     })
+
+    -- Setup up vim-dadbod
+    cmp.setup.filetype({ "sql" }, {
+      sources = {
+        { name = "vim-dadbod-completion" },
+        { name = "buffer" },
+      },
+    })
   end,
   dependencies = {
     "nvim-treesitter",
@@ -113,5 +121,6 @@ return {
     "hrsh7th/cmp-nvim-lua",
     "hrsh7th/cmp-cmdline",
     "hrsh7th/cmp-nvim-lsp-document-symbol",
+    { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
   },
 }
