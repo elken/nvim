@@ -18,6 +18,9 @@ return {
       require("nvim-treesitter.install").prefer_git = true
     end
 
+    -- Ensure that Octo uses tree-sitter where possible
+    vim.treesitter.language.register("markdown", "octo")
+
     -- Main treesitter config
     require("nvim-treesitter.configs").setup({
       ensure_installed = vim.g.started_by_firenvim and {} or {
