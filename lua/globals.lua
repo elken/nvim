@@ -38,8 +38,10 @@ end
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
+vim.opt.inccommand = "split"
 vim.opt.termguicolors = true
 vim.g.formatoptions = "qrn1"
+vim.opt.formatoptions:remove("o")
 vim.opt.showmode = false
 vim.opt.timeoutlen = 300
 vim.opt.updatetime = 100
