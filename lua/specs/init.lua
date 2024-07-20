@@ -33,7 +33,47 @@ return {
       require("nightfox").setup({
         groups = {
           nordfox = {
-            DapBreakpoint = { fg = "#bf616a" },
+            DapBreakpoint = { fg = "palette.red.bright" },
+
+            Pmenu = { bg = "palette.bg0" },
+
+            CmpItemAbbrDeprecated = { fg = "palette.comment", bg = "NONE", style = "strikethrough" },
+            CmpItemAbbrMatch = { fg = "palette.cyan", bg = "NONE", style = "bold" },
+            CmpItemAbbrMatchFuzzy = { fg = "palette.cyan", bg = "NONE", style = "bold" },
+            CmpItemMenu = { fg = "palette.magenta.dim", bg = "NONE", style = "italic" },
+
+            CmpItemKindField = { fg = "palette.fg0", bg = "palette.red.dim" },
+            CmpItemKindProperty = { fg = "palette.fg0", bg = "palette.red.dim" },
+            CmpItemKindEvent = { fg = "palette.fg0", bg = "palette.red.dim" },
+
+            CmpItemKindText = { fg = "palette.fg0", bg = "palette.green.dim" },
+            CmpItemKindEnum = { fg = "palette.fg0", bg = "palette.green.dim" },
+            CmpItemKindKeyword = { fg = "palette.fg0", bg = "palette.green.dim" },
+
+            CmpItemKindConstant = { fg = "palette.fg0", bg = "palette.yellow.dim" },
+            CmpItemKindConstructor = { fg = "palette.fg0", bg = "palette.yellow.dim" },
+            CmpItemKindReference = { fg = "palette.fg0", bg = "palette.yellow.dim" },
+
+            CmpItemKindFunction = { fg = "palette.fg0", bg = "palette.magenta.dim" },
+            CmpItemKindStruct = { fg = "palette.fg0", bg = "palette.magenta.dim" },
+            CmpItemKindClass = { fg = "palette.fg0", bg = "palette.magenta.dim" },
+            CmpItemKindModule = { fg = "palette.fg0", bg = "palette.magenta.dim" },
+            CmpItemKindOperator = { fg = "palette.fg0", bg = "palette.magenta.dim" },
+
+            CmpItemKindVariable = { fg = "palette.fg3", bg = "palette.bg3" },
+            CmpItemKindFile = { fg = "palette.fg3", bg = "palette.bg3" },
+
+            CmpItemKindUnit = { fg = "palette.fg0", bg = "palette.orange.dim" },
+            CmpItemKindSnippet = { fg = "palette.fg0", bg = "palette.orange.dim" },
+            CmpItemKindFolder = { fg = "palette.fg0", bg = "palette.orange.dim" },
+
+            CmpItemKindMethod = { fg = "palette.fg0", bg = "palette.blue.dim" },
+            CmpItemKindValue = { fg = "palette.fg0", bg = "palette.blue.dim" },
+            CmpItemKindEnumMember = { fg = "palette.fg0", bg = "palette.blue.dim" },
+
+            CmpItemKindInterface = { fg = "palette.fg0", bg = "palette.cyan.dim" },
+            CmpItemKindColor = { fg = "palette.fg0", bg = "palette.cyan.dim" },
+            CmpItemKindTypeParameter = { fg = "palette.fg0", bg = "palette.cyan.dim" },
           },
         },
       })

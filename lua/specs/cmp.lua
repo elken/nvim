@@ -67,13 +67,27 @@ return {
         }),
       },
       formatting = {
-        format = require("lspkind").cmp_format({
-          mode = "symbol",
-          maxwidth = 50,
-        }),
+        expandable_indicator = true,
+        fields = { "kind", "abbr", "menu" },
+        format = function(entry, vim_item)
+          local kind = require("lspkind").cmp_format({ mode = "symbol_text", maxwidth = 50 })(entry, vim_item)
+          local strings = vim.split(kind.kind, "%s", { trimempty = true })
+          kind.kind = " " .. (strings[1] or "") .. " "
+          kind.menu = "    (" .. (strings[2] or "") .. ")"
+
+          return kind
+        end,
       },
       window = {
         documentation = cmp.config.window.bordered(),
+        completion = {
+          winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,Search:None",
+          col_offset = -3,
+          side_padding = 0,
+        },
+      },
+      experimental = {
+        ghost_text = true,
       },
     })
 
@@ -100,6 +114,18 @@ return {
         { name = "buffer" },
       },
     })
+
+    cmp.setup.filetype("gitcommit", {
+      sources = cmp.config.sources({
+        { name = "git" },
+      }, {
+        { name = "buffer" },
+      }),
+    })
+
+    -- Insert `(` after select function or method item
+    local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+    cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
   end,
   dependencies = {
     "nvim-treesitter",
@@ -126,5 +152,6 @@ return {
     "hrsh7th/cmp-cmdline",
     "hrsh7th/cmp-nvim-lsp-document-symbol",
     { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
+    { "petertriho/cmp-git", opts = {}, ft = "gitcommit" },
   },
 }
