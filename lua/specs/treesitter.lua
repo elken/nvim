@@ -22,12 +22,14 @@ return {
     vim.treesitter.language.register("markdown", "octo")
 
     -- Main treesitter config
+    require("nvim-dap-repl-highlights").setup()
     require("nvim-treesitter.configs").setup({
       ensure_installed = vim.g.started_by_firenvim and {} or {
         "c",
         "clojure",
         "commonlisp",
         "css",
+        "dap_repl",
         "diff",
         "dockerfile",
         "dot",
@@ -144,5 +146,6 @@ return {
     "RRethy/nvim-treesitter-textsubjects", -- Location & syntax-aware text objects
     "nvim-treesitter/nvim-treesitter-textobjects", -- Custom objects using treesitter
     "JoosepAlviste/nvim-ts-context-commentstring", -- Correctly guess which comment to  in a mixed-mode file
+    "LiadOz/nvim-dap-repl-highlights", -- Use tree-sitter in the DAP REPL
   },
 }
