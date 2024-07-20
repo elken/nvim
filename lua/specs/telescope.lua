@@ -15,10 +15,12 @@ return {
         lazy_plugins = {
           lazy_config = vim.fn.stdpath("config") .. "/init.lua",
         },
+        workspaces = {
+          keep_insert = true,
+        },
       },
     })
-    require("project_nvim").setup({})
-    require("telescope").load_extension("projects")
+    require("telescope").load_extension("workspaces")
     if not vim.g.started_by_firenvim then
       require("telescope").load_extension("frecency")
     end
@@ -30,7 +32,6 @@ return {
     "nvim-lua/plenary.nvim",
     "polirritmico/telescope-lazy-plugins.nvim",
     "nvim-lua/popup.nvim",
-    "ahmedkhalf/project.nvim",
     {
       "nvim-telescope/telescope-frecency.nvim",
       dependencies = { "tami5/sqlite.lua" },

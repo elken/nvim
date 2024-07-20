@@ -120,4 +120,6 @@ vim.keymap.set("n", "<leader>oe", "<cmd>Neotree toggle<cr>", { desc = "Neotree" 
 vim.keymap.set("n", "<leader>oo", open_in_folder(), { desc = open_in_folder_label(), silent = true })
 
 -- [P]roject
-vim.keymap.set("n", "<leader>pp", "<cmd>Telescope projects<cr>", { desc = "Switch Project" })
+vim.keymap.set("n", "<leader>pp", "<cmd>Telescope workspaces<cr>", { desc = "Switch Project" })
+vim.keymap.set("n", "<leader>pa", "<cmd>WorkspacesAdd<cr>", { desc = "Add the current project to the list" })
+vim.keymap.set("n", "<leader>pd", "<cmd>WorkspacesRemoveDir<cr>", { desc = "Remove the current project from the list" })
