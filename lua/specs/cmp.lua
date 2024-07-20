@@ -15,6 +15,9 @@ return {
     require("luasnip.loaders.from_vscode").lazy_load()
 
     cmp.setup({
+      enabled = function()
+        return vim.api.nvim_get_option_value("buftype", { buf = 0 }) ~= "prompt" or require("cmp_dap").is_dap_buffer()
+      end,
       sources = cmp.config.sources({
         { name = "nvim_lsp" },
         { name = "nvim_lua" },
@@ -123,6 +126,12 @@ return {
       }),
     })
 
+    cmp.setup.filetype({ "dap-repl", "dapui_watches", "dapui_hover" }, {
+      sources = {
+        { name = "dap" },
+      },
+    })
+
     -- Insert `(` after select function or method item
     local cmp_autopairs = require("nvim-autopairs.completion.cmp")
     cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
@@ -153,5 +162,6 @@ return {
     "hrsh7th/cmp-nvim-lsp-document-symbol",
     { "kristijanhusak/vim-dadbod-completion", ft = { "sql", "mysql", "plsql" }, lazy = true },
     { "petertriho/cmp-git", opts = {}, ft = "gitcommit" },
+    "rcarriga/cmp-dap",
   },
 }
