@@ -72,7 +72,7 @@
   "popup.nvim": { "branch": "master", "commit": "b7404d35d5d3548a82149238289fa71f7f6de4ac" },
   "project.nvim": { "branch": "main", "commit": "8c6bad7d22eef1b71144b401c9f74ed01526a4fb" },
   "rainbow-delimiters.nvim": { "branch": "master", "commit": "b29da4a6061a88270e875b38367d82c04c856128" },
-  "smart-splits.nvim": { "branch": "master", "commit": "44145a4b37217348293fe457992cc38cf3b19f33" },
+  "smart-splits.nvim": { "branch": "master", "commit": "7697116ca807304c9d27a3d8157fe4bc78e88d0f" },
   "sqlite.lua": { "branch": "master", "commit": "d0ffd703b56d090d213b497ed4eb840495f14a11" },
   "suda.vim": { "branch": "master", "commit": "b97fab52f9cdeabe2bbb5eb98d82356899f30829" },
   "tailwind-tools.nvim": { "branch": "master", "commit": "ce3ab3fd6ad05d08fbfc1ef84b3f5312cd05ee6d" },
