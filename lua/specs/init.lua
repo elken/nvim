@@ -227,7 +227,7 @@ return {
     "levouh/tint.nvim",
     opts = {
       tint = -35,
-      highlight_ignore_patterns = { "WinSeparator", "Status.*", "DropBar.*", "WinBar" },
+      highlight_ignore_patterns = { "WinSeparator", "Status.*", "WinBar", "DAPUI.*" },
       tint_background_colors = true,
       window_ignore_function = function(winid)
         local bufid = vim.api.nvim_win_get_buf(winid)
