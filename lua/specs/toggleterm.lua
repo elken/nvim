@@ -20,7 +20,7 @@ return {
       end,
       desc = "Lazygit",
     },
-    { "<leader>ot", "<cmd>ToggleTerm<cr>", desc = "Lazygit" },
+    { "<leader>ot", "<cmd>ToggleTerm<cr>", desc = "Terminal" },
     {
       "<leader>oD",
       function()
