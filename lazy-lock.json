@@ -97,9 +97,10 @@
   "vim-rails": { "branch": "master", "commit": "2fba7907f585819a8653f0bc7dd7f437a822d9c6" },
   "vim-rake": { "branch": "master", "commit": "af4ee966f5479fa89e60be067b6183f6addf9e4e" },
   "vim-repeat": { "branch": "master", "commit": "65846025c15494983dafe5e3b46c8f88ab2e9635" },
+  "vim-rooter": { "branch": "master", "commit": "4a0df2f1b0f3d69e8f7e19afe464a7c3a7af89a2" },
   "vim-speeddating": { "branch": "master", "commit": "5a36fd29df63ea3f65562bd2bb837be48a5ec90b" },
   "vim-visual-multi": { "branch": "master", "commit": "38b0e8d94a5499ccc17d6159763d32c79f53417b" },
   "vim-wordmotion": { "branch": "master", "commit": "81d9bd298376ab0dc465c85d55afa4cb8d5f47a1" },
-  "which-key.nvim": { "branch": "main", "commit": "bdcc429afaecc5896b462b0b07c2b3a9e9c1c60f" },
+  "which-key.nvim": { "branch": "main", "commit": "78cc92c6cb7da88df60227bc334a598a7e772e51" },
   "workspaces.nvim": { "branch": "fix/nested-autocmd", "commit": "3211d2f72b05d646129e951c8ac0da35d11aaf2a" }
 }
