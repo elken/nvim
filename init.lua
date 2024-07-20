@@ -31,6 +31,10 @@ require("lazy").setup("specs", {
     enabled = true,
     notify = false,
   },
+  change_detection = {
+    enabled = true,
+    notify = false,
+  },
   rocks = {
     hererocks = true,
   },

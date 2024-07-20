@@ -12,7 +12,7 @@ if vim.g.neovide then
   -- Quake was fun, and having some guide to show your jumps turns out to be pretty useful
   vim.g.neovide_cursor_vfx_mode = "railgun"
 
-  -- Add transparency
+  -- Increase transparency
   vim.opt.winblend = 30
   vim.opt.pumblend = 30
 

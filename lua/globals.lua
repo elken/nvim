@@ -38,6 +38,10 @@ end
 vim.g.mapleader = " "
 vim.g.maplocalleader = ","
 
+-- Window & popup transparency
+vim.opt.winblend = 10
+vim.opt.pumblend = 10
+
 vim.opt.inccommand = "split"
 vim.opt.termguicolors = true
 vim.g.formatoptions = "qrn1"

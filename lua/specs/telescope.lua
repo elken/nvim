@@ -8,9 +8,6 @@ return {
   "nvim-telescope/telescope.nvim",
   config = function()
     require("telescope").setup({
-      defaults = {
-        winblend = vim.g.neovide and 70 or 0,
-      },
       extensions = {
         frecency = {
           db_safe_mode = false,
