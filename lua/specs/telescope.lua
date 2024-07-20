@@ -12,10 +12,6 @@ return {
         winblend = vim.g.neovide and 70 or 0,
       },
       extensions = {
-        file_browser = {
-          theme = "ivy",
-          hijack_netrw = true,
-        },
         frecency = {
           db_safe_mode = false,
         },
@@ -29,7 +25,6 @@ return {
     if not vim.g.started_by_firenvim then
       require("telescope").load_extension("frecency")
     end
-    require("telescope").load_extension("file_browser")
     require("telescope").load_extension("ui-select")
     require("telescope").load_extension("lazy_plugins")
     require("telescope").load_extension("fzf")
@@ -39,7 +34,6 @@ return {
     "polirritmico/telescope-lazy-plugins.nvim",
     "nvim-lua/popup.nvim",
     "ahmedkhalf/project.nvim",
-    "nvim-telescope/telescope-file-browser.nvim",
     {
       "nvim-telescope/telescope-frecency.nvim",
       dependencies = { "tami5/sqlite.lua" },

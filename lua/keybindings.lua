@@ -16,7 +16,7 @@ vim.keymap.set("n", "<leader>-", "<cmd>FormatToggle!<cr>", { desc = "Toggle Auto
 vim.keymap.set("n", "<leader>_", "<cmd>FormatToggle<cr>", { desc = "Toggle Autoformatter (global)" })
 
 vim.keymap.set("n", "<leader>,", "<cmd>Telescope buffers<cr>", { desc = "Switch Buffer" })
-vim.keymap.set("n", "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", { desc = "File browser" })
+vim.keymap.set("n", "<leader>.", "<cmd>Neotree position=current<cr>", { desc = "File browser" })
 vim.keymap.set("n", "<leader>/", "<cmd>Telescope live_grep<cr>", { desc = "Search in project" })
 
 vim.keymap.set("n", "<leader><space>", function()
@@ -95,6 +95,7 @@ local function open_in_folder_label()
   return string.format("Open current directory in %s", default_fm:gsub(".desktop", ""):gsub("\n", ""):gsub("org.gnome.", ""))
 end
 
+vim.keymap.set("n", "<leader>oe", "<cmd>Neotree toggle<cr>", { desc = "Neotree" })
 vim.keymap.set("n", "<leader>oo", open_in_folder(), { desc = open_in_folder_label(), silent = true })
 
 -- [P]roject
