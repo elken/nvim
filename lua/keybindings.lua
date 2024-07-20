@@ -1,3 +1,9 @@
+vim.keymap.set("n", "<Esc>", function()
+  require("notify").dismiss({ silent = true, pending = true })
+  vim.cmd.nohlsearch()
+  vim.cmd.echo()
+end)
+
 -- Oil is better than vinegar
 vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
 
