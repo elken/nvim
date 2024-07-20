@@ -31,9 +31,13 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- Buffer local mappings based on server support
     -- When an LSP server is sent initialize, it returns the list of capabilities it supports.
     -- We use that here to prevent binding things that will just cause errors.
-    vim.keymap.set("n", "gD", vim.lsp.buf.declaration, make_opts("Go To Declaration"))
+    if client and client.server_capabilities.declarationProvider then
+      vim.keymap.set("n", "gD", vim.lsp.buf.declaration, make_opts("Go To Declaration"))
+    end
 
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, make_opts("Go To Definition"))
+    if client and client.server_capabilities.definitionProvider then
+      vim.keymap.set("n", "gd", vim.lsp.buf.definition, make_opts("Go To Definition"))
+    end
 
     vim.keymap.set("n", "K", vim.lsp.buf.hover, make_opts("Show documentation for symbol"))
 
