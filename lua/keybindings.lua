@@ -1,3 +1,6 @@
+-- Oil is better than vinegar
+vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+
 -- Long-time muscle memory
 vim.keymap.set("n", "<C-s>", "<cmd>w<cr>", { silent = true, desc = "Save buffer" })
 
