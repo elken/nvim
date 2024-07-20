@@ -79,9 +79,10 @@ return {
     local mason = require("mason")
     mason.setup({})
 
-    require("mason-lspconfig").setup({
-      automatic_installation = true,
+    -- Bootstrap needed tools
+    require("mason-tool-installer").setup({
       ensure_installed = {
+        -- LSP
         "bashls",
         "clojure_lsp",
         "docker_compose_language_service",
@@ -101,6 +102,24 @@ return {
         "tsserver",
         "typst_lsp",
         "vimls",
+
+        -- DAP
+        -- Linters
+        "clj-kondo",
+        "markdownlint",
+        "selene",
+        "shellcheck",
+        "vale",
+
+        -- Formatters
+        "erb-formatter",
+        "mdformat",
+        "prettierd",
+        "rubocop",
+        "rustywind",
+        "shfmt",
+        "sql-formatter",
+        "stylua",
       },
     })
 
@@ -151,53 +170,93 @@ return {
       },
     },
     "folke/which-key.nvim",
+    "WhoIsSethDaniel/mason-tool-installer",
     {
-      "nvimtools/none-ls.nvim",
+      "stevearc/conform.nvim",
+      init = function()
+        -- Used when `gq` and others are called
+        vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+      end,
       config = function()
-        local null_ls = require("null-ls")
-
-        local formatting = null_ls.builtins.formatting
-        local diagnostics = null_ls.builtins.diagnostics
-
-        null_ls.setup({
-          -- Format on save
-          debug = true,
-          sources = {
-            -- Formatters
-            formatting.stylua,
-            formatting.prettier,
-            formatting.rubocop,
-
-            -- Linters
-            diagnostics.selene,
-
-            -- Extra completion
+        require("conform").setup({
+          formatters_by_ft = {
+            lua = { "stylua" },
+            javascript = { "prettierd" },
+            typescript = { "prettierd" },
+            javascriptreact = { "prettierd" },
+            typescriptreact = { "prettierd" },
+            eruby = { "erb_format" },
+            markdown = { "mdformat" },
+            ruby = { "rubocop" },
+            zsh = { "shfmt" },
+            sql = { "sql-formatter" },
           },
+          format_on_save = function(bufnr)
+            if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
+              return
+            end
+            return { timeout_ms = 500, lsp_format = "fallback" }
+          end,
+        })
+
+        vim.api.nvim_create_user_command("FormatToggle", function(args)
+          local disabled = false
+
+          if args.bang then
+            -- FormatDisable! will disable formatting just for this buffer
+            vim.b.disable_autoformat = not vim.b.disable_autoformat
+            disabled = vim.b.disable_autoformat
+          else
+            vim.g.disable_autoformat = not vim.g.disable_autoformat
+            disabled = vim.g.disable_autoformat
+          end
+
+          vim.api.nvim_exec_autocmds("User", {
+            pattern = "FormatToggle",
+            modeline = false,
+            data = {
+              bufnr = vim.api.nvim_get_current_buf(),
+              disabled = disabled,
+            },
+          })
+        end, {
+          desc = "Toggle autoformat on save",
+          bang = true,
+        })
+
+        vim.api.nvim_create_autocmd("User", {
+          pattern = "FormatToggle",
+          callback = vim.schedule_wrap(function()
+            vim.cmd("redrawstatus")
+          end),
         })
       end,
     },
     {
-      "jay-babu/mason-null-ls.nvim",
-      opts = {
-        automatic_installation = true,
-        -- TODO: Derive this list from the sources in none-ls
-        ensure_installed = {
-          "clj-kondo",
-          "cljfmt",
-          "markdownlint",
-          "mdformat",
-          "prettierd",
-          "rubocop",
-          "rustywind",
-          "selene",
-          "shellcheck",
-          "shfmt",
-          "sql-formatter",
-          "stylua",
-          "typstfmt",
-          "vale",
-        },
-      },
+      "mfussenegger/nvim-lint",
+      config = function()
+        local lint = require("lint")
+
+        lint.linters_by_ft = {
+          javascript = { "eslint_d" },
+          typescript = { "eslint_d" },
+          javascriptreact = { "eslint_d" },
+          typescriptreact = { "eslint_d" },
+          clojure = { "clj-kondo" },
+          markdown = { "markdownlint", "vale" },
+          lua = { "selene" },
+          zsh = { "shellcheck" },
+          bash = { "shellcheck" },
+        }
+
+        local augroup = vim.api.nvim_create_augroup("lint", { clear = true })
+        vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+          group = augroup,
+          callback = function()
+            lint.try_lint()
+          end,
+        })
+      end,
     },
     {
       "williamboman/mason.nvim",

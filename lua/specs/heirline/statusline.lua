@@ -236,13 +236,13 @@ local lsp_servers = {
     },
     {
       provider = "  ",
-      update = { "User", pattern = "LspFormatToggle" },
+      update = { "User", pattern = "FormatToggle" },
       hl = function()
         local hl = { bg = statusline_bg }
-        if require("plugins.lsp-format").is_enabled() then
-          hl.fg = palette.green.bright
-        else
+        if vim.b[0].disable_autoformat or vim.g.disable_autoformat then
           hl.fg = palette.red.bright
+        else
+          hl.fg = palette.green.bright
         end
         return hl
       end,

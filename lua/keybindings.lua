@@ -12,7 +12,8 @@ vim.keymap.set("n", "<leader>;", "<cmd>nohl<cr>", { desc = "Turn off search high
 vim.keymap.set("n", "<leader>l", ":lua ", { desc = "Open lua prompt" })
 vim.keymap.set("n", "<leader>!", ":! ", { desc = "Open shell prompt" })
 vim.keymap.set("n", "<leader>%", "<cmd>so %<cr>", { desc = "Reload current file" })
-vim.keymap.set("n", "<leader>-", "<cmd>LspFormatToggle<cr>", { desc = "Toggle Autoformatter" })
+vim.keymap.set("n", "<leader>-", "<cmd>FormatToggle!<cr>", { desc = "Toggle Autoformatter (buffer)" })
+vim.keymap.set("n", "<leader>_", "<cmd>FormatToggle<cr>", { desc = "Toggle Autoformatter (global)" })
 
 vim.keymap.set("n", "<leader>,", "<cmd>Telescope buffers<cr>", { desc = "Switch Buffer" })
 vim.keymap.set("n", "<leader>.", "<cmd>Telescope file_browser path=%:p:h select_buffer=true<cr>", { desc = "File browser" })
