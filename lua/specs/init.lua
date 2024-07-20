@@ -104,9 +104,6 @@ return {
   -- Enable repeating supported plugin maps with "."
   "tpope/vim-repeat",
 
-  -- GitHub extension for fugitive.vim
-  "tpope/vim-rhubarb",
-
   -- Increment dates/times
   "tpope/vim-speeddating",
 
