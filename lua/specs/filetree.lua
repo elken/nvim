@@ -131,6 +131,7 @@ return {
                 { source = "filesystem" },
                 { source = "buffers" },
                 { source = "remote" },
+                { source = "git_status" },
                 { source = "document_symbols" },
               },
             },
