@@ -186,7 +186,7 @@ return {
       "stevearc/conform.nvim",
       init = function()
         -- Used when `gq` and others are called
-        vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
+        -- vim.o.formatexpr = "v:lua.require'conform'.formatexpr()"
       end,
       config = function()
         require("conform").setup({
