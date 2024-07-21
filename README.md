@@ -1,14 +1,26 @@
-# Neovim dotfiles
+# Neovim
+
+<!--toc:start-->
+
+- [Neovim](#neovim)
+  - [Dependencies](#dependencies)
+  - [Usage](#usage)
+
+<!--toc:end-->
 
 ![preview](.github/assets/preview.png)
 
 There are many like it; but this config is mine.
 
-A modular setup based on [lazy.nvim](https://github.com/folke/lazy.nvim)'s ability to load things "lazily" based on specific conditions, key invocations or commands.
+A modular setup based on [lazy.nvim](https://github.com/folke/lazy.nvim)'s
+ability to load things "lazily" based on specific conditions, key invocations
+or commands.
 
-Due to how fast neovim is already, I've taken a very ... Lazy approach, it starts up in about 80 milliseconds and that's plenty good enough for me.
+Due to how fast neovim is already, I've taken a Lazy approach, it
+starts up in about 80 milliseconds and that's plenty good enough for me.
 
 ## Dependencies
+
 Nothing concrete, I will in time add a healthcheck setup but for now just:
 
 - `neovim` 0.9+
@@ -24,11 +36,12 @@ Off the top of my head
 
 ## Usage
 
-Clone to `$XDG_CONFIG_HOME/nvim` (usually `~/.config/nvim`) and open nvim. Lazy will bootstrap everything plugin-wise and once it's done you're good to go!
+Clone to `$XDG_CONFIG_HOME/nvim` (usually `~/.config/nvim`) and open nvim. Lazy
+will bootstrap everything plugin-wise and once it's done you're good to go!
 
-This also has setup for both [Neovide](https://neovide.dev/) and regular terminal; the former is where
-most of my "project" work happens. I use an XDG desktop file like the below to
-set this up:
+This also has setup for both [Neovide](https://neovide.dev/) and regular
+terminal; the former is where most of my "project" work happens. I use an XDG
+desktop file like the below to set this up:
 
 ```conf
 [Desktop Entry]

@@ -1,0 +1,3 @@
+MD013:
+  # Code blocks should be much longer, sometimes I can't split it
+  code_block_line_length: 120
