@@ -6,6 +6,7 @@ I'll be honest since moving back to nvim, I have just been using lazygit; I real
 
 return {
   "NeogitOrg/neogit",
+  cmd = { "Neogit" },
   keys = {
     {
       "<leader>gb",
