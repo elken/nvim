@@ -1,3 +1,9 @@
+--[[
+An awkward combination of oil and neo-tree since I can't quite get neo-tree to always replace netrw.
+
+Oil functions a bit like Emacs' dired in that the buffer is editable and changes are persisted neatly, otherwise I'd prefer to use neo-tree all the time
+--]]
+
 local git_ignored = setmetatable({}, {
   __index = function(self, key)
     local proc = vim.system({ "git", "ls-files", "--ignored", "--exclude-standard", "--others", "--directory" }, {

@@ -35,7 +35,7 @@
   "neo-tree.nvim": { "branch": "v3.x", "commit": "29f7c215332ba95e470811c380ddbce2cebe2af4" },
   "neoconf.nvim": { "branch": "main", "commit": "057b3ff0df0ef263f00d5e3003194e8998492d45" },
   "neodev.nvim": { "branch": "main", "commit": "46aa467dca16cf3dfe27098042402066d2ae242d" },
-  "neogit": { "branch": "master", "commit": "af1d8d88f426a4da63c913f3b81a37350dbe8d02" },
+  "neogit": { "branch": "master", "commit": "f7914bc33cac960ea71793463966695b6e10a5ef" },
   "neotest": { "branch": "master", "commit": "32ff2ac21135a372a42b38ae131e531e64833bd3" },
   "neotest-rspec": { "branch": "main", "commit": "48573d5882cbe8d8bcd3b735d9ee7705168b1b87" },
   "neotree-file-nesting-config": { "branch": "main", "commit": "d9168eed2522397d271624e5f523d8384a552a64" },
@@ -102,5 +102,5 @@
   "vim-visual-multi": { "branch": "master", "commit": "38b0e8d94a5499ccc17d6159763d32c79f53417b" },
   "vim-wordmotion": { "branch": "master", "commit": "81d9bd298376ab0dc465c85d55afa4cb8d5f47a1" },
   "which-key.nvim": { "branch": "main", "commit": "c74c245d9277ad6865b28ea7e37158b7f990b7fe" },
-  "workspaces.nvim": { "branch": "fix/nested-autocmd", "commit": "3211d2f72b05d646129e951c8ac0da35d11aaf2a" }
+  "workspaces.nvim": { "branch": "master", "commit": "86bb5ce9bda377aae9ff3c92357ed407b0d028c2" }
 }

@@ -1,3 +1,17 @@
+--[[
+Config for my bespoke statuscolumn borrowed from https://github.com/olimorris/dotfiles/blob/main/.config/nvim/lua/plugins/heirline/init.lua.
+
+In this we define quite a large statuscolumn that incorporates a number of items:
+- Breakpoints that can be toggled by clicking as well as the default keybind
+- Arrows to open/close folds
+- Markers for git hunks
+- Diagnostic markers
+- Markers for TODO: like things
+- Markers for passing tests
+
+The larger-than-normal width is to neatly incorporate all of the above without having too much overlap.
+--]]
+
 local v, fn, api = vim.v, vim.fn, vim.api
 
 local conditions = require("heirline.conditions")

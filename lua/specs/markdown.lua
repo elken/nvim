@@ -1,3 +1,9 @@
+--[[
+Markdown is a format that's become extremely ubiquitous these days, so having a good editing experience for it is crucial.
+
+Thankfully, all that's really needed is this one package.
+--]]
+
 return {
   {
     "MeanderingProgrammer/markdown.nvim",
@@ -5,8 +11,6 @@ return {
       "nvim-treesitter/nvim-treesitter",
       "nvim-tree/nvim-web-devicons",
     },
-    config = function()
-      require("render-markdown").setup({})
-    end,
+    opts = {},
   },
 }

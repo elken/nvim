@@ -1,4 +1,5 @@
 -- Allow jumping between "alternative" files (eg tests and their source files)
+
 return {
   "rgroli/other.nvim",
   keys = {

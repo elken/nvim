@@ -1,3 +1,7 @@
+--[[
+Neovide is my preferred graphical way to interact with neovim, but I more and more find myself preferring the terminal so this for now is almost pointless.
+--]]
+
 if vim.g.neovide then
   -- Setup default font with fallbacks
   vim.opt.guifont = "Iosevka Nerd Font,Symbols Nerd Font Mono,Noto Color Emoji"

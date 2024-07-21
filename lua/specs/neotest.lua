@@ -1,4 +1,11 @@
--- Pretty good test runner
+--[[
+I like to think that this package helped me secure my current role, and as such I'm a big fan of it.
+
+Having the ability to show the entire test suite for the little toy task I had to write made it simple to demonstrate.
+
+Neotest adds a bunch of lovely improvements around testing, including a summary window which when coupled with the watch setup allows you to get in-editor test feedback in a very graphical way.
+--]]
+
 return {
   "nvim-neotest/neotest",
   keys = {

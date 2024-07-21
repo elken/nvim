@@ -1,7 +1,7 @@
 --[[
 DAP is short for Debugger Adapter Protocol; and behaves similar to how LSP works but for debugging.
 
-I really don't use this much at all, so this is again considered dead code for now
+The only proven setup is the ruby bits, and even then there's still some minor issues with regards to closing the session and clearing all the buffers cleanly.
 --]]
 
 return {

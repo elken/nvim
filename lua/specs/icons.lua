@@ -1,3 +1,9 @@
+--[[
+This package is used all over the place, so to me it's important that things I use often have appropriate icons.
+
+Ideally this should be PR'd upstream.
+--]]
+
 return {
   "nvim-tree/nvim-web-devicons",
   config = function()

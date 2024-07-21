@@ -3,6 +3,7 @@ Plugins that are part of the "mini.nvim" ecosystem, a set of packages all from t
 
 There's quite a few of these we like, so it made sense to group them in the same place (I'm allowed to break my own convention, it's mine)
 --]]
+
 return {
   {
     "echasnovski/mini.surround",

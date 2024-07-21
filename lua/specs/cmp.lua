@@ -2,6 +2,8 @@
 My completion framework of choice, since I don't want to complex hassle that is coc; although I do mean to check it out from time-to-time...
 
 This is also where snippets are setup, since they exist as a direct dependency.
+
+We rely on a number of sources to complete against, and I also go with the grain that is using tab for everything.
 --]]
 
 return {
@@ -88,9 +90,6 @@ return {
           col_offset = -3,
           side_padding = 0,
         },
-      },
-      experimental = {
-        ghost_text = true,
       },
     })
 

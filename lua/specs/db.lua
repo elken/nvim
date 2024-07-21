@@ -1,3 +1,9 @@
+--[[
+A lovely setup for running queries against defined database connections with all the wonderful nvim integrations, tree-sitter etc.
+
+Has potential to hook nicely into vim-rails but I haven't looked into it yet.
+--]]
+
 return {
   {
     "kristijanhusak/vim-dadbod-ui",

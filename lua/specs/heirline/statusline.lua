@@ -1,3 +1,16 @@
+--[[
+Config for my bespoke statusline borrowed from https://github.com/olimorris/dotfiles/blob/main/.config/nvim/lua/plugins/heirline/init.lua.
+
+In this we define a statusline that incorporates a number of segments:
+- The current mode (always visible)
+- The current git branch along with the various status change statistics
+- A listing of all the diagnostics (hidden when not applicable)
+- A listing of all the LSP servers and a green or red cog to indicate if the current buffer has formatting enabled on save
+- A display of the current macro being recorded (hidden when not applicable)
+- The number of current lazy.nvim package updates
+
+In a nicely centred statusline, notably missing the buffer name which is taken care of by incline.nvim
+--]]
 local conditions = require("heirline.conditions")
 local palette = require("nightfox.palette").load("nordfox")
 local statusline_bg = palette.bg1

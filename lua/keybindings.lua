@@ -1,3 +1,9 @@
+--[[
+It should honestly be obvious what this file is but to save the hassle it's where all my keybindings are defined.
+
+In time I may prefer to co-locate more of these with their relevant packages...
+--]]
+
 vim.keymap.set("n", "<Esc>", function()
   require("notify").dismiss({ silent = true, pending = true })
   vim.cmd.nohlsearch()
