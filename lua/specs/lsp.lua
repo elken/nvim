@@ -160,7 +160,6 @@ return {
           capabilities = capabilities,
         })
       end,
-      ["rubocop"] = function() end,
       ["clojure_lsp"] = function()
         require("lspconfig")["clojure_lsp"].setup({
           capabilities = capabilities,
@@ -197,8 +196,7 @@ return {
             javascriptreact = { "prettierd" },
             typescriptreact = { "prettierd" },
             eruby = { "erb_format" },
-            markdown = { "mdformat" },
-            ruby = { "rubocop" },
+            markdown = { "prettierd" },
             zsh = { "shfmt" },
             sql = { "sql-formatter" },
           },
@@ -254,7 +252,7 @@ return {
           javascriptreact = { "eslint_d" },
           typescriptreact = { "eslint_d" },
           clojure = { "clj-kondo" },
-          markdown = { "markdownlint", "vale" },
+          markdown = { "markdownlint" },
           lua = { "selene" },
           zsh = { "shellcheck" },
           bash = { "shellcheck" },
