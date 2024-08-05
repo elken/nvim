@@ -18,6 +18,12 @@ return {
     "natecraddock/workspaces.nvim",
     dependencies = {
       "folke/noice.nvim",
+      {
+        "ahmedkhalf/project.nvim",
+        config = function()
+          require("project_nvim").setup()
+        end,
+      },
     },
     opts = {
       auto_open = true,
@@ -31,28 +37,29 @@ return {
           ":Bdelete!",
         },
         open = function()
-          if vim.fn.filereadable(".nvim/session") then
+          if vim.fn.filereadable(".nvim/session") == 1 then
             local choice = vim.fn.confirm("Open the last session?", "&Yes\n&No")
             if choice == 1 then
               require("sessions").load(nil, { silent = true })
-            elseif choice == 2 then
-              local function is_git_repo()
-                vim.fn.system("git rev-parse --is-inside-work-tree")
-                return vim.v.shell_error == 0
-              end
-              local function get_git_root()
-                local dot_git_path = vim.fn.finddir(".git", ".;")
-                return vim.fn.fnamemodify(dot_git_path, ":h")
-              end
-              local opts = {}
-              if is_git_repo() then
-                opts = {
-                  cwd = get_git_root(),
-                }
-              end
-              require("telescope.builtin").find_files(opts)
+              return
             end
           end
+
+          local function is_git_repo()
+            vim.fn.system("git rev-parse --is-inside-work-tree")
+            return vim.v.shell_error == 0
+          end
+          local function get_git_root()
+            local dot_git_path = vim.fn.finddir(".git", ".;")
+            return vim.fn.fnamemodify(dot_git_path, ":h")
+          end
+          local opts = {}
+          if is_git_repo() then
+            opts = {
+              cwd = get_git_root(),
+            }
+          end
+          require("telescope.builtin").find_files(opts)
         end,
       },
     },
