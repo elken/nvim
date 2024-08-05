@@ -238,5 +238,4 @@ return {
   },
 
   -- In the right place at the right time
-  "airblade/vim-rooter",
 }
