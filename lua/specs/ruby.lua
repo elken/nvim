@@ -5,7 +5,15 @@ No but really these are too new for me to know what I want to customize yet, as 
 --]]
 
 return {
-  "tpope/vim-rails",
+  {
+    "tpope/vim-rails",
+    config = function()
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "eruby.yaml",
+        command = "set filetype=yaml",
+      })
+    end,
+  },
   "tpope/vim-rake",
   "tpope/vim-bundler",
 }
