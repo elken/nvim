@@ -21,32 +21,73 @@ return {
       function()
         require("neotest").run.run(vim.fn.getcwd())
       end,
-      desc = "Run whole suite",
+      desc = "Run tests in project",
+    },
+    {
+      "<leader>td",
+      function()
+        ---@diagnostic disable-next-line: missing-fields
+        require("neotest").run.run({ strategy = "dap" })
+      end,
+      desc = "Run nearest test",
+    },
+    {
+      "<leader>tr",
+      function()
+        require("neotest").run.run(vim.fn.expand("%"))
+      end,
+      desc = "Run current test file",
+    },
+    {
+      "<leader>tn",
+      function()
+        require("neotest").run.run()
+      end,
+      desc = "Run nearest test",
+    },
+    {
+      "<leader>to",
+      function()
+        require("neotest").output.open()
+      end,
+      desc = "View test output",
+    },
+    {
+      "<leader>tO",
+      function()
+        require("neotest").output.open({ auto_close = true, enter = true })
+      end,
+      desc = "View test output",
     },
     {
       "<leader>tw",
       function()
         require("neotest").watch.toggle(vim.fn.getcwd())
       end,
-      desc = "Run whole suite in watch mode",
+      desc = "Run tests in project in watch mode",
     },
   },
   config = function()
+    ---@diagnostic disable-next-line: missing-fields
     require("neotest").setup({
       adapters = {
         require("neotest-rspec")({
           filter_dirs = { "vendor" },
           rspec_cmd = function(position_type)
             if position_type == "test" then
+              ---No viable alternative exists yet
+              ---@diagnostic disable-next-line: deprecated
               return vim.tbl_flatten({
-                "bundle",
+                vim.fn.expand("~/.rbenv/shims/bundle"),
                 "exec",
                 "rspec",
                 "--fail-fast",
               })
             else
+              ---No viable alternative exists yet
+              ---@diagnostic disable-next-line: deprecated
               return vim.tbl_flatten({
-                "bundle",
+                vim.fn.expand("~/.rbenv/shims/bundle"),
                 "exec",
                 "rspec",
               })
