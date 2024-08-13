@@ -237,5 +237,6 @@ return {
     },
   },
 
-  -- In the right place at the right time
+  -- Nicer helpdocs
+  { "OXY2DEV/helpview.nvim", lazy = false },
 }
