@@ -168,6 +168,12 @@ return {
           },
         })
       end,
+      -- Needed short-term until neovim supports `DiagnosticRegistrationOptions`
+      ["ruby_lsp"] = function()
+        require("lspconfig").ruby_lsp.setup({
+          filetypes = { "ruby" },
+        })
+      end,
     })
   end,
   dependencies = {
