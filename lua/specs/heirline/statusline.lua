@@ -122,7 +122,7 @@ local git_branch = {
     },
     {
       provider = function(self)
-        return self.status_dict.head
+        return string.sub(self.status_dict.head, 1, 30)
       end,
       hl = { fg = palette.fg1, bold = true },
     },
