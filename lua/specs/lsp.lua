@@ -198,7 +198,7 @@ return {
             eruby = { "erb_format" },
             markdown = { "prettierd" },
             zsh = { "shfmt" },
-            sql = { "sql-formatter" },
+            sql = { "sql_formatter" },
           },
           format_on_save = function(bufnr)
             if vim.g.disable_autoformat or vim.b[bufnr].disable_autoformat then
