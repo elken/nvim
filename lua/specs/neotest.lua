@@ -78,18 +78,14 @@ return {
               ---No viable alternative exists yet
               ---@diagnostic disable-next-line: deprecated
               return vim.tbl_flatten({
-                vim.fn.expand("~/.rbenv/shims/bundle"),
-                "exec",
-                "rspec",
+                "bin/rspec",
                 "--fail-fast",
               })
             else
               ---No viable alternative exists yet
               ---@diagnostic disable-next-line: deprecated
               return vim.tbl_flatten({
-                vim.fn.expand("~/.rbenv/shims/bundle"),
-                "exec",
-                "rspec",
+                "bin/rspec",
               })
             end
           end,
