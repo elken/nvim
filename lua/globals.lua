@@ -138,6 +138,11 @@ if vim.fn.executable("rg") > 0 then
   vim.opt.grepformat = vim.opt.grepformat ^ { "%f:%l:%c:%m" }
 end
 
+-- sync buffers automatically
+vim.opt.autoread = true
+-- disable neovim generating a swapfile and showing the error
+vim.opt.swapfile = false
+
 -- Firenvim setup
 function _G.FirenvimSetup(channel)
   local channel_info = vim.api.nvim_get_chan_info(channel)
