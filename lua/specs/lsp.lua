@@ -110,7 +110,6 @@ return {
         "tailwindcss",
         "taplo",
         "terraformls",
-        "tsserver",
         "typst_lsp",
         "vimls",
 
