@@ -239,4 +239,19 @@ return {
 
   -- Nicer helpdocs
   { "OXY2DEV/helpview.nvim", lazy = false },
+
+  -- Interface to kubectl
+  {
+    "Ramilito/kubectl.nvim",
+    keys = {
+      {
+        "<leader>ok",
+        function()
+          require("kubectl").toggle()
+        end,
+        desc = "Toggle Kubectl",
+      },
+    },
+    opts = {},
+  },
 }
