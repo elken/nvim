@@ -159,6 +159,13 @@ return {
           capabilities = capabilities,
         })
       end,
+      ["elixirls"] = function()
+        require("lspconfig")["elixirls"].setup({
+          capabilities = capabilities,
+          cmd = { "elixir-ls" },
+          filetypes = { "elixir", "eelixir", "heex", "surface" },
+        })
+      end,
       ["clojure_lsp"] = function()
         require("lspconfig")["clojure_lsp"].setup({
           capabilities = capabilities,

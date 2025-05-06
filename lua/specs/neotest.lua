@@ -67,6 +67,7 @@ return {
       desc = "Run tests in project in watch mode",
     },
   },
+  version = "5.3.3",
   config = function()
     ---@diagnostic disable-next-line: missing-fields
     require("neotest").setup({
@@ -78,14 +79,18 @@ return {
               ---No viable alternative exists yet
               ---@diagnostic disable-next-line: deprecated
               return vim.tbl_flatten({
-                "bin/rspec",
+                "bundle",
+                "exec",
+                "rspec",
                 "--fail-fast",
               })
             else
               ---No viable alternative exists yet
               ---@diagnostic disable-next-line: deprecated
               return vim.tbl_flatten({
-                "bin/rspec",
+                "bundle",
+                "exec",
+                "rspec",
               })
             end
           end,
